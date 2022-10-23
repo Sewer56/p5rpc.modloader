@@ -2,14 +2,13 @@
 using System.Runtime.InteropServices;
 using p5rpc.modloader.Configuration;
 using Reloaded.Hooks.Definitions;
-using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Memory.Sources;
 using Reloaded.Mod.Interfaces;
 
 namespace p5rpc.modloader;
 
-internal class CpkPatches
+internal unsafe class CpkPatches
 {
     private readonly Config _conf;
     private readonly ILogger _logger;
@@ -19,27 +18,41 @@ internal class CpkPatches
     private readonly Memory _mem;
     private readonly SigScan _scan;
 
-    private IHook<BindCpk>? _bindCpkHook;
-    private IHook<BindCpk>? _bindDirHook;
-    private IHook<PathExists>? _pathExistHook;
+    private bool _modsLoaded = false;
 
-    private IAsmHook? _preBindCpkHook;
+    #region Hooks
 
-    private IReverseWrapper<LoadMods>? _modSupportRWrap;
+    private IHook<criFsBinder_BindCpk>? _bindCpkHook;
+    private IHook<criFsBinder_BindCpk>? _bindDirHook;
 
-    private MountCpk? _mountCpkWrap;
+    #endregion Hooks
 
-    [Function(CallingConventions.Microsoft)]
-    private delegate void MountCpk(int loadType, string cpkName, int a3);
+    #region Delegates
 
     [Function(CallingConventions.Microsoft)]
-    private delegate int PathExists(string path);
+    private delegate int criFsBinder_Create(IntPtr bndrhn);
 
     [Function(CallingConventions.Microsoft)]
-    private delegate int BindCpk(IntPtr bndrhn, IntPtr srcbndrhn, string path, IntPtr work, int worksize, IntPtr bndrid);
+    private delegate int criFsBinder_GetStatus(uint bndrid, int* status);
 
     [Function(CallingConventions.Microsoft)]
-    private delegate void LoadMods();
+    private delegate int criFsBinder_BindCpk(IntPtr bndrhn, IntPtr srcbndrhn, string path, IntPtr work, int worksize, uint* bndrid);
+
+    [Function(CallingConventions.Microsoft)]
+    private delegate uint criFsBinder_SetPriority(uint bndrid, int priority);
+
+    [Function(CallingConventions.Microsoft)]
+    private delegate int criFsBinder_Unbind(uint bndrid);
+
+    #endregion Delegates
+
+    #region Wrappers
+
+    private criFsBinder_GetStatus? _getStatusWrap;
+    private criFsBinder_SetPriority? _setPriorityWrap;
+    private criFsBinder_Unbind? _unbindWrap;
+
+    #endregion Wrappers
 
     public CpkPatches(IReloadedHooks? hooks, ILogger logger, Config conf, SigScan scan)
     {
@@ -54,73 +67,104 @@ internal class CpkPatches
 
     public void Activate()
     {
-        _modSupportRWrap = _hooks?.CreateReverseWrapper<LoadMods>(LoadModsImpl);
-
-        _scan.FindPatternOffset("48 89 5C 24 ?? 48 89 7C 24 ?? 55 48 8D AC 24 ?? ?? ?? ?? 48 81 EC E0 01 00 00 48 83 3D ?? ?? ?? ?? 00", (offset) =>
-            _mountCpkWrap = _hooks?.CreateWrapper<MountCpk>(_base + offset, out var _)
-        , "mount cpk");
-
-        _scan.FindPatternOffset("33 C9 E8 ?? ?? ?? ?? 41 8B CC 48 89 05", (offset) =>
-        {
-            string[] func =
-            {
-                $"use64",
-                _hooks!.Utilities.GetAbsoluteCallMnemonics(_modSupportRWrap!.WrapperPointer, true),
-            };
-
-            _preBindCpkHook = _hooks?.CreateAsmHook(func, _base + offset, AsmHookBehaviour.ExecuteFirst);
-            _preBindCpkHook?.Activate();
-        }, "pre mount");
-
-        _scan.FindPatternOffset("48 83 EC 28 48 89 CA", (offset) =>
-            _pathExistHook = _hooks?.CreateHook<PathExists>(PathExistsImpl, _base + offset).Activate()
-        , "path exists");
-
         _scan.FindPatternOffset("48 83 EC 48 48 8B 44 24 ?? C7 44 24 ?? 01 00 00 00 48 89 44 24 ?? 8B 44 24 ??", (offset) =>
-            _bindCpkHook = _hooks?.CreateHook<BindCpk>(BindCpkImpl, _base + offset).Activate()
-        , "bind cpk");
+            _bindCpkHook = _hooks?.CreateHook<criFsBinder_BindCpk>(BindCpkImpl, _base + offset).Activate(),
+            "bind cpk");
 
         _scan.FindPatternOffset("48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 40 48", (offset) =>
-            _bindDirHook = _hooks?.CreateHook<BindCpk>(BindDirImpl, _base + offset).Activate()
-        , "bind dir");
+            _bindDirHook = _hooks?.CreateHook<criFsBinder_BindCpk>(BindDirImpl, _base + offset).Activate(),
+            "bind dir");
+
+        _scan.FindPatternOffset("48 89 5C 24 08 57 48 83 EC 20 8B FA E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 75 18", (offset) =>
+            _setPriorityWrap = _hooks?.CreateWrapper<criFsBinder_SetPriority>(_base + offset, out var _),
+            "set prio");
+
+        _scan.FindPatternOffset("48 89 5C 24 08 57 48 83 EC 20 48 8B DA 8B F9 85", (offset) =>
+            _getStatusWrap = _hooks?.CreateWrapper<criFsBinder_GetStatus>(_base + offset, out var _),
+            "get status");
+
+        _scan.FindPatternOffset("48 89 5C 24 08 57 48 83 EC 20 8B F9 E8 ?? ?? ?? ?? 48 8B", (offset) =>
+            _unbindWrap = _hooks?.CreateWrapper<criFsBinder_Unbind>(_base + offset, out var _),
+            "unbind");
     }
 
-    private void LoadModsImpl()
+    private int BindCpkImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, uint* bndrid)
     {
-        if (!_conf.ModSupport)
-            return;
+        if (_conf.ModSupport && !_modsLoaded)
+        {
+            _modsLoaded = true;
 
-        _mountCpkWrap!(1, "BIND/", 0);
-        _mountCpkWrap!(1, "BIND1/", 0);
-        _mountCpkWrap!(1, "BIND2/", 0);
-        _mountCpkWrap!(1, "BIND3/", 0);
+            foreach (var bindMod in _conf.BindMods)
+            {
+                BindModsLoop(bndrhn, bindMod, 0x10000000);
+            }
+        }
 
-        _mountCpkWrap!(1, "MOD", 0);
-        _mountCpkWrap!(1, "MOD1", 0);
-        _mountCpkWrap!(1, "MOD2", 0);
-        _mountCpkWrap!(1, "MOD3", 0);
-    }
+        _logger.WriteLine($"<{path}> bind cpk");
 
-    private int PathExistsImpl([MarshalAs(UnmanagedType.LPStr)] string path)
-    {
-        if (path.Contains("/.CPK") && Directory.Exists(path.Replace("/.CPK", "/")))
-            return 1;
-
-        return _pathExistHook!.OriginalFunction(path);
-    }
-
-    private int BindCpkImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, IntPtr bndrid)
-    {
-        if (_bindDirHook != null && path.Contains("/.CPK"))
-            return BindDirImpl(bndrhn, srcbndrhn, path.Replace("/.CPK", "/"), work, worksize, bndrid);
-
-        _logger.WriteLine($"bind cpk {path.Replace("/.CPK", "/")}");
         return _bindCpkHook!.OriginalFunction(bndrhn, srcbndrhn, path, work, worksize, bndrid);
     }
 
-    private int BindDirImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, IntPtr bndrid)
+    private int BindDirImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, uint* bndrid)
     {
-        _logger.WriteLine($"bind dir {path}");
+        _logger.WriteLine($"<{path}> bind dir");
+
         return _bindDirHook!.OriginalFunction(bndrhn, srcbndrhn, path, work, worksize, bndrid);
+    }
+
+    private uint BindModsLoop(IntPtr bndrhn, string path, int priority)
+    {
+        uint bndrid = 0;
+        int status = 0;
+
+        var err = 0;
+
+        if (File.Exists(path))
+        {
+            _logger.WriteLine($"<{path}> bind file with priority 0x{priority:X8}");
+            err = _bindCpkHook!.OriginalFunction(bndrhn, 0, path, 0, 0, &bndrid);
+        }
+        else if (Directory.Exists(path))
+        {
+            _logger.WriteLine($"<{path}> bind dir with priority 0x{priority:X8}");
+            err = _bindDirHook!.OriginalFunction(bndrhn, 0, path, 0, 0, &bndrid);
+        }
+        else
+        {
+            _logger.WriteLine($"<{path}> doesn't exist, skipping");
+            return 0;
+        }
+
+        if (err > 0)
+        {
+            // either find a way to handle bindCpk errors properly or ignore
+
+            return 0;
+        }
+
+        while (true)
+        {
+            _getStatusWrap!(bndrid, &status);
+
+            if (status == 2) // complete
+            {
+                _setPriorityWrap!(bndrid, priority);
+
+                _logger.WriteLine($"<{path}> bind done - id {bndrid}");
+
+                return bndrid;
+            }
+
+            if (status == 6) // error
+                break;
+
+            Thread.Sleep(10);
+        }
+
+        _logger.WriteLine($"<{path}> bind failed");
+
+        _unbindWrap!(bndrid);
+
+        return 0;
     }
 }

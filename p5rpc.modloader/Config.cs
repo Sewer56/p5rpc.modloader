@@ -5,13 +5,6 @@ namespace p5rpc.modloader.Configuration;
 
 public class Config : Configurable<Config>
 {
-    public enum BattleBgmOptions
-    {
-        Normal,
-        InOrder,
-        Random,
-    }
-
     [Category("Test")]
     [DisplayName("Intro Skip")]
     [DefaultValue(false)]
@@ -23,24 +16,23 @@ public class Config : Configurable<Config>
     public bool ModSupport { get; set; } = true;
 
     [Category("Test")]
-    [DisplayName("Disable Achievements")]
-    [DefaultValue(false)]
-    public bool NoTrophy { get; set; } = false;
+    [DisplayName("Mods")]
+    public List<string> BindMods { get; set; } = new()
+    { 
+        @".\CPK\BIND\",
+        @".\CPK\BIND1\",
+        @".\CPK\BIND2\",
+        @".\CPK\BIND3\",
+        @".\CPK\MOD.CPK",
+        @".\CPK\MOD1.CPK",
+        @".\CPK\MOD2.CPK",
+        @".\CPK\MOD3.CPK",
+    };
 
     [Category("Test")]
     [DisplayName("Render In Background")]
     [DefaultValue(false)]
     public bool RenderInBackground { get; set; } = false;
-
-    [Category("Test")]
-    [DisplayName("Battle BGM")]
-    [DefaultValue(BattleBgmOptions.Normal)]
-    public BattleBgmOptions BattleBgm { get; set; } = BattleBgmOptions.Normal;
-
-    [Category("Test")]
-    [DisplayName("Cutscene Outfits")]
-    [DefaultValue(false)]
-    public bool CutsceneOutfits { get; set; } = false;
 }
 
 /// <summary>

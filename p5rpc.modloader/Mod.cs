@@ -50,8 +50,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
     private readonly MiscPatches _misc;
     private readonly CpkPatches _cpk;
-    private readonly BgmPatches _bgm;
-    private readonly TestPatches _test;
     private CpkRedirectorBuilder _cpkBuilder;
 
     public Mod(ModContext context)
@@ -75,14 +73,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         _cpk = new CpkPatches(_hooks, _logger, _configuration, scan);
         _cpk.Activate();
 
-        _bgm = new BgmPatches(_hooks, _logger, _configuration, scan);
-        _bgm.Activate();
-
         _misc = new MiscPatches(_hooks, _logger, _configuration, scan);
         _misc.Activate();
-
-        _test = new TestPatches(_hooks, _logger, _configuration, scan);
-        _test.Activate();
         
         // TODO: Hey Lipsum, I added the boilerplate for getting files from inside mods.
         // please wire this up with your rewritten binder code, thanks!
