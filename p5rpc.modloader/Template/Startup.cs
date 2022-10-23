@@ -3,13 +3,13 @@
  * to make it easier to upgrade to newer versions of the template.
 */
 
-using p5rpc.stuff.Configuration;
-using p5rpc.stuff.Template.Configuration;
+using p5rpc.modloader.Configuration;
+using p5rpc.modloader.Template.Configuration;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
-namespace p5rpc.stuff.Template
+namespace p5rpc.modloader.Template
 {
     public class Startup : IMod
     {

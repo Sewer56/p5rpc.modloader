@@ -1,8 +1,8 @@
-﻿using p5rpc.stuff.Configuration;
+﻿using p5rpc.modloader.Configuration;
 using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace p5rpc.stuff.Template
+namespace p5rpc.modloader.Template
 {
     /// <summary>
     /// Represents information passed in from the mod loader template to the implementing mod.

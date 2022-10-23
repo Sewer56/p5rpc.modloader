@@ -1,10 +1,10 @@
-﻿using p5rpc.stuff.Configuration;
-using p5rpc.stuff.Template;
+﻿using p5rpc.modloader.Configuration;
+using p5rpc.modloader.Template;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff;
+namespace p5rpc.modloader;
 
 /// <summary>
 /// Your mod logic goes here.

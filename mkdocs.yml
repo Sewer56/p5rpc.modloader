@@ -1,0 +1,29 @@
+site_name: P5R PC Essentials Documentation
+site_url: https://zarroboogs.github.io/p5rpc.modloader
+
+repo_name: zarroboogs/p5rpc.modloader
+repo_url: https://github.com/zarroboogs/p5rpc.modloader
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences 
+  - pymdownx.tasklist
+  - def_list
+  - meta
+  - md_in_html
+  - attr_list
+  - footnotes
+
+theme:
+  name: material
+  palette:
+    primary: red
+    accent: red
+    scheme: slate
+    
+nav:
+  - Home: index.md
+  - Usage: usage.md

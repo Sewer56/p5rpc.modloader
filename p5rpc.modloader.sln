@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p5rpc.stuff", "p5rpc.stuff\p5rpc.stuff.csproj", "{6F4B205B-ABF6-4A29-BD48-03E18C769813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p5rpc.modloader", "p5rpc.modloader\p5rpc.modloader.csproj", "{6F4B205B-ABF6-4A29-BD48-03E18C769813}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

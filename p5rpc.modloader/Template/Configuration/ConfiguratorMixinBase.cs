@@ -1,7 +1,7 @@
-﻿using p5rpc.stuff.Configuration;
+﻿using p5rpc.modloader.Configuration;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff.Template.Configuration
+namespace p5rpc.modloader.Template.Configuration
 {
     /// <summary>
     /// Creates the various different configurations used by the mod.
