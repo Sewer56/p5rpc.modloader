@@ -23,6 +23,20 @@ public class Config : Configurable<Config>
     public bool ModSupport { get; set; } = false;
 
     [Category("Test")]
+    [DisplayName("Mods")]
+    public List<string> BindMods { get; set; } = new()
+    { 
+        @".\CPK\BIND\",
+        @".\CPK\BIND1\",
+        @".\CPK\BIND2\",
+        @".\CPK\BIND3\",
+        @".\CPK\MOD.CPK",
+        @".\CPK\MOD1.CPK",
+        @".\CPK\MOD2.CPK",
+        @".\CPK\MOD3.CPK",
+    };
+
+    [Category("Test")]
     [DisplayName("Disable Achievements")]
     [DefaultValue(false)]
     public bool NoTrophy { get; set; } = false;
