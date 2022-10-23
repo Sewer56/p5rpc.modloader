@@ -4,6 +4,7 @@ using p5rpc.modloader.Configuration;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X64;
+using Reloaded.Memory.Interop;
 using Reloaded.Memory.Sources;
 using Reloaded.Mod.Interfaces;
 
@@ -29,7 +30,7 @@ internal unsafe class BgmPatches
 
     private readonly Random _rnd = new((int)DateTime.Now.Ticks);
 
-    private BgmCond _newCond;
+    private Pinnable<BgmCond> _newCond = new(new BgmCond());
 
     private bool _shouldSetBgm = false;
     private short _lastBgm = 0;
@@ -98,9 +99,9 @@ internal unsafe class BgmPatches
         if (_conf.BattleBgm == Config.BattleBgmOptions.Normal)
             return cond;
 
-        _newCond.id = cond->id;
-        _newCond.outfit = cond->outfit;
-        _newCond.flag = cond->flag;
+        _newCond.Pointer->id = cond->id;
+        _newCond.Pointer->outfit = cond->outfit;
+        _newCond.Pointer->flag = cond->flag;
 
         if (_conf.BattleBgm == Config.BattleBgmOptions.Random)
         {
@@ -110,7 +111,7 @@ internal unsafe class BgmPatches
                 _shouldSetBgm = false;
             }
 
-            _newCond.id = _lastBgm;
+            _newCond.Pointer->id = _lastBgm;
         }
         else
         {
@@ -120,10 +121,9 @@ internal unsafe class BgmPatches
                 _shouldSetBgm = false;
             }
 
-            _newCond.id = _lastBgm;
+            _newCond.Pointer->id = _lastBgm;
         }
 
-        fixed (BgmCond* pCond = &_newCond)
-            return pCond;
+        return _newCond.Pointer;
     }
 }
