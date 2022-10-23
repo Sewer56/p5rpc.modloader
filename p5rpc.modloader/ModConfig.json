@@ -11,7 +11,7 @@
   "ModNativeDll32": "",
   "ModNativeDll64": "",
   "IsLibrary": false,
-  "ReleaseMetadataFileName": "p5rpc.stuff.ReleaseMetadata.json",
+  "ReleaseMetadataFileName": "p5rpc.modloader.ReleaseMetadata.json",
   "PluginData": {
     "GitHubDependencies": {
       "IdToConfigMap": {
