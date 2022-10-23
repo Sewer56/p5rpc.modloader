@@ -2,7 +2,7 @@
   "ModId": "p5rpc.stuff",
   "ModName": "P5RPC Stuff",
   "ModAuthor": "zarroboogs",
-  "ModVersion": "0.0.2",
+  "ModVersion": "0.0.4",
   "ModDescription": "",
   "ModDll": "p5rpc.stuff.dll",
   "ModIcon": "Preview.png",
