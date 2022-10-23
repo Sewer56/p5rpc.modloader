@@ -1,8 +1,14 @@
-﻿using p5rpc.modloader.Configuration;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using p5rpc.modloader.Configuration;
 using p5rpc.modloader.Template;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
+using Reloaded.Mod.Interfaces.Internal;
+
+// Free perf gains, but you'll need to remember that any stackalloc isn't 0 initialized.
+[module: SkipLocalsInit]
 
 namespace p5rpc.modloader;
 
@@ -46,6 +52,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private readonly CpkPatches _cpk;
     private readonly BgmPatches _bgm;
     private readonly TestPatches _test;
+    private CpkRedirectorBuilder _cpkBuilder;
 
     public Mod(ModContext context)
     {
@@ -76,6 +83,21 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
         _test = new TestPatches(_hooks, _logger, _configuration, scan);
         _test.Activate();
+        
+        // TODO: Hey Lipsum, I added the boilerplate for getting files from inside mods.
+        // please wire this up with your rewritten binder code, thanks!
+        _cpkBuilder = new CpkRedirectorBuilder(_modLoader, _logger);
+        _modLoader.ModLoading += OnModLoading;
+        _modLoader.OnModLoaderInitialized += OnLoaderInitialized;
+    }
+
+    private void OnModLoading(IModV1 arg1, IModConfigV1 arg2) => _cpkBuilder.Add((IModConfig)arg2);
+
+    private void OnLoaderInitialized()
+    {
+        _modLoader.ModLoading -= OnModLoading;
+        _cpkBuilder.Build(); // Return something that stores only the data we need here.
+        _cpkBuilder = null;  // We don't need this anymore :)
     }
 
     #region Standard Overrides

@@ -19,8 +19,8 @@ public class Config : Configurable<Config>
 
     [Category("Test")]
     [DisplayName("Mod Support")]
-    [DefaultValue(false)]
-    public bool ModSupport { get; set; } = false;
+    [DefaultValue(true)]
+    public bool ModSupport { get; set; } = true;
 
     [Category("Test")]
     [DisplayName("Disable Achievements")]
