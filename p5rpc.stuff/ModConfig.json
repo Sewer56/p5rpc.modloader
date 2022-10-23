@@ -1,0 +1,21 @@
+{
+  "ModId": "p5rpc.stuff",
+  "ModName": "P5RPC Stuff",
+  "ModAuthor": "zarroboogs",
+  "ModVersion": "0.0.2",
+  "ModDescription": "",
+  "ModDll": "p5rpc.stuff.dll",
+  "ModIcon": "Preview.png",
+  "ModR2RManagedDll32": "x86/p5rpc.stuff.dll",
+  "ModR2RManagedDll64": "x64/p5rpc.stuff.dll",
+  "ModNativeDll32": "",
+  "ModNativeDll64": "",
+  "IsLibrary": false,
+  "ReleaseMetadataFileName": "p5rpc.stuff.ReleaseMetadata.json",
+  "PluginData": {},
+  "IsUniversalMod": false,
+  "ModDependencies": [ "reloaded.sharedlib.hooks", "Reloaded.Memory.SigScan.ReloadedII" ],
+  "OptionalDependencies": [],
+  "SupportedAppId": [ "p5r.exe" ],
+  "ProjectUrl": ""
+}
