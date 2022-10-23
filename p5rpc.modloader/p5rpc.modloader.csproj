@@ -14,7 +14,7 @@
     <!-- IL Trimming Support for Framework Dependent Apps. Unofficial.
          If you set this to true, trimming will be enabled when you publish the mod.
          Test trimming with: `BuildLinked.ps1` in PowerShell. -->
-    <ReloadedILLink>false</ReloadedILLink>
+    <ReloadedILLink>true</ReloadedILLink>
   </PropertyGroup>
 
   <ItemGroup>
