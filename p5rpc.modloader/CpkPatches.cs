@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using p5rpc.stuff.Configuration;
+using p5rpc.modloader.Configuration;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Memory.Sources;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff;
+namespace p5rpc.modloader;
 
 internal class CpkPatches
 {

@@ -1,7 +1,7 @@
 ﻿using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff;
+namespace p5rpc.modloader;
 
 internal class SigScan
 {

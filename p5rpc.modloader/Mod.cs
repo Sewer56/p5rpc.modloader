@@ -1,10 +1,10 @@
-﻿using p5rpc.stuff.Configuration;
-using p5rpc.stuff.Template;
+﻿using p5rpc.modloader.Configuration;
+using p5rpc.modloader.Template;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff;
+namespace p5rpc.modloader;
 
 /// <summary>
 /// Your mod logic goes here.
@@ -61,8 +61,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
         // If you want to implement e.g. unload support in your mod,
         // and some other neat features, override the methods in ModBase.
-
-        // TODO: Implement some mod logic
 
         _modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
         var scan = new SigScan(_logger, startupScanner);

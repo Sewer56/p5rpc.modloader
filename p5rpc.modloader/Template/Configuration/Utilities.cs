@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace p5rpc.stuff.Template.Configuration
+namespace p5rpc.modloader.Template.Configuration
 {
     public class Utilities
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using p5rpc.stuff.Template.Configuration;
+using p5rpc.modloader.Template.Configuration;
 
-namespace p5rpc.stuff.Configuration;
+namespace p5rpc.modloader.Configuration;
 
 public class Config : Configurable<Config>
 {

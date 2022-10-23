@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using p5rpc.stuff.Configuration;
+using p5rpc.modloader.Configuration;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.Sources;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff;
+namespace p5rpc.modloader;
 
 internal class TestPatches
 {

@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>$(RELOADEDIIMODS)/p5rpc.stuff</OutputPath>
+    <OutputPath>$(RELOADEDIIMODS)/p5rpc.modloader</OutputPath>
     <Deterministic>true</Deterministic>
     <ImplicitUsings>enable</ImplicitUsings>
 
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ReloadedLinkRoots Include="p5rpc.stuff" />
+    <ReloadedLinkRoots Include="p5rpc.modloader" />
     <!-- Add assemblies to be trimmed. You might need to add their dependencies too!  -->
     <!-- <ReloadedLinkAssemblies Include="Reloaded.Memory" /> -->
   </ItemGroup>
@@ -42,8 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Reloaded.Memory.Sigscan" Version="3.1.4" />
-    <PackageReference Include="Reloaded.Memory.Sigscan.Definitions" Version="1.1.0" />
+    <PackageReference Include="Reloaded.Memory" Version="8.0.1" />
     <PackageReference Include="Reloaded.Memory.SigScan.ReloadedII.Interfaces" Version="1.2.0" />
     <PackageReference Include="Reloaded.Mod.Interfaces" Version="2.3.0" ExcludeAssets="runtime" />
     <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />

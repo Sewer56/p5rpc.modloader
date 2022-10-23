@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Reloaded.Mod.Interfaces;
 
-namespace p5rpc.stuff.Template.Configuration
+namespace p5rpc.modloader.Template.Configuration
 {
     public class Configurable<TParentType> : IUpdatableConfigurable where TParentType : Configurable<TParentType>, new()
     {
