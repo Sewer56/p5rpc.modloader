@@ -55,11 +55,7 @@ internal unsafe class MiscPatches
         {
             _scan.FindPatternOffset("74 10 C7 07 0C 00 00 00", (offset) =>
                 _mem?.SafeWriteRaw((nuint)(_base + offset), new byte[] { 0x90, 0x90 })
-            , "intro logo");
-
-            _scan.FindPatternOffset("E8 ?? ?? ?? ?? 48 89 47 10 F6 15", (offset) =>
-                _mem?.SafeWriteRaw((nuint)(_base + offset), new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 })
-            , "intro movie");
+            , "intro");
         }
     }
 
