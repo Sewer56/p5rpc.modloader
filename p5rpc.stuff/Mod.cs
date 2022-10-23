@@ -44,8 +44,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
     private readonly MiscPatches _misc;
     private readonly CpkPatches _cpk;
-    private readonly BgmPatches _bgm;
-    private readonly TestPatches _test;
 
     public Mod(ModContext context)
     {
@@ -62,22 +60,14 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         // If you want to implement e.g. unload support in your mod,
         // and some other neat features, override the methods in ModBase.
 
-        // TODO: Implement some mod logic
-
         _modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
         var scan = new SigScan(_logger, startupScanner);
 
         _cpk = new CpkPatches(_hooks, _logger, _configuration, scan);
         _cpk.Activate();
 
-        _bgm = new BgmPatches(_hooks, _logger, _configuration, scan);
-        _bgm.Activate();
-
         _misc = new MiscPatches(_hooks, _logger, _configuration, scan);
         _misc.Activate();
-
-        _test = new TestPatches(_hooks, _logger, _configuration, scan);
-        _test.Activate();
     }
 
     #region Standard Overrides

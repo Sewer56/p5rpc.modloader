@@ -5,13 +5,6 @@ namespace p5rpc.stuff.Configuration;
 
 public class Config : Configurable<Config>
 {
-    public enum BattleBgmOptions
-    {
-        Normal,
-        InOrder,
-        Random,
-    }
-
     [Category("Test")]
     [DisplayName("Intro Skip")]
     [DefaultValue(false)]
@@ -37,24 +30,9 @@ public class Config : Configurable<Config>
     };
 
     [Category("Test")]
-    [DisplayName("Disable Achievements")]
-    [DefaultValue(false)]
-    public bool NoTrophy { get; set; } = false;
-
-    [Category("Test")]
     [DisplayName("Render In Background")]
     [DefaultValue(false)]
     public bool RenderInBackground { get; set; } = false;
-
-    [Category("Test")]
-    [DisplayName("Battle BGM")]
-    [DefaultValue(BattleBgmOptions.Normal)]
-    public BattleBgmOptions BattleBgm { get; set; } = BattleBgmOptions.Normal;
-
-    [Category("Test")]
-    [DisplayName("Cutscene Outfits")]
-    [DefaultValue(false)]
-    public bool CutsceneOutfits { get; set; } = false;
 }
 
 /// <summary>
