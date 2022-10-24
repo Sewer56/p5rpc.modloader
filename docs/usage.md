@@ -1,9 +1,5 @@
 # Usage
 
-!!! note
-
-    Some images are placeholders and need updated.  
-
 ## Prerequisites
 
 ### Create a Reloaded Mod
@@ -11,6 +7,10 @@
 Follow the guidance in the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/CreatingMods/) to create a new Reloaded mod.  
 
 ### Download Mod
+
+!!! note
+
+    This image needs updated.
 
 If you don't have it already, download the `Persona 5 Royal Essentials` Mod.  
 
@@ -39,11 +39,11 @@ Go to the folder where your mod is stored, this can be done by simply clicking t
 ### Add Some Files
 
 Make a folder called `P5REssentials`, and inside that a folder called `CPK`.   
-Inside that folder, make folder names matching the names of the `CPKs` .  
+Inside that folder, make a folder [or multiple!] where you will store your mod files (you can call it anything you want!).  
 
 ![FileRedirectorFolder](./images/CpkRedirectorFolder.png)
 
-Placing files inside this folder will replace files in game's `EN.CPK`.  
+I used `EN.CPK` for clarity to match the game's structure.  
 
 ![FileRedirectorFolder](./images/CpkRedirectorFolder2.png)
 
