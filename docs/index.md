@@ -13,10 +13,7 @@ Persona 5 Royal Essentials is a set of miscellaneous improvements for Persona 5 
 
 - Support for replacing CPK file contents via other mods.  
 - Intro Skip.  
-- Toggle Achievements.  
 - Toggle Pause on Window Focus Loss.  
-- Toggle Battle Music/BGM.  
-- Toggle Outfits in Cutscenes.  
 
 # Building
 
@@ -31,3 +28,9 @@ When you build your project, the files will automatically be copied to the right
 # How to make mods with Essentials
 
 Refer to the [usage section](./usage.md).
+
+# Special Thanks
+
+- Lipsum (zarroboogs): Original Implementation  
+- CherryCreamSoda: Project Logo  
+- Shujynx, Covfefe: Mod Test Data  

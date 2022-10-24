@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Configuration;
+using p5rpc.modloader.Patches;
+using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
+using p5rpc.modloader.Utilities;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
@@ -18,6 +22,16 @@ namespace p5rpc.modloader;
 public unsafe class Mod : ModBase // <= Do not Remove.
 {
     /// <summary>
+    /// Provides access to this mod's configuration.
+    /// </summary>
+    public static Config Configuration = null!;
+
+    /// <summary>
+    /// Current process.
+    /// </summary>
+    public static Process CurrentProcess = null!;
+    
+    /// <summary>
     /// Provides access to the mod loader API.
     /// </summary>
     private readonly IModLoader _modLoader;
@@ -29,36 +43,27 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private readonly IReloadedHooks? _hooks;
 
     /// <summary>
-    /// Provides access to the Reloaded logger.
-    /// </summary>
-    private readonly ILogger _logger;
-
-    /// <summary>
     /// Entry point into the mod, instance that created this class.
     /// </summary>
     private readonly IMod _owner;
-
-    /// <summary>
-    /// Provides access to this mod's configuration.
-    /// </summary>
-    private Config _configuration;
 
     /// <summary>
     /// The configuration of the currently executing mod.
     /// </summary>
     private readonly IModConfig _modConfig;
 
-    private readonly MiscPatches _misc;
-    private readonly CpkPatches _cpk;
-    private CpkRedirectorBuilder _cpkBuilder;
+    private readonly Logger _logger;
+    private CpkBindBuilder? _cpkBuilder;
+    private CpkBinder? _binder;
+    private SigScanHelper _scanHelper;
 
     public Mod(ModContext context)
     {
         _modLoader = context.ModLoader;
         _hooks = context.Hooks;
-        _logger = context.Logger;
         _owner = context.Owner;
-        _configuration = context.Configuration;
+        Configuration = context.Configuration;
+        _logger = new Logger(context.Logger, Configuration.LogLevel);
         _modConfig = context.ModConfig;
 
         // For more information about this template, please see
@@ -66,30 +71,38 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
         // If you want to implement e.g. unload support in your mod,
         // and some other neat features, override the methods in ModBase.
-
         _modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
-        var scan = new SigScan(_logger, startupScanner);
-
-        _cpk = new CpkPatches(_hooks, _logger, _configuration, scan);
-        _cpk.Activate();
-
-        _misc = new MiscPatches(_hooks, _logger, _configuration, scan);
-        _misc.Activate();
+        _scanHelper = new SigScanHelper(_logger, startupScanner);
+        CurrentProcess = Process.GetCurrentProcess();
+        var baseAddr = CurrentProcess.MainModule!.BaseAddress;
         
-        // TODO: Hey Lipsum, I added the boilerplate for getting files from inside mods.
-        // please wire this up with your rewritten binder code, thanks!
-        _cpkBuilder = new CpkRedirectorBuilder(_modLoader, _logger);
+        var patchContext = new PatchContext()
+        {
+            BaseAddress = baseAddr,
+            Config = Configuration,
+            Logger = _logger,
+            Hooks = _hooks!,
+            ScanHelper = _scanHelper
+        };
+        
+        // Patches
+        CpkBinderPointers.Init(_scanHelper, baseAddr);
+        NoPauseOnFocusLoss.Activate(patchContext);
+        SkipIntro.Activate(patchContext);
+        
+        // CPK Builder & Redirector
+        _cpkBuilder = new CpkBindBuilder(_modLoader, _logger, _modConfig);
         _modLoader.ModLoading += OnModLoading;
         _modLoader.OnModLoaderInitialized += OnLoaderInitialized;
     }
 
-    private void OnModLoading(IModV1 arg1, IModConfigV1 arg2) => _cpkBuilder.Add((IModConfig)arg2);
+    private void OnModLoading(IModV1 arg1, IModConfigV1 arg2) => _cpkBuilder?.Add((IModConfig)arg2);
 
     private void OnLoaderInitialized()
     {
         _modLoader.ModLoading -= OnModLoading;
-        _cpkBuilder.Build(); // Return something that stores only the data we need here.
-        _cpkBuilder = null;  // We don't need this anymore :)
+        _binder = _cpkBuilder?.Build(_hooks); // Return something that stores only the data we need here.
+        _cpkBuilder = null;  // We don't need this anymore :), free up the mem!
     }
 
     #region Standard Overrides
@@ -98,8 +111,9 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     {
         // Apply settings from configuration.
         // ... your code here.
-        _configuration = configuration;
-        _logger.WriteLine($"[{_modConfig.ModId}] Config Updated: Applying");
+        Configuration = configuration;
+        _logger.LogLevel = Configuration.LogLevel;
+        _logger.Info($"[{_modConfig.ModId}] Config Updated: Applying");
     }
 
     #endregion Standard Overrides

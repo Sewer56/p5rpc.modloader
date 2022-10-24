@@ -10,7 +10,10 @@ For more information, [please visit the documentation](https://zarroboogs.github
 
 - Support for replacing CPK file contents via other mods.  
 - Intro Skip.  
-- Toggle Achievements.  
 - Toggle Pause on Window Focus Loss.  
-- Toggle Battle Music/BGM.  
-- Toggle Outfits in Cutscenes.  
+
+# Special Thanks
+
+- Lipsum (zarroboogs): Original Implementation  
+- CherryCreamSoda: Project Logo  
+- Shujynx, Covfefe: Mod Test Data  

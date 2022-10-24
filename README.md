@@ -15,10 +15,7 @@ For more information, [please visit the documentation](https://zarroboogs.github
 
 - Support for replacing CPK file contents via other mods.  
 - Intro Skip.  
-- Toggle Achievements.  
 - Toggle Pause on Window Focus Loss.  
-- Toggle Battle Music/BGM.  
-- Toggle Outfits in Cutscenes.  
 
 # Building
 
@@ -28,3 +25,9 @@ For more information, [please visit the documentation](https://zarroboogs.github
 
 When you build your project, the files will automatically be copied to the right directory and be loaded by Reloaded.  
 [Refer to the Reloaded wiki if you need more information](https://reloaded-project.github.io/Reloaded-II/DevelopmentEnvironmentSetup/).
+
+# Special Thanks
+
+- Lipsum (zarroboogs): Original Implementation  
+- CherryCreamSoda: Project Logo  
+- Shujynx, Covfefe: Mod Test Data  
