@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using FileEmulationFramework.Lib;
@@ -55,23 +56,42 @@ public class BindBuilder
         // TODO: Add the merging infrastructure. For now, we will accept last added file as the winner.
         // For the merging infra, we will commit the merging (check against cache first), put result in cache folder.
         // And replace the key,value combination with just the cached merged file.
+        
+        // Note: We are not worried about threading in this hashSet. 
+        // Lack of synchronization just means it might accidentally create directory when it shouldn't, but given the
+        // (small) number of directories this will be unlikely. Performance wise this is better than using concurrent one.
         var createdFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var file in files)
+        if (files.Count > 1000) // TODO: Benchmark around for a good number.
         {
-            var hardlinkPath = Path.Combine(OutputFolder, file.Key);
-            var newFile = file.Value.Last();
-            var directory = Path.GetDirectoryName(hardlinkPath);
-
-            if (!createdFolders.Contains(directory))
+            var keyValuePairs = files.ToArray();
+            Parallel.ForEach(Partitioner.Create(0, files.Count), (range, state) =>
             {
-                Directory.CreateDirectory(directory);
-                createdFolders.Add(directory);
-            }
-            
-            Native.CreateHardLink(hardlinkPath, newFile, IntPtr.Zero);
+                for (int x = range.Item1; x < range.Item2; x++)
+                    HardlinkFile(keyValuePairs[x], createdFolders);
+            });
+        }
+        else
+        {
+            foreach (var file in files)
+                HardlinkFile(file, createdFolders);
+        }
+        
+        return OutputFolder;
+    }
+
+    private void HardlinkFile(KeyValuePair<string, List<string>> file, HashSet<string> createdFolders)
+    {
+        var hardlinkPath = Path.Combine(OutputFolder, file.Key);
+        var newFile = file.Value.Last();
+        var directory = Path.GetDirectoryName(hardlinkPath);
+
+        if (!createdFolders.Contains(directory))
+        {
+            Directory.CreateDirectory(directory);
+            createdFolders.Add(directory);
         }
 
-        return OutputFolder;
+        Native.CreateHardLink(hardlinkPath, newFile, IntPtr.Zero);
     }
 
     /// <summary>
