@@ -1,8 +1,8 @@
 site_name: P5R PC Essentials Documentation
-site_url: https://zarroboogs.github.io/p5rpc.modloader
+site_url: https://sewer56.dev/p5rpc.modloader
 
-repo_name: zarroboogs/p5rpc.modloader
-repo_url: https://github.com/zarroboogs/p5rpc.modloader
+repo_name: Sewer56/p5rpc.modloader
+repo_url: https://github.com/Sewer56/p5rpc.modloader
 
 markdown_extensions:
   - admonition
