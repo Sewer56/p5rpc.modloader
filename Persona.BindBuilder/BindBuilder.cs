@@ -55,11 +55,19 @@ public class BindBuilder
         // TODO: Add the merging infrastructure. For now, we will accept last added file as the winner.
         // For the merging infra, we will commit the merging (check against cache first), put result in cache folder.
         // And replace the key,value combination with just the cached merged file.
+        var createdFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var file in files)
         {
             var hardlinkPath = Path.Combine(OutputFolder, file.Key);
             var newFile = file.Value.Last();
-            Directory.CreateDirectory(Path.GetDirectoryName(hardlinkPath));
+            var directory = Path.GetDirectoryName(hardlinkPath);
+
+            if (!createdFolders.Contains(directory))
+            {
+                Directory.CreateDirectory(directory);
+                createdFolders.Add(directory);
+            }
+            
             Native.CreateHardLink(hardlinkPath, newFile, IntPtr.Zero);
         }
 
