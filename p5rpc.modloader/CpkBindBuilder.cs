@@ -40,7 +40,7 @@ public class CpkBindBuilder
         
         // Get all CPK folders
         WindowsDirectorySearcher.TryGetDirectoryContents(cpkFolder, out _, out var directories);
-        foreach (var directory in directories.Where(x => x.FullPath.EndsWith(Routes.CpkExtension, StringComparison.OrdinalIgnoreCase)))
+        foreach (var directory in directories)
         {
             WindowsDirectorySearcher.GetDirectoryContentsRecursive(directory.FullPath, out var files, out _);
             _builder.AddItem(new BuilderItem(directory.FullPath, files));

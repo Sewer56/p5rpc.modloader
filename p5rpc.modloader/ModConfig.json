@@ -2,7 +2,7 @@
   "ModId": "p5rpc.modloader",
   "ModName": "Persona 5 Royal Essentials",
   "ModAuthor": "Sewer56, zarroboogs",
-  "ModVersion": "1.0.1",
+  "ModVersion": "1.0.2",
   "ModDescription": "Mod which provides base modding support as well as miscellaneous basic quality of life fixes.",
   "ModDll": "p5rpc.modloader.dll",
   "ModIcon": "Preview.png",
