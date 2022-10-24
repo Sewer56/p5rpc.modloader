@@ -67,3 +67,11 @@ P5REssentials
 
 
 The connectors `└─` represent folders.
+
+## Releasing/Uploading your Mods
+
+Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  
+
+You should both Enable Update Support AND Publish according to the guidelines.  
+
+It is recommended to enable update support even if you don't plan to ship updates as [doing so will allow your mod to be used in Mod Packs.](https://reloaded-project.github.io/Reloaded-II/CreatingModPacks/)
