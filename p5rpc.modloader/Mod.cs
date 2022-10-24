@@ -88,6 +88,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         // Patches
         CpkBinderPointers.Init(_scanHelper, baseAddr);
         NoPauseOnFocusLoss.Activate(patchContext);
+        DontLogCriDirectoryBinds.Activate(patchContext);
         SkipIntro.Activate(patchContext);
         
         // CPK Builder & Redirector
