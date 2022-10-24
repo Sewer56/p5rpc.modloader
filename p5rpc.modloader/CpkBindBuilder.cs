@@ -23,8 +23,7 @@ public class CpkBindBuilder
         var builder   = new BindingOutputDirectoryGenerator(Routes.GetBindBaseDirectory(configDir));
         var bindPath  = builder.Generate(new CurrentProcessProvider());
         builder.Cleanup(new ProcessListProvider());
-        
-        _builder = new BindBuilder(bindPath);
+        _builder = new BindBuilder(bindPath, "R2");
     }
 
     /// <summary>
