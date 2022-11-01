@@ -3,7 +3,6 @@
  * to make it easier to upgrade to newer versions of the template.
 */
 
-using p5rpc.modloader.Configuration;
 using p5rpc.modloader.Template.Configuration;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;

@@ -1,8 +1,6 @@
-using System.Diagnostics;
-using p5rpc.modloader.Patches.Common;
 using Reloaded.Memory.Sources;
 
-namespace p5rpc.modloader.Patches;
+namespace p5rpc.modloader.Patches.Common;
 
 /// <summary>
 /// Disables logging of files loaded in from directory binds.
@@ -12,7 +10,7 @@ internal class DontLogCriDirectoryBinds
     public static void Activate(in PatchContext context)
     {
         var baseAddr = context.BaseAddress;
-        if (!context.Config.DisableCriBindLogging) 
+        if (!context.Config.Common.DisableCriBindLogging) 
             return;
         
         context.ScanHelper.FindPatternOffset("48 8B FA 75 7E", (offset) =>

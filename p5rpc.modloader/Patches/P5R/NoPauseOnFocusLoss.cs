@@ -3,7 +3,7 @@ using p5rpc.modloader.Patches.Common;
 using Reloaded.Hooks.Definitions;
 using static p5rpc.modloader.Utilities.Native;
 
-namespace p5rpc.modloader.Patches;
+namespace p5rpc.modloader.Patches.P5R;
 
 /// <summary>
 /// Patch that disables pause on focus loss.
@@ -25,7 +25,7 @@ internal static unsafe class NoPauseOnFocusLoss
     [UnmanagedCallersOnly]
     private static IntPtr WndProcImpl(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)
     {
-        if (!Mod.Configuration.RenderInBackground) 
+        if (!Mod.Configuration.P5RConfig.RenderInBackground) 
             return _wndProcHook!.OriginalFunction.Value.Invoke(hWnd, uMsg, wParam, lParam);
         
         switch (uMsg)

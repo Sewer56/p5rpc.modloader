@@ -1,7 +1,7 @@
 using p5rpc.modloader.Patches.Common;
 using Reloaded.Memory.Sources;
 
-namespace p5rpc.modloader.Patches;
+namespace p5rpc.modloader.Patches.P5R;
 
 /// <summary>
 /// Skips the game introduction video.
@@ -11,7 +11,7 @@ internal class SkipIntro
     public static void Activate(in PatchContext context)
     {
         var baseAddr = context.BaseAddress;
-        if (!context.Config.IntroSkip) 
+        if (!context.Config.P5RConfig.IntroSkip) 
             return;
         
         context.ScanHelper.FindPatternOffset("74 10 C7 07 0C 00 00 00", (offset) => 

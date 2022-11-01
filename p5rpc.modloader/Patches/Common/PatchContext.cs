@@ -1,5 +1,4 @@
 using FileEmulationFramework.Lib.Utilities;
-using p5rpc.modloader.Configuration;
 using p5rpc.modloader.Utilities;
 using Reloaded.Hooks.Definitions;
 

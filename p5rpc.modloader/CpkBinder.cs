@@ -36,7 +36,7 @@ public unsafe class CpkBinder
     
     private CriError BindCpkImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, uint* bndrid)
     {
-        if (Mod.Configuration.ModSupport && !_firstCpkLoaded)
+        if (Mod.Configuration.Common.ModSupport && !_firstCpkLoaded)
             BindAllModFolders(bndrhn);
 
         _firstCpkLoaded = true;

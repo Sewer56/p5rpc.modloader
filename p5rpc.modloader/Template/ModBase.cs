@@ -1,6 +1,4 @@
-﻿using p5rpc.modloader.Configuration;
-
-namespace p5rpc.modloader.Template;
+﻿namespace p5rpc.modloader.Template;
 
 /// <summary>
 /// Base class for implementing mod functionality.

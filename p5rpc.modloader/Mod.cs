@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using FileEmulationFramework.Lib.Utilities;
-using p5rpc.modloader.Configuration;
-using p5rpc.modloader.Patches;
 using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
 using p5rpc.modloader.Utilities;
@@ -22,10 +20,15 @@ namespace p5rpc.modloader;
 public unsafe class Mod : ModBase // <= Do not Remove.
 {
     /// <summary>
-    /// Provides access to this mod's configuration.
+    /// Provides access to this mod's common configuration.
     /// </summary>
     public static Config Configuration = null!;
 
+    /// <summary>
+    /// Assume Persona 5 Royal unless otherwise.
+    /// </summary>
+    public static Game Game = Game.P5R;
+    
     /// <summary>
     /// Current process.
     /// </summary>
@@ -63,7 +66,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         _hooks = context.Hooks;
         _owner = context.Owner;
         Configuration = context.Configuration;
-        _logger = new Logger(context.Logger, Configuration.LogLevel);
+        _logger = new Logger(context.Logger, Configuration.Common.LogLevel);
         _modConfig = context.ModConfig;
 
         // For more information about this template, please see
@@ -74,7 +77,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         _modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
         _scanHelper = new SigScanHelper(_logger, startupScanner);
         CurrentProcess = Process.GetCurrentProcess();
-        var baseAddr = CurrentProcess.MainModule!.BaseAddress;
+        var mainModule = CurrentProcess.MainModule;
+        var baseAddr = mainModule!.BaseAddress;
         
         var patchContext = new PatchContext()
         {
@@ -87,9 +91,23 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         
         // Patches
         CpkBinderPointers.Init(_scanHelper, baseAddr);
-        NoPauseOnFocusLoss.Activate(patchContext);
         DontLogCriDirectoryBinds.Activate(patchContext);
-        SkipIntro.Activate(patchContext);
+        
+        // Game Specific Patches
+        var fileName = Path.GetFileName(mainModule.FileName);
+        if (fileName.StartsWith("p5r", StringComparison.OrdinalIgnoreCase))
+            Game = Game.P5R;
+        else if (fileName.StartsWith("p4g", StringComparison.OrdinalIgnoreCase))
+            Game = Game.P4G;
+        else
+            _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
+                            "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
+
+        if (Game == Game.P5R)
+        {
+            Patches.P5R.NoPauseOnFocusLoss.Activate(patchContext);
+            Patches.P5R.SkipIntro.Activate(patchContext);
+        }
         
         // CPK Builder & Redirector
         _cpkBuilder = new CpkBindBuilder(_modLoader, _logger, _modConfig);
@@ -113,7 +131,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         // Apply settings from configuration.
         // ... your code here.
         Configuration = configuration;
-        _logger.LogLevel = Configuration.LogLevel;
+        _logger.LogLevel = Configuration.Common.LogLevel;
         _logger.Info($"[{_modConfig.ModId}] Config Updated: Applying");
     }
 
@@ -129,4 +147,13 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 #pragma warning restore CS8618
 
     #endregion For Exports, Serialization etc.
+}
+
+/// <summary>
+/// The game we're currently running.
+/// </summary>
+public enum Game
+{
+    P4G,
+    P5R
 }

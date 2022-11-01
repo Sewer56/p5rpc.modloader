@@ -1,5 +1,4 @@
-﻿using p5rpc.modloader.Configuration;
-using Reloaded.Mod.Interfaces;
+﻿using Reloaded.Mod.Interfaces;
 
 namespace p5rpc.modloader.Template.Configuration;
 
@@ -18,7 +17,7 @@ public class ConfiguratorMixinBase
         // You can add any Configurable here.
         return new IUpdatableConfigurable[]
         {
-            Configurable<Config>.FromFile(Path.Combine(configFolder, "Config.json"), "Default Config")
+            Configurable<Config>.FromFile(Path.Combine(configFolder, "Config.json"), "General Config"),
         };
     }
 

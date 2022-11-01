@@ -1,5 +1,5 @@
 <div align="center">
-	<h1>Persona 5 Royal Essentials</h1>
+	<h1>Persona Essentials</h1>
 	<img src="./images/icon.png" Width="200" /><br/>
 	<strong>⛸ Lookin' cool Joker 🛹</strong>
     <p>Enables more advanced mod support for P5R PC.</p>
@@ -7,11 +7,13 @@
 
 # About
 
-Persona 5 Royal Essentials is a set of miscellaneous improvements for Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
+Persona Essentials is a set of miscellaneous improvements for Persona 4 Golden (2022) and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
 
 # Features
 
 - Support for replacing CPK file contents via other mods.  
+
+## Features (Persona 5 Royal Only)
 - Intro Skip.  
 - Toggle Pause on Window Focus Loss.  
 

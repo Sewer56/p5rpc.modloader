@@ -1,5 +1,4 @@
-﻿using p5rpc.modloader.Configuration;
-using Reloaded.Mod.Interfaces;
+﻿using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
 namespace p5rpc.modloader.Template;
@@ -25,7 +24,7 @@ public class ModContext
     public ILogger Logger { get; set; } = null!;
 
     /// <summary>
-    /// Provides access to this mod's configuration.
+    /// Provides access to this mod's P5R configuration.
     /// </summary>
     public Config Configuration { get; set; } = null!;
 
