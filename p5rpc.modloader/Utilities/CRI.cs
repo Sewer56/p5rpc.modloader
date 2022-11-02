@@ -58,6 +58,16 @@ public static unsafe class CRI
     public delegate CriError criFsBinder_Unbind(uint bndrid);
     
     /// <summary>
+    /// Get allocation size needed for work directory.
+    /// </summary>
+    /// <param name="srcbndrhn">Binder handle to access directory to bind.</param>
+    /// <param name="path">Path to the folder to bind.</param>
+    /// <param name="workSize">Necessary work size.</param>
+    /// <returns>CriError Error code.</returns>
+    [Function(CallingConventions.Microsoft)]
+    public delegate CriError criFsBinder_GetWorkSizeForBindDirectory(IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, int* workSize);
+    
+    /// <summary>
     /// Status of the CRI binder.
     /// </summary>
     public enum CriFsBinderStatus : int

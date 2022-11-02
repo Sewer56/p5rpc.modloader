@@ -3,6 +3,7 @@ using FileEmulationFramework.Lib.IO;
 using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Utilities;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Memory.Sources;
 using static p5rpc.modloader.Utilities.CRI;
 using static p5rpc.modloader.Utilities.CRI.CriFsBinderStatus;
 
@@ -18,6 +19,7 @@ public unsafe class CpkBinder
 
     private IHook<criFsBinder_BindCpk>? _bindCpkHook;
     private criFsBinder_BindCpk? _bindDir;
+    private criFsBinder_GetWorkSizeForBindDirectory? _getSizeForBindDir;
     private criFsBinder_GetStatus? _getStatus;
     private criFsBinder_SetPriority? _setPriority;
     private criFsBinder_Unbind? _unbind;
@@ -29,6 +31,7 @@ public unsafe class CpkBinder
         _logger = logger;
         _bindCpkHook = hooks.CreateHook<criFsBinder_BindCpk>(BindCpkImpl, CpkBinderPointers._bindCpk).Activate();
         _bindDir = hooks.CreateWrapper<criFsBinder_BindCpk>(CpkBinderPointers._bindDir, out _);
+        _getSizeForBindDir = hooks.CreateWrapper<criFsBinder_GetWorkSizeForBindDirectory>(CpkBinderPointers._getSizeForBindDir, out _);
         _setPriority = hooks.CreateWrapper<criFsBinder_SetPriority>(CpkBinderPointers._setPriority, out _);
         _getStatus = hooks.CreateWrapper<criFsBinder_GetStatus>(CpkBinderPointers._getStatus, out _);
         _unbind = hooks.CreateWrapper<criFsBinder_Unbind>(CpkBinderPointers._unbind, out _);
@@ -58,7 +61,16 @@ public unsafe class CpkBinder
         CriError err = 0;
         
         _logger.Debug("Binding Directory {0} with priority {1}", path, priority);
-        err = _bindDir!(bndrhn, IntPtr.Zero, path, IntPtr.Zero, 0, &bndrid);
+        int size = 0;
+        err = _getSizeForBindDir!(bndrhn, path, &size);
+        if (err < 0)
+        {
+            _logger.Error("Binding Directory Failed: Failed to get size of Bind Directory {0}", err);
+            return 0;
+        }
+
+        var workMem = Memory.Instance.Allocate(size);
+        err = _bindDir!(bndrhn, IntPtr.Zero, path, (nint)workMem, size, &bndrid);
         
         if (err < 0)
         {
@@ -92,13 +104,14 @@ internal static class CpkBinderPointers
 {
     internal static long _bindCpk;
     internal static long _bindDir;
+    internal static long _getSizeForBindDir;
     internal static long _setPriority;
     internal static long _getStatus;
     internal static long _unbind;
     
     public static void Init(SigScanHelper helper, nint baseAddr)
     {
-        helper.FindPatternOffset("48 83 EC 48 48 8B 44 24 ?? C7 44 24 ?? 01 00 00 00 48 89 44 24 ?? 8B 44 24 ??", 
+        helper.FindPatternOffset("48 83 EC 48 48 8B 44 24 78 C7 44 24 30 01 00 00 00 48 89 44 24 28 8B", 
             (offset) => _bindCpk = baseAddr + offset, "CRI Bind CPK");
 
         helper.FindPatternOffset("48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 40 48", 
@@ -112,5 +125,8 @@ internal static class CpkBinderPointers
 
         helper.FindPatternOffset("48 89 5C 24 08 57 48 83 EC 20 8B F9 E8 ?? ?? ?? ?? 48 8B", 
             (offset) => _unbind = baseAddr + offset, "CRI Unbind");
+        
+        helper.FindPatternOffset("48 83 EC 28 4D 85 C0 75 1B", 
+            (offset) => _getSizeForBindDir = baseAddr + offset, "CRI Get Size for Bind Dir");
     }
 }
