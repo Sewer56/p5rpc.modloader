@@ -18,6 +18,7 @@ public unsafe class CpkBinder
     private readonly Logger _logger;
 
     private IHook<criFsBinder_BindCpk>? _bindCpkHook;
+    private IHook<criFsLoader_LoadRegisteredFile_Internal>? _loadRegisteredFile;
     private criFsBinder_BindCpk? _bindDir;
     private criFsBinder_GetWorkSizeForBindDirectory? _getSizeForBindDir;
     private criFsBinder_GetStatus? _getStatus;
@@ -30,13 +31,25 @@ public unsafe class CpkBinder
         _outputDirectory = outputDirectory;
         _logger = logger;
         _bindCpkHook = hooks.CreateHook<criFsBinder_BindCpk>(BindCpkImpl, CpkBinderPointers._bindCpk).Activate();
+        _loadRegisteredFile = hooks.CreateHook<criFsLoader_LoadRegisteredFile_Internal>(LoadRegisteredFileInternal, CpkBinderPointers._loadRegisteredFile).Activate();
         _bindDir = hooks.CreateWrapper<criFsBinder_BindCpk>(CpkBinderPointers._bindDir, out _);
         _getSizeForBindDir = hooks.CreateWrapper<criFsBinder_GetWorkSizeForBindDirectory>(CpkBinderPointers._getSizeForBindDir, out _);
         _setPriority = hooks.CreateWrapper<criFsBinder_SetPriority>(CpkBinderPointers._setPriority, out _);
         _getStatus = hooks.CreateWrapper<criFsBinder_GetStatus>(CpkBinderPointers._getStatus, out _);
         _unbind = hooks.CreateWrapper<criFsBinder_Unbind>(CpkBinderPointers._unbind, out _);
     }
-    
+
+    private IntPtr LoadRegisteredFileInternal(IntPtr a1, IntPtr a2, IntPtr a3, IntPtr a4, IntPtr a5)
+    {
+        if (Mod.Configuration.Common.PrintFileAccess)
+        {
+            var namePtr = (IntPtr*)IntPtr.Add(a1, 16);
+            _logger.Info(Marshal.PtrToStringAnsi(*namePtr));
+        }
+
+        return _loadRegisteredFile.OriginalFunction(a1, a2, a3, a4, a5);
+    }
+
     private CriError BindCpkImpl(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, uint* bndrid)
     {
         if (Mod.Configuration.Common.ModSupport && !_firstCpkLoaded)
@@ -105,6 +118,7 @@ internal static class CpkBinderPointers
     internal static long _bindCpk;
     internal static long _bindDir;
     internal static long _getSizeForBindDir;
+    internal static long _loadRegisteredFile;
     internal static long _setPriority;
     internal static long _getStatus;
     internal static long _unbind;
@@ -128,5 +142,8 @@ internal static class CpkBinderPointers
         
         helper.FindPatternOffset("48 83 EC 28 4D 85 C0 75 1B", 
             (offset) => _getSizeForBindDir = baseAddr + offset, "CRI Get Size for Bind Dir");
+            
+        helper.FindPatternOffset("48 89 5C 24 10 4C 89 4C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 81", 
+            (offset) => _loadRegisteredFile = baseAddr + offset, "CRI Load File");
     }
 }

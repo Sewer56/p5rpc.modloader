@@ -67,6 +67,9 @@ public static unsafe class CRI
     [Function(CallingConventions.Microsoft)]
     public delegate CriError criFsBinder_GetWorkSizeForBindDirectory(IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, int* workSize);
     
+    [Function(CallingConventions.Microsoft)]
+    public delegate IntPtr criFsLoader_LoadRegisteredFile_Internal(IntPtr a1, IntPtr a2, IntPtr a3, IntPtr a4, IntPtr a5);
+    
     /// <summary>
     /// Status of the CRI binder.
     /// </summary>

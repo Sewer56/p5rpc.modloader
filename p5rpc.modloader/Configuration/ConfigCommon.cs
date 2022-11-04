@@ -11,6 +11,11 @@ public class ConfigCommon
     [DisplayName("Mod Support")]
     [DefaultValue(true)]
     public bool ModSupport { get; set; } = true;
+    
+    [DisplayName("Print File Access")]
+    [Description("Prints loaded file to console using the Info log level.")]
+    [DefaultValue(false)]
+    public bool PrintFileAccess { get; set; } = false;
 
     [DisplayName("Disable Bind Warnings(s)")]
     [Description("Disables warnings printed to the console as a result of CRI loading files from disk.")]
