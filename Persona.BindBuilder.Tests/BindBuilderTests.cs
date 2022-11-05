@@ -1,5 +1,5 @@
-using Persona.BindBuilder.Utilities;
-using static Persona.BindBuilder.Tests.Utilities;
+using Persona.BindBuilder.Tests.Utils;
+using static Persona.BindBuilder.Tests.Utils.Utilities;
 
 namespace Persona.BindBuilder.Tests;
 
@@ -10,7 +10,7 @@ public class BindBuilderTests
     {
         // Arrange
         using var tempFolder = new TemporaryFolderAllocation(Assets.TempFolder);
-        var builder = new BindBuilder(tempFolder.FolderPath);
+        var builder = new CpkBindStringBuilder(tempFolder.FolderPath);
         builder.AddItem(new BuilderItem(Assets.ButtonPromptsMod1Cpk, GetFilesInDirectory(Assets.ButtonPromptsMod1Cpk)));
         builder.AddItem(new BuilderItem(Assets.ModelModCpk, GetFilesInDirectory(Assets.ModelModCpk)));
         
@@ -26,7 +26,7 @@ public class BindBuilderTests
     {
         // Arrange
         using var tempFolder = new TemporaryFolderAllocation(Assets.TempFolder);
-        var builder = new BindBuilder(tempFolder.FolderPath);
+        var builder = new CpkBindStringBuilder(tempFolder.FolderPath);
         builder.AddItem(new BuilderItem(Assets.ButtonPromptsMod1Cpk, GetFilesInDirectory(Assets.ButtonPromptsMod1Cpk)));
         builder.AddItem(new BuilderItem(Assets.ButtonPromptsMod2Cpk, GetFilesInDirectory(Assets.ButtonPromptsMod2Cpk)));
 
@@ -42,7 +42,7 @@ public class BindBuilderTests
     {
         // Arrange
         using var tempFolder = new TemporaryFolderAllocation(Assets.TempFolder);
-        var builder = new BindBuilder(tempFolder.FolderPath);
+        var builder = new CpkBindStringBuilder(tempFolder.FolderPath);
         builder.AddItem(new BuilderItem(Assets.ButtonPromptsMod1Cpk, GetFilesInDirectory(Assets.ButtonPromptsMod1Cpk)));
         builder.AddItem(new BuilderItem(Assets.ButtonPromptsMod2Cpk, GetFilesInDirectory(Assets.ButtonPromptsMod2Cpk)));
 
@@ -50,6 +50,6 @@ public class BindBuilderTests
         var outputDir = builder.Build();
         
         // Assert
-        Assert.Equal(2, GetFilesInDirectory(outputDir).Count);
+        Assert.Equal(2, outputDir.Split(CpkBindStringBuilder.Delimiter).Length); // include empty line
     }
 }

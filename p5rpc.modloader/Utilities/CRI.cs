@@ -38,6 +38,19 @@ public static unsafe class CRI
     public delegate CriError criFsBinder_BindCpk(IntPtr bndrhn, IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, IntPtr work, int worksize, uint* bndrid);
     
     /// <summary>
+    /// Bind a list of files.
+    /// </summary>
+    /// <param name="bndrhn">Binder handle of the bind destination.</param>
+    /// <param name="srcbndrhn">Binder handle to search files to bind.</param>
+    /// <param name="path">List of the paths of files to bind, separated by newline.</param>
+    /// <param name="work">Work area for bind (mainly for CPK analysis).</param>
+    /// <param name="worksize">Size of the work area (bytes).</param>
+    /// <param name="bndrid">[out] Bind ID.</param>
+    /// <returns>CriError Error code.</returns>
+    [Function(CallingConventions.Microsoft)]
+    public delegate CriError criFsBinder_BindFiles(IntPtr bndrhn, IntPtr srcbndrhn, IntPtr fileList, IntPtr work, int worksize, uint* bndrid);
+    
+    /// <summary>
     /// This function sets the priority value for the bind ID. 
     /// Using the priority enables you to control the order of searching the bind IDs in a binder handle. 
     /// The priority value of the ID is 0 when bound, and IDs are searched in the binding order of them with the same priority. 
@@ -65,7 +78,25 @@ public static unsafe class CRI
     /// <param name="workSize">Necessary work size.</param>
     /// <returns>CriError Error code.</returns>
     [Function(CallingConventions.Microsoft)]
-    public delegate CriError criFsBinder_GetWorkSizeForBindDirectory(IntPtr srcbndrhn, [MarshalAs(UnmanagedType.LPStr)] string path, int* workSize);
+    public delegate CriError criFsBinder_GetWorkSizeForBindFiles(IntPtr srcbndrhn, IntPtr fileList, int* workSize);
+    
+    /// <summary>
+    /// This function initializes the CRI File System library. 
+    /// </summary>
+    /// <param name="config">Pointer to the CRI Config</param>
+    /// <param name="buffer">Buffer area used for library initialisation.</param>
+    /// <returns>CriError Error code.</returns>
+    [Function(CallingConventions.Microsoft)]
+    public delegate CriError criFs_InitializeLibrary(CriFsConfig* config, void* buffer, int bufferSize);
+
+    /// <summary>
+    /// This function gets the required amount of space to operate the CRI library.
+    /// </summary>
+    /// <param name="config">Pointer to the CRI Config</param>
+    /// <param name="bufferSize">Returns the size of memory needed for the library.</param>
+    /// <returns>CriError Error code.</returns>
+    [Function(CallingConventions.Microsoft)]
+    public delegate CriError criFs_CalculateWorkSizeForLibrary(CriFsConfig* config, int* bufferSize);
     
     [Function(CallingConventions.Microsoft)]
     public delegate IntPtr criFsLoader_LoadRegisteredFile_Internal(IntPtr a1, IntPtr a2, IntPtr a3, IntPtr a4, IntPtr a5);

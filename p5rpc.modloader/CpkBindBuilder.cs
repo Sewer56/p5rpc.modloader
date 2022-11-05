@@ -1,7 +1,6 @@
 using FileEmulationFramework.Lib.IO;
 using FileEmulationFramework.Lib.Utilities;
 using Persona.BindBuilder;
-using Persona.BindBuilder.Utilities;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Mod.Interfaces;
 
@@ -11,7 +10,7 @@ public class CpkBindBuilder
 {
     private readonly IModLoader _loader;
     private readonly Logger _logger;
-    private readonly BindBuilder _builder;
+    private readonly CpkBindStringBuilder _stringBuilder;
 
     public CpkBindBuilder(IModLoader loader, Logger logger, IModConfig modConfig)
     {
@@ -19,11 +18,7 @@ public class CpkBindBuilder
         _logger = logger;
         
         // Get binding directory & cleanup.
-        var configDir = _loader.GetModConfigDirectory(modConfig.ModId);
-        var builder   = new BindingOutputDirectoryGenerator(Routes.GetBindBaseDirectory(configDir));
-        var bindPath  = builder.Generate(new CurrentProcessProvider());
-        builder.Cleanup(new ProcessListProvider());
-        _builder = new BindBuilder(bindPath, "R2");
+        _stringBuilder = new CpkBindStringBuilder("R2");
     }
 
     /// <summary>
@@ -43,7 +38,7 @@ public class CpkBindBuilder
         foreach (var directory in directories)
         {
             WindowsDirectorySearcher.GetDirectoryContentsRecursive(directory.FullPath, out var files, out _);
-            _builder.AddItem(new BuilderItem(directory.FullPath, files));
+            _stringBuilder.AddItem(new BuilderItem(directory.FullPath, files));
         }
     }
 
@@ -53,8 +48,8 @@ public class CpkBindBuilder
     public CpkBinder Build(IReloadedHooks hooks)
     {
         // This code finds duplicate files should we ever need to do merging in the future.
-        var outputDirectory = _builder.Build();
-        return new CpkBinder(outputDirectory, _logger, hooks);
+        var bindString = _stringBuilder.Build();
+        return new CpkBinder(bindString, _logger, hooks);
     }
 
     /// <summary>

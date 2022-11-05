@@ -42,14 +42,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FileEmulationFramework.Lib" Version="1.0.0" />
     <PackageReference Include="Reloaded.Memory" Version="8.0.1" />
     <PackageReference Include="Reloaded.Memory.SigScan.ReloadedII.Interfaces" Version="1.2.0" />
     <PackageReference Include="Reloaded.Mod.Interfaces" Version="2.3.0" ExcludeAssets="runtime" />
     <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Persona.BindBuilder\Persona.BindBuilder.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net7.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Persona.BindBuilder\Persona.BindBuilder.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <None Update="xunit.runner.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
@@ -36,6 +32,10 @@
         <None Include="Assets/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\p5rpc.modloader\p5rpc.modloader.csproj" />
     </ItemGroup>
 
 </Project>

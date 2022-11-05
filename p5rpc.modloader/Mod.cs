@@ -91,7 +91,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         
         // Patches
         CpkBinderPointers.Init(_scanHelper, baseAddr);
-        DontLogCriDirectoryBinds.Activate(patchContext);
         
         // Game Specific Patches
         var fileName = Path.GetFileName(mainModule.FileName);
@@ -120,7 +119,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private void OnLoaderInitialized()
     {
         _modLoader.ModLoading -= OnModLoading;
-        _binder = _cpkBuilder?.Build(_hooks); // Return something that stores only the data we need here.
+        _binder = _cpkBuilder?.Build(_hooks!); // Return something that stores only the data we need here.
         _cpkBuilder = null;  // We don't need this anymore :), free up the mem!
     }
 

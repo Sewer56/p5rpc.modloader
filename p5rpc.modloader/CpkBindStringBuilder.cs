@@ -1,31 +1,21 @@
-﻿using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 using FileEmulationFramework.Lib;
 using FileEmulationFramework.Lib.IO;
-using FileEmulationFramework.Lib.Utilities;
-using Native = Persona.BindBuilder.Utilities.Native;
-
-[module: SkipLocalsInit]
 
 namespace Persona.BindBuilder;
 
 /// <summary>
-/// Utility that builds folders with files that we will inject into games through any of the following methods
-/// - File Emulation
-/// - Binding (e.g. CRI CPK Binding)
+/// Utility that builds paths for binding multiple files with BindFiles.
 /// </summary>
-public class BindBuilder
+public class CpkBindStringBuilder
 {
-    // TODO: Caching.
-    // TODO: Multi-thread.
-    
     /// <summary>
-    /// The folder where all the data to be bound will be stored.
+    /// The delimiter character used.
     /// </summary>
-    public string OutputFolder { get; private set; }
-
+    public const char Delimiter = ',';
+    
     /// <summary>
     /// Current list of items that will constitute the final output.
     /// </summary>
@@ -38,11 +28,7 @@ public class BindBuilder
 
     /// <summary/>
     /// <param name="outputFolder">The folder where the generated data to be bound will be stored.</param>
-    public BindBuilder(string outputFolder, string? bindFolderName = null)
-    {
-        OutputFolder = outputFolder;
-        BindFolderName = bindFolderName;
-    }
+    public CpkBindStringBuilder(string? bindFolderName = null) => BindFolderName = bindFolderName;
 
     /// <summary>
     /// Adds an item to be used in the output.
@@ -51,55 +37,23 @@ public class BindBuilder
     public void AddItem(BuilderItem item) => Items.Add(item);
     
     /// <summary>
-    /// Builds the bind folders :P.
+    /// Builds the bind file string.
     /// </summary>
-    /// <returns>The folder inside which bound data is contained.</returns>
+    /// <returns>Complete list of files to be bound using the CRI bind function.</returns>
     public string Build()
     {
         // This code finds duplicate files should we ever need to do merging in the future.
         var files = GetFiles(out var duplicates);
-        
-        // Normalize keys so all mods go in same base directory
-
-        // TODO: Add the merging infrastructure. For now, we will accept last added file as the winner.
-        // For the merging infra, we will commit the merging (check against cache first), put result in cache folder.
-        // And replace the key,value combination with just the cached merged file.
-        
-        // Note: We are not worried about threading in this hashSet. 
-        // Lack of synchronization just means it might accidentally create directory when it shouldn't, but given the
-        // (small) number of directories this will be unlikely. Performance wise this is better than using concurrent one.
-        var createdFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (files.Count > 1000) // TODO: Benchmark around for a good number.
+        var builder = new StringBuilder();
+        foreach (var file in files)
         {
-            var keyValuePairs = files.ToArray();
-            Parallel.ForEach(Partitioner.Create(0, files.Count), (range, state) =>
-            {
-                for (int x = range.Item1; x < range.Item2; x++)
-                    HardlinkFile(keyValuePairs[x], createdFolders);
-            });
-        }
-        else
-        {
-            foreach (var file in files)
-                HardlinkFile(file, createdFolders);
-        }
+            builder.Append(file.Value[^1]);
+            builder.Append(Delimiter);
+        };
         
-        return OutputFolder;
-    }
-
-    private void HardlinkFile(KeyValuePair<string, List<string>> file, HashSet<string> createdFolders)
-    {
-        var hardlinkPath = Path.Combine(OutputFolder, file.Key);
-        var newFile = file.Value.Last();
-        var directory = Path.GetDirectoryName(hardlinkPath);
-
-        if (!createdFolders.Contains(directory))
-        {
-            Directory.CreateDirectory(directory);
-            createdFolders.Add(directory);
-        }
-
-        Native.CreateHardLink(hardlinkPath, newFile, IntPtr.Zero);
+        builder.Length--;
+        builder.Append('\0');
+        return builder.ToString();
     }
 
     /// <summary>

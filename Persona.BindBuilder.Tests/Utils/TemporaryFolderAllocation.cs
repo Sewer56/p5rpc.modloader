@@ -1,4 +1,4 @@
-namespace Persona.BindBuilder.Utilities;
+namespace Persona.BindBuilder.Tests.Utils;
 
 /// <summary>
 /// Creates a temporary folder that is disposed with the class.
