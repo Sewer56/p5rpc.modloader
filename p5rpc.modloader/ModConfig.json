@@ -49,7 +49,7 @@
     }
   },
   "IsUniversalMod": false,
-  "ModDependencies": [ "reloaded.sharedlib.hooks", "Reloaded.Memory.SigScan.ReloadedII" ],
+  "ModDependencies": [ "reloaded.sharedlib.hooks", "Reloaded.Memory.SigScan.ReloadedII", "crifs.v2.hook" ],
   "OptionalDependencies": [],
   "SupportedAppId": [ "p5r.exe", "p4g.exe" ],
   "ProjectUrl": "https://sewer56.dev/p5rpc.modloader/"

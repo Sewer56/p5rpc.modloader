@@ -5,9 +5,13 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p5rpc.modloader", "p5rpc.modloader\p5rpc.modloader.csproj", "{6F4B205B-ABF6-4A29-BD48-03E18C769813}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persona.BindBuilder", "Persona.BindBuilder\Persona.BindBuilder.csproj", "{7915AEFD-7E09-4C1A-AF09-14235225975E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persona.Merger.Common", "Persona.Merger.Common\Persona.Merger.Common.csproj", "{7915AEFD-7E09-4C1A-AF09-14235225975E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persona.BindBuilder.Tests", "Persona.BindBuilder.Tests\Persona.BindBuilder.Tests.csproj", "{73B42473-33C6-42D2-8ECF-7BC9A378E14C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persona.Merger.Tests", "Persona.Merger.Tests\Persona.Merger.Tests.csproj", "{73B42473-33C6-42D2-8ECF-7BC9A378E14C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Submodules", "Submodules", "{D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriFs.V2.Hook.Interfaces", "Submodules\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj", "{0873146F-6FA1-42CB-89FD-B0FF5433412F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,11 +31,18 @@ Global
 		{73B42473-33C6-42D2-8ECF-7BC9A378E14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73B42473-33C6-42D2-8ECF-7BC9A378E14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73B42473-33C6-42D2-8ECF-7BC9A378E14C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56D65FA2-2A48-49CB-BA59-C44FDDB11E8D}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0873146F-6FA1-42CB-89FD-B0FF5433412F} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
 	EndGlobalSection
 EndGlobal

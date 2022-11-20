@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using CriFs.V2.Hook.Interfaces;
 using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
@@ -56,9 +57,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private readonly IModConfig _modConfig;
 
     private readonly Logger _logger;
-    private CpkBindBuilder? _cpkBuilder;
-    private CpkBinder? _binder;
     private SigScanHelper _scanHelper;
+    private ICriFsRedirectorApi _redirectorApi;
 
     public Mod(ModContext context)
     {
@@ -89,10 +89,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             ScanHelper = _scanHelper
         };
         
-        // Patches
-        CpkBinderPointers.Init(_scanHelper, baseAddr);
-        DontLogCriDirectoryBinds.Activate(patchContext);
-        
         // Game Specific Patches
         var fileName = Path.GetFileName(mainModule.FileName);
         if (fileName.StartsWith("p5r", StringComparison.OrdinalIgnoreCase))
@@ -109,19 +105,13 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             Patches.P5R.SkipIntro.Activate(patchContext);
         }
         
-        // CPK Builder & Redirector
-        _cpkBuilder = new CpkBindBuilder(_modLoader, _logger, _modConfig);
-        _modLoader.ModLoading += OnModLoading;
-        _modLoader.OnModLoaderInitialized += OnLoaderInitialized;
+        _modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _redirectorApi!);
+        _redirectorApi.AddBindCallback(OnBind);
     }
 
-    private void OnModLoading(IModV1 arg1, IModConfigV1 arg2) => _cpkBuilder?.Add((IModConfig)arg2);
-
-    private void OnLoaderInitialized()
+    private void OnBind(ICriFsRedirectorApi.BindContext context)
     {
-        _modLoader.ModLoading -= OnModLoading;
-        _binder = _cpkBuilder?.Build(_hooks); // Return something that stores only the data we need here.
-        _cpkBuilder = null;  // We don't need this anymore :), free up the mem!
+        // TODO: File Merging Here.
     }
 
     #region Standard Overrides

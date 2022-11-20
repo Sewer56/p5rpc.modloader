@@ -49,7 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persona.BindBuilder\Persona.BindBuilder.csproj" />
+    <ProjectReference Include="..\Persona.Merger.Common\Persona.Merger.Common.csproj" />
+    <ProjectReference Include="..\Submodules\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>
