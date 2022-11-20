@@ -2,7 +2,7 @@
   "ModId": "p5rpc.modloader",
   "ModName": "Persona Essentials",
   "ModAuthor": "Sewer56",
-  "ModVersion": "1.1.0",
+  "ModVersion": "1.2.0",
   "ModDescription": "Mod which provides base modding support as well as miscellaneous basic quality of life fixes. See readme for Special Thanks!",
   "ModDll": "p5rpc.modloader.dll",
   "ModIcon": "Preview.png",
@@ -32,6 +32,15 @@
             "AssetFileName": "Mod.zip"
           },
           "ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
+        },
+        "crifs.v2.hook": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "CriFs.V2.Hook.ReloadedII",
+            "UseReleaseTag": true,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "CriFs.V2.Hook.ReleaseMetadata.json"
         }
       }
     },
@@ -49,8 +58,15 @@
     }
   },
   "IsUniversalMod": false,
-  "ModDependencies": [ "reloaded.sharedlib.hooks", "Reloaded.Memory.SigScan.ReloadedII", "crifs.v2.hook" ],
+  "ModDependencies": [
+    "reloaded.sharedlib.hooks",
+    "Reloaded.Memory.SigScan.ReloadedII",
+    "crifs.v2.hook"
+  ],
   "OptionalDependencies": [],
-  "SupportedAppId": [ "p5r.exe", "p4g.exe" ],
+  "SupportedAppId": [
+    "p5r.exe",
+    "p4g.exe"
+  ],
   "ProjectUrl": "https://sewer56.dev/p5rpc.modloader/"
 }

@@ -6,6 +6,7 @@ Split-Path $MyInvocation.MyCommand.Path | Push-Location
 ./p5rpc.modloader/Publish.ps1 -ProjectPath "p5rpc.modloader/p5rpc.modloader.csproj" `
               -PackageName "p5rpc.modloader" `
 			  -ReadmePath ./README-LOADER.md `
+			  -ChangelogPath ./p5rpc.modloader/CHANGELOG.MD `
               -MakeDelta false -UseGitHubDelta true `
               -MetadataFileName "p5rpc.modloader.ReleaseMetadata.json" `
 			  -UseScriptDirectory false `
