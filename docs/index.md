@@ -12,6 +12,8 @@ Persona Essentials is a set of miscellaneous improvements for Persona 4 Golden (
 # Features
 
 - Support for replacing CPK file contents via other mods.  
+- Support for injecting custom music into the game without extracting files.  
+- Support for hot reload (update files on the fly without game reboot).  
 
 ## Features (Persona 5 Royal Only)
 - Intro Skip.  

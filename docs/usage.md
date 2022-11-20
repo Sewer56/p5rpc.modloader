@@ -68,6 +68,29 @@ P5REssentials
 
 The connectors `└─` represent folders.
 
+## Replacing Music
+
+!!! info
+
+    Essentials can be used to replace audio inside AWB & ACB pairs.  
+
+[Uses FileRedirectionFramework under the hood, follow instructions here for more information.](https://sewer56.dev/FileEmulationFramework/emulators/awb.html)  
+Don't add dependency on AWB emulator (it's not necessary), but do follow rest of guide.
+    
+### Example
+
+As per usage guide above.  
+This works the same as it does in Persona 4 Golden 64-bit/2023 version.
+
+![AwbExample](./images/AwbExample.png)
+
+Replaces 53rd audio track (`Signs of Love`).  
+
+!!! warning
+
+    Encryption keys/scheme on the ADX/hca audio must match original file.  
+    [Can someone please link Amicitia or other relevant wiki here??]  
+
 ## Releasing/Uploading your Mods
 
 Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  
