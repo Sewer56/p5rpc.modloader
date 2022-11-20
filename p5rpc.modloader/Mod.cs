@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CriFs.V2.Hook.Interfaces;
+using CriFsV2Lib.Definitions;
 using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
@@ -99,14 +100,16 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
 
+        _modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _redirectorApi!);
+        _redirectorApi.AddBindCallback(OnBind);
+        
         if (Game == Game.P5R)
         {
             Patches.P5R.NoPauseOnFocusLoss.Activate(patchContext);
             Patches.P5R.SkipIntro.Activate(patchContext);
+            var criLib = _redirectorApi.GetCriFsLib();
+            criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R));
         }
-        
-        _modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _redirectorApi!);
-        _redirectorApi.AddBindCallback(OnBind);
     }
 
     private void OnBind(ICriFsRedirectorApi.BindContext context)

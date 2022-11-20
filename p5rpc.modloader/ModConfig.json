@@ -61,6 +61,7 @@
   "ModDependencies": [
     "reloaded.sharedlib.hooks",
     "Reloaded.Memory.SigScan.ReloadedII",
+    "CriFs.V2.Hook.Awb",
     "crifs.v2.hook"
   ],
   "OptionalDependencies": [],
