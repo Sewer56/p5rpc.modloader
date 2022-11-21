@@ -9,6 +9,7 @@ This also means that all settings related to that functionality moved to said mo
 
 - Fixed: Mod load order not being respected during build.  
 - Added: Support for injecting custom music via AWB Emulator extension.  
+- Added: Support for Render in Background for P4G 64-bit & P5R GamePass.  
 
 # 1.1.0
 

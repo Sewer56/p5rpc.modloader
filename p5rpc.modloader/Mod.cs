@@ -105,11 +105,13 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         
         if (Game == Game.P5R)
         {
-            Patches.P5R.NoPauseOnFocusLoss.Activate(patchContext);
             Patches.P5R.SkipIntro.Activate(patchContext);
             var criLib = _redirectorApi.GetCriFsLib();
             criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R));
         }
+        
+        // Common Patches
+        NoPauseOnFocusLoss.Activate(patchContext);
     }
 
     private void OnBind(ICriFsRedirectorApi.BindContext context)
