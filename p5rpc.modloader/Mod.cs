@@ -107,7 +107,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         {
             Patches.P5R.SkipIntro.Activate(patchContext);
             var criLib = _redirectorApi.GetCriFsLib();
-            criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R));
+            criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R)!);
         }
         
         // Common Patches

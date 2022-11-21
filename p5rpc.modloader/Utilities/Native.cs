@@ -64,5 +64,5 @@ public static class Native
     private static extern IntPtr GetWindowLongPtr64W(IntPtr hWnd, int nIndex);
     
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+    public static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
 }

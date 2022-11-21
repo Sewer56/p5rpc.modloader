@@ -13,9 +13,9 @@ namespace p5rpc.modloader.Patches.Common;
 /// </summary>
 internal static class NoPauseOnFocusLoss
 {
-    private static IReloadedHooks _hooks;
-    private static Logger _logger;
-    private static WndProcHook _wndProcHook;
+    private static IReloadedHooks _hooks = null!;
+    private static Logger _logger = null!;
+    private static WndProcHook _wndProcHook = null!;
     
     public static void Activate(in PatchContext context)
     {

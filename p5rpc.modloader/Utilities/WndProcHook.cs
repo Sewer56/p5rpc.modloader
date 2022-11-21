@@ -11,7 +11,7 @@ public class WndProcHook
     /// <summary>
     /// Shared instance of the hook.
     /// </summary>
-    public static WndProcHook Instance { get; private set; }
+    public static WndProcHook Instance { get; private set; } = null!;
 
     /// <summary>
     /// The function that gets called when hooked.
@@ -27,7 +27,7 @@ public class WndProcHook
     /// The hook created for the WndProc function.
     /// Can be used to call the original WndProc.
     /// </summary>
-    public IHook<WndProcFn> Hook { get; private set; }
+    public IHook<WndProcFn> Hook { get; private set; } = null!;
 
     private WndProcHook() { }
     
