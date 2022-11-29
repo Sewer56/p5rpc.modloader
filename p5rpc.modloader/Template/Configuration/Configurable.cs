@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Reloaded.Mod.Interfaces;
+// ReSharper disable All
 
 namespace p5rpc.modloader.Template.Configuration;
 

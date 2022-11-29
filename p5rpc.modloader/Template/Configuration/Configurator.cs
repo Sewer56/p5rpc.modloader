@@ -1,5 +1,6 @@
 ﻿using p5rpc.modloader.Configuration;
 using Reloaded.Mod.Interfaces;
+// ReSharper disable CoVariantArrayConversion
 
 namespace p5rpc.modloader.Template.Configuration;
 

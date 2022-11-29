@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Definitions.X64;
+// ReSharper disable InconsistentNaming
 
 namespace p5rpc.modloader.Utilities;
 

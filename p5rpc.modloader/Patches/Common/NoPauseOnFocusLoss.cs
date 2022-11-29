@@ -4,7 +4,6 @@ using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Utilities;
 using Reloaded.Hooks.Definitions;
 using static p5rpc.modloader.Utilities.Native;
-using Native = p5rpc.modloader.Utilities.Native;
 
 namespace p5rpc.modloader.Patches.Common;
 
@@ -64,7 +63,7 @@ internal static class NoPauseOnFocusLoss
     {
         var renderInBg = Mod.Configuration.GetShouldRenderInBackground(Mod.Game);
         if (!renderInBg) 
-            return _wndProcHook!.Hook.OriginalFunction.Value.Invoke(hWnd, uMsg, wParam, lParam);
+            return _wndProcHook.Hook.OriginalFunction.Value.Invoke(hWnd, uMsg, wParam, lParam);
         
         switch (uMsg)
         {
@@ -79,6 +78,6 @@ internal static class NoPauseOnFocusLoss
                 return IntPtr.Zero;
         }
 
-        return _wndProcHook!.Hook.OriginalFunction.Value.Invoke(hWnd, uMsg, wParam, lParam);
+        return _wndProcHook.Hook.OriginalFunction.Value.Invoke(hWnd, uMsg, wParam, lParam);
     }
 }

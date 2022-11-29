@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Template.Configuration;
 
 namespace p5rpc.modloader.Configuration;

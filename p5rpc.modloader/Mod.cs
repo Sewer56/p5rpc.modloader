@@ -9,7 +9,6 @@ using p5rpc.modloader.Utilities;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
-using Reloaded.Mod.Interfaces.Internal;
 
 // Free perf gains, but you'll need to remember that any stackalloc isn't 0 initialized.
 [module: SkipLocalsInit]
@@ -19,7 +18,7 @@ namespace p5rpc.modloader;
 /// <summary>
 /// Your mod logic goes here.
 /// </summary>
-public unsafe class Mod : ModBase // <= Do not Remove.
+public class Mod : ModBase // <= Do not Remove.
 {
     /// <summary>
     /// Provides access to this mod's common configuration.
@@ -35,22 +34,6 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     /// Current process.
     /// </summary>
     public static Process CurrentProcess = null!;
-    
-    /// <summary>
-    /// Provides access to the mod loader API.
-    /// </summary>
-    private readonly IModLoader _modLoader;
-
-    /// <summary>
-    /// Provides access to the Reloaded.Hooks API.
-    /// </summary>
-    /// <remarks>This is null if you remove dependency on Reloaded.SharedLib.Hooks in your mod.</remarks>
-    private readonly IReloadedHooks? _hooks;
-
-    /// <summary>
-    /// Entry point into the mod, instance that created this class.
-    /// </summary>
-    private readonly IMod _owner;
 
     /// <summary>
     /// The configuration of the currently executing mod.
@@ -58,14 +41,11 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private readonly IModConfig _modConfig;
 
     private readonly Logger _logger;
-    private SigScanHelper _scanHelper;
-    private ICriFsRedirectorApi _redirectorApi;
 
     public Mod(ModContext context)
     {
-        _modLoader = context.ModLoader;
-        _hooks = context.Hooks;
-        _owner = context.Owner;
+        var modLoader = context.ModLoader;
+        IReloadedHooks? hooks = context.Hooks;
         Configuration = context.Configuration;
         _logger = new Logger(context.Logger, Configuration.Common.LogLevel);
         _modConfig = context.ModConfig;
@@ -75,8 +55,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
         // If you want to implement e.g. unload support in your mod,
         // and some other neat features, override the methods in ModBase.
-        _modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
-        _scanHelper = new SigScanHelper(_logger, startupScanner);
+        modLoader.GetController<IStartupScanner>().TryGetTarget(out var startupScanner);
+        var scanHelper = new SigScanHelper(_logger, startupScanner);
         CurrentProcess = Process.GetCurrentProcess();
         var mainModule = CurrentProcess.MainModule;
         var baseAddr = mainModule!.BaseAddress;
@@ -86,8 +66,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             BaseAddress = baseAddr,
             Config = Configuration,
             Logger = _logger,
-            Hooks = _hooks!,
-            ScanHelper = _scanHelper
+            Hooks = hooks!,
+            ScanHelper = scanHelper
         };
         
         // Game Specific Patches
@@ -100,13 +80,13 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
 
-        _modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _redirectorApi!);
-        _redirectorApi.AddBindCallback(OnBind);
+        modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out var redirectorApi);
+        redirectorApi!.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)
         {
             Patches.P5R.SkipIntro.Activate(patchContext);
-            var criLib = _redirectorApi.GetCriFsLib();
+            var criLib = redirectorApi.GetCriFsLib();
             criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R)!);
         }
         
