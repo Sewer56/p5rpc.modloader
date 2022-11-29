@@ -1,3 +1,8 @@
+# 1.2.2
+
+- Fixed: Incorrect update info for dependencies.  
+- Changed: Cleaned up code a bit.  
+
 # 1.2.0
 
 - Changed: All CRI Related functionality moved to separate mod `Cri FileSystem V2 Hook`.  
