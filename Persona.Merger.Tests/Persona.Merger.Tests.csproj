@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,6 +38,10 @@
         <None Include="Assets/**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Assets\Skill\Extend" />
     </ItemGroup>
 
 </Project>
