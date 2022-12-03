@@ -52,7 +52,7 @@ public class MergedFileCache
     ///    True if replacement file is present, else false.
     ///    If file is present, but is no longer valid based on last write times in sources, it is invalidated.
     /// </returns>
-    public bool TryGet(string key, Span<CachedFileSource> sources, [MaybeNullWhen(false)] out string cachedPath)
+    public unsafe bool TryGet(string key, Span<CachedFileSource> sources, [MaybeNullWhen(false)] out string cachedPath)
     {
         cachedPath = null;
         if (!KeyToFile.TryGetValue(key, out var value))
@@ -62,22 +62,25 @@ public class MergedFileCache
         // in modIds, and thus should never have collisions where source count would be different.
         
         // We write it this way however to elide bounds checks.
-        ref var currentSource = ref sources[0];
-        ref var currentValueSource = ref value.Sources[0];
-        for (int x = 0; x < sources.Length; x++)
+        fixed (CachedFileSource* currentValueSource = &value.Sources[0])
+        fixed (CachedFileSource* currentSource = &sources[0])
         {
-            var lastWrite = currentSource.LastWrite;
-            var savedLastWrite = currentValueSource.LastWrite;
-            if (lastWrite != savedLastWrite)
+            var currentValueSourcePtr = currentValueSource;
+            var currentSourcePtr = currentSource;
+            for (int x = 0; x < sources.Length; x++)
             {
-                // Files don't match to saved, please invalidate.
-                RemoveFile(key, value);
-                return false;
-            }
+                if (currentSourcePtr->LastWrite != currentValueSourcePtr->LastWrite)
+                {
+                    // Files don't match to saved, please invalidate.
+                    RemoveFile(key, value);
+                    return false;
+                }
 
-            currentSource = Unsafe.Add(ref currentSource, 1);
-            currentValueSource = Unsafe.Add(ref currentValueSource, 1);
+                currentSourcePtr += 1;
+                currentValueSourcePtr += 1;
+            }
         }
+        
         
         cachedPath = Path.Combine(CacheFolder, value.RelativePath);
         value.LastAccessed = DateTime.UtcNow;
