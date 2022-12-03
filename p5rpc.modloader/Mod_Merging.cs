@@ -58,7 +58,7 @@ public partial class Mod
         var cacheKey = GetCacheKeyAndSources(tblPath, candidates, out var sources);
         if (_mergedFileCache.TryGet(cacheKey, sources, out var cachedFilePath))
         {
-            _logger.Info("Loading Merged TBL {0} from Cache", tblPath);
+            _logger.Info("Loading Merged TBL {0} from Cache ({1})", tblPath, cachedFilePath);
             ReplaceFileInBinderInput(pathToFileMap, pathInCpk, cachedFilePath);
             return;
         }
@@ -81,7 +81,7 @@ public partial class Mod
         // Then we store in cache.
         var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
         ReplaceFileInBinderInput(pathToFileMap, pathInCpk, Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
-        _logger.Info("Merge {0} Complete.", tblPath, cacheKey);
+        _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
     }
 
     private void ReplaceFileInBinderInput(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> binderInput, string filePath, string newFilePath)
