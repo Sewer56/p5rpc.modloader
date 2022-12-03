@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -33,7 +34,7 @@ public class MergedFileCache
     /// Map of relative path to individual file.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public Dictionary<string, CachedFile> KeyToFile { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+    public ConcurrentDictionary<string, CachedFile> KeyToFile { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     internal MergedFileCache(string cacheFolder) { CacheFolder = cacheFolder; }
     
@@ -107,7 +108,7 @@ public class MergedFileCache
         });
 
         await fileStream.WriteAsync(data);
-        KeyToFile.Add(key, item);
+        KeyToFile[key] = item;
         return item;
     }
 
@@ -230,7 +231,7 @@ public class MergedFileCache
     
     private void RemoveFile(string key, CachedFile value)
     {
-        KeyToFile.Remove(key);
+        KeyToFile.Remove(key, out _);
         File.Delete(Path.Combine(CacheFolder, value.RelativePath));
     }
 }

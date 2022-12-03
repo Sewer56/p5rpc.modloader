@@ -46,7 +46,7 @@ public class MergeCacheTests
             LastAccessed = lastModified  - dummyCache.Expiration
         };
         
-        dummyCache.KeyToFile.Add(dummyKey, dummyFile);
+        dummyCache.KeyToFile[dummyKey] = dummyFile;
         
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
@@ -71,7 +71,7 @@ public class MergeCacheTests
             LastAccessed = DateTime.Now
         };
         
-        dummyCache.KeyToFile.Add(dummyKey, dummyFile);
+        dummyCache.KeyToFile[dummyKey] = dummyFile;
 
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
@@ -97,7 +97,7 @@ public class MergeCacheTests
             LastAccessed = DateTime.Now
         };
         
-        dummyCache.KeyToFile.Add(dummyKey, dummyFile);
+        dummyCache.KeyToFile[dummyKey] = dummyFile;
 
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
@@ -120,7 +120,7 @@ public class MergeCacheTests
             Sources = new[] { new CachedFileSource() { LastWrite = DateTime.Now } }, 
             LastAccessed = DateTime.Now
         };
-        dummyCache.KeyToFile.Add(dummyKey, dummyFile);
+        dummyCache.KeyToFile[dummyKey] = dummyFile;
 
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
@@ -146,7 +146,7 @@ public class MergeCacheTests
         var dummyKey = "temp+coolFile.png";
         
         // Assert & Write Dummy File
-        dummyCache.KeyToFile.Add(dummyKey, dummyFile);
+        dummyCache.KeyToFile[dummyKey] = dummyFile;
         await dummyCache.ToPathAsync();
         Assert.True(File.Exists(dummyCache.GetConfigPath()));
         
