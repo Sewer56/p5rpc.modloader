@@ -14,4 +14,15 @@ public class TblPatcherTests
         var patched = patcher.Apply(new List<TblPatch>() { patch });
         Assert.Equal(after, patched);
     }
+    
+    [Fact]
+    public void PatchTbl_Item_Extend()
+    {
+        var original = File.ReadAllBytes(Assets.ItemBefore);
+        var after = File.ReadAllBytes(Assets.ItemExtend);
+        var patcher = new TblPatcher(original, TblType.Item);
+        var patch = patcher.GeneratePatch(after);
+        var patched = patcher.Apply(new List<TblPatch>() { patch });
+        Assert.Equal(after, patched);
+    }
 }
