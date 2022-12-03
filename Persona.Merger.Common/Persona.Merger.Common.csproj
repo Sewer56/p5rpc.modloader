@@ -11,6 +11,8 @@
 
     <ItemGroup>
       <PackageReference Include="FileEmulationFramework.Lib" Version="1.0.0" />
+      <PackageReference Include="Reloaded.Memory" Version="8.0.1" />
+      <PackageReference Include="Sewer56.StructuredDiff" Version="2.0.0" />
     </ItemGroup>
 
 </Project>

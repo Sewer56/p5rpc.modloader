@@ -26,7 +26,7 @@ public class MergedFileCache
     /// Folder where this cache is contained.
     /// </summary>
     [JsonIgnore] 
-    public string CacheFolder;
+    public string CacheFolder = null!;
     
     /// <summary>
     /// Not for direct access. Public for serializer only (needed for source generation).

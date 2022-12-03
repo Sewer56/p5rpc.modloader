@@ -21,13 +21,13 @@ public class MergeCacheTests
         await dummyCache.AddAsync(dummyKey, new[] { new CachedFileSource() { LastWrite = lastModified } }, data);
         
         // Assert
-        Assert.True(dummyCache.TryGet(dummyKey, new CachedFileSource[] { new() { LastWrite = lastModified } }, out string path));
+        Assert.True(dummyCache.TryGet(dummyKey, new CachedFileSource[] { new() { LastWrite = lastModified } }, out var path));
         Assert.NotNull(path);
         Assert.True(File.Exists(path));    
     }
     
     [Fact]
-    public async Task RemoveExpiredItems_AfterExpiry()
+    public void RemoveExpiredItems_AfterExpiry()
     {
         // Arrange
         var folderPath = "Test/RemoveExpiredItems_AfterExpiry";
@@ -55,7 +55,7 @@ public class MergeCacheTests
     }
 
     [Fact]
-    public async Task TryGet_LastAccessed_UpdatesWhen()
+    public void TryGet_LastAccessed_UpdatesWhen()
     {
         // Arrange
         var folderPath = "Test/TryGet_Deletes_WhenLastModifiedNotMatch";
@@ -75,13 +75,13 @@ public class MergeCacheTests
 
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
-        Assert.True(dummyCache.TryGet(dummyKey, new CachedFileSource[] { new() { LastWrite = lastModified } }, out string path));
+        Assert.True(dummyCache.TryGet(dummyKey, new CachedFileSource[] { new() { LastWrite = lastModified } }, out var path));
         Assert.NotNull(path);
         Assert.NotEqual(lastModified, dummyCache.KeyToFile[dummyKey].LastAccessed);    
     }
     
     [Fact]
-    public async Task TryGet_Success_WhenLastModifiedMatch()
+    public void TryGet_Success_WhenLastModifiedMatch()
     {
         // Arrange
         var folderPath = "Test/TryGet_Deletes_WhenLastModifiedNotMatch";
@@ -106,7 +106,7 @@ public class MergeCacheTests
     }
     
     [Fact]
-    public async Task TryGet_Deletes_WhenLastModifiedNotMatch()
+    public void TryGet_Deletes_WhenLastModifiedNotMatch()
     {
         // Arrange
         var folderPath = "Test/TryGet_Deletes_WhenLastModifiedNotMatch";
