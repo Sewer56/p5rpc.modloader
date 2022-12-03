@@ -43,7 +43,7 @@ public partial class Mod : ModBase // <= Do not Remove.
 
     private readonly Logger _logger;
     private ICriFsRedirectorApi _criFsApi = null!;
-    private MergedFileCache _mergedFileCache;
+    private MergedFileCache _mergedFileCache = null!;
     private Task _createMergedFileCacheTask = null!;
     
     public Mod(ModContext context)
