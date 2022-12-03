@@ -6,6 +6,7 @@ using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
 using p5rpc.modloader.Utilities;
+using Persona.Merger.Cache;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
@@ -18,7 +19,7 @@ namespace p5rpc.modloader;
 /// <summary>
 /// Your mod logic goes here.
 /// </summary>
-public class Mod : ModBase // <= Do not Remove.
+public partial class Mod : ModBase // <= Do not Remove.
 {
     /// <summary>
     /// Provides access to this mod's common configuration.
@@ -41,7 +42,10 @@ public class Mod : ModBase // <= Do not Remove.
     private readonly IModConfig _modConfig;
 
     private readonly Logger _logger;
-
+    private ICriFsRedirectorApi _criFsApi = null!;
+    private MergedFileCache _mergedFileCache;
+    private Task _createMergedFileCacheTask = null!;
+    
     public Mod(ModContext context)
     {
         var modLoader = context.ModLoader;
@@ -49,6 +53,14 @@ public class Mod : ModBase // <= Do not Remove.
         Configuration = context.Configuration;
         _logger = new Logger(context.Logger, Configuration.Common.LogLevel);
         _modConfig = context.ModConfig;
+
+        // Read merged file cache in background.
+        _createMergedFileCacheTask = Task.Run(async () =>
+        {
+            var modFolder = modLoader.GetDirectoryForModId(context.ModConfig.ModId);
+            var cacheFolder = Path.Combine(modFolder, "Cache");
+            return _mergedFileCache = await MergedFileCache.FromPathAsync(cacheFolder);
+        });
 
         // For more information about this template, please see
         // https://reloaded-project.github.io/Reloaded-II/ModTemplate/
@@ -80,23 +92,18 @@ public class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
 
-        modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out var redirectorApi);
-        redirectorApi!.AddBindCallback(OnBind);
+        modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi);
+        _criFsApi!.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)
         {
             Patches.P5R.SkipIntro.Activate(patchContext);
-            var criLib = redirectorApi.GetCriFsLib();
+            var criLib = _criFsApi.GetCriFsLib();
             criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R)!);
         }
         
         // Common Patches
         NoPauseOnFocusLoss.Activate(patchContext);
-    }
-
-    private void OnBind(ICriFsRedirectorApi.BindContext context)
-    {
-        // TODO: File Merging Here.
     }
 
     #region Standard Overrides

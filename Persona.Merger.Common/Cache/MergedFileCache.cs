@@ -89,7 +89,7 @@ public class MergedFileCache
     /// <param name="key">The key for the file.</param>
     /// <param name="sources">Sources/timestamps associated with the result file.</param>
     /// <param name="data">The data to store on disk.</param>
-    public async Task AddAsync(string key, CachedFileSource[] sources, ReadOnlyMemory<byte> data)
+    public async Task<CachedFile> AddAsync(string key, CachedFileSource[] sources, ReadOnlyMemory<byte> data)
     {
         var item = new CachedFile()
         {
@@ -108,6 +108,7 @@ public class MergedFileCache
 
         await fileStream.WriteAsync(data);
         KeyToFile.Add(key, item);
+        return item;
     }
 
     /// <summary>
@@ -230,7 +231,7 @@ public class MergedFileCache
     private void RemoveFile(string key, CachedFile value)
     {
         KeyToFile.Remove(key);
-        File.Delete(value.RelativePath);
+        File.Delete(Path.Combine(CacheFolder, value.RelativePath));
     }
 }
 
