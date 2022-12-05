@@ -23,16 +23,27 @@ public class NameTableMergerTests
     [Fact]
     public void MergeTables_Baseline()
     {
-        var name  = File.ReadAllBytes(Assets.NameBefore);
+        MergeTables_Common(Assets.NameAfter);
+    }
+
+    [Fact]
+    public void MergeTables_DCBreaksStuffTooMuch()
+    {
+        MergeTables_Common(Assets.NameAfter2);
+    }
+    
+    private static void MergeTables_Common(string afterFilePath)
+    {
+        var name = File.ReadAllBytes(Assets.NameBefore);
         var table = ParsedNameTable.ParseTable(name);
-        
-        var otherName  = File.ReadAllBytes(Assets.NameAfter);
+
+        var otherName = File.ReadAllBytes(afterFilePath);
         var otherTable = ParsedNameTable.ParseTable(otherName);
 
         var diff = NameTableMerger.CreateDiffs(table, new[] { otherTable });
         var newTable = NameTableMerger.Merge(table, diff);
         var newFile = newTable.ToArray();
-        
+
         Assert.Equal(otherName, newFile);
     }
 }

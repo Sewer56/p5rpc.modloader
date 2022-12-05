@@ -38,7 +38,7 @@ public class NameTableMerger
                 // Add all extra names varbatim
                 if (otherSegment.Names.Count > baseSegment.Names.Count)
                 {
-                    for (int z = otherSegment.Names.Count - 1; z < baseSegment.Names.Count; z++)
+                    for (int z = baseSegment.Names.Count; z < otherSegment.Names.Count; z++)
                         segmentDiff.Strings[z] = otherSegment.Names[z];
                 }
                 

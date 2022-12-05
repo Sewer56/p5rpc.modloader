@@ -10,6 +10,7 @@ public static class Assets
     
     public static readonly string NameBefore = Path.Combine(AssetsFolder, "Name", "Before", "NAME.TBL");
     public static readonly string NameAfter  = Path.Combine(AssetsFolder, "Name", "After", "NAME.TBL");
+    public static readonly string NameAfter2 = Path.Combine(AssetsFolder, "Name", "After2", "NAME.TBL");
     
     public static readonly string SkillBefore  = Path.Combine(AssetsFolder, "Skill", "Before", "SKILL.TBL");
     public static readonly string SkillAfter   = Path.Combine(AssetsFolder, "Skill", "After", "SKILL.TBL");
