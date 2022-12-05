@@ -222,5 +222,6 @@ public enum TblType
     Skill,
     Item,
     Unit,
-    Visual
+    Visual,
+    Name
 }

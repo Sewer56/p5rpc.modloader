@@ -15,4 +15,10 @@
       <PackageReference Include="Sewer56.StructuredDiff" Version="2.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Charsets\P5R_EFIGS.tsv">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

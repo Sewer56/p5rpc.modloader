@@ -30,6 +30,7 @@ public unsafe struct TblSegmentFinder
             TblType.Item => 10,
             TblType.Unit => 5,
             TblType.Visual => 6,
+            TblType.Name => 38,
             _ => ThrowUnsupportedTblTypeException(type)
         };
     }
