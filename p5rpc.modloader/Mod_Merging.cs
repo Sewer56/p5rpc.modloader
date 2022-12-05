@@ -23,26 +23,26 @@ public partial class Mod
         var watch = Stopwatch.StartNew();
         var cpks = _criFsApi.GetCpkFilesInGameDir();
         var pathToFileMap = context.RelativePathToFileMap;
-        var tasks = new List<Task>();
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\SKILL.TBL", TblType.Skill, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ELSAI.TBL", TblType.Elsai, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ITEM.TBL", TblType.Item, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\EXIST.TBL", TblType.Exist, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\PLAYER.TBL", TblType.Player, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ENCOUNT.TBL", TblType.Encount, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\PERSONA.TBL", TblType.Persona, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\AICALC.TBL", TblType.AiCalc, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\VISUAL.TBL", TblType.Visual, cpks)));
-        tasks.Add(Task.Run(() => PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\UNIT.TBL", TblType.Unit, cpks)));
-
+        var tasks = new List<ValueTask>();
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\SKILL.TBL", TblType.Skill, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ELSAI.TBL", TblType.Elsai, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ITEM.TBL", TblType.Item, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\EXIST.TBL", TblType.Exist, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\PLAYER.TBL", TblType.Player, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\ENCOUNT.TBL", TblType.Encount, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\PERSONA.TBL", TblType.Persona, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\AICALC.TBL", TblType.AiCalc, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\VISUAL.TBL", TblType.Visual, cpks));
+        tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\UNIT.TBL", TblType.Unit, cpks));
+        
         // TODO: Name
-        Task.WhenAll(tasks).Wait();
+        Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
         _logger.Info("Merging Completed in {0}ms", watch.ElapsedMilliseconds);
         _mergedFileCache.RemoveExpiredItems();
         _ = _mergedFileCache.ToPathAsync();
     }
 
-    private async Task PatchTbl(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string tblPath, TblType type, string[] cpks)
+    private async ValueTask PatchTbl(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string tblPath, TblType type, string[] cpks)
     {
         if (!pathToFileMap.TryGetValue(tblPath, out var candidates)) 
             return;
@@ -65,23 +65,27 @@ public partial class Mod
         
         // Else Merge our Data
         // First we extract.
-        _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
-        await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-        using var reader         = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
-        using var extractedTable = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
-        
-        // Then we merge
-        var patcher = new TblPatcher(extractedTable.Span.ToArray(), type);
-        var patches = new List<TblPatch>(candidates.Count);
-        for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x].FullPath)));
+        await Task.Run(async () =>
+        {
+            _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
+            await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
+            using var extractedTable = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
 
-        var patched = patcher.Apply(patches);
-        
-        // Then we store in cache.
-        var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
-        ReplaceFileInBinderInput(pathToFileMap, pathInCpk, Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
-        _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
+            // Then we merge
+            var patcher = new TblPatcher(extractedTable.Span.ToArray(), type);
+            var patches = new List<TblPatch>(candidates.Count);
+            for (var x = 0; x < candidates.Count; x++)
+                patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x].FullPath)));
+
+            var patched = patcher.Apply(patches);
+
+            // Then we store in cache.
+            var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
+            ReplaceFileInBinderInput(pathToFileMap, pathInCpk,
+                Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
+            _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
+        });
     }
 
     private void ReplaceFileInBinderInput(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> binderInput, string filePath, string newFilePath)
