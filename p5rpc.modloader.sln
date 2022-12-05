@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Submodules", "Submodules", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriFs.V2.Hook.Interfaces", "Submodules\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj", "{0873146F-6FA1-42CB-89FD-B0FF5433412F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persona.Merger.Benchmarks", "Persona.Merger.Benchmarks\Persona.Merger.Benchmarks.csproj", "{F29DF666-2A4B-47F5-890F-6032F5DBBD32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0873146F-6FA1-42CB-89FD-B0FF5433412F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
