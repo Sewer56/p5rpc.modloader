@@ -41,7 +41,6 @@ public partial class Mod
         tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\NAME.TBL", TblType.Name, cpks));
         tasks.Add(PatchTbl(pathToFileMap, @"R2\BATTLE\TABLE\UNIT.TBL", TblType.Unit, cpks));
         
-        // TODO: Name
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
         _logger.Info("Merging Completed in {0}ms", watch.ElapsedMilliseconds);
         _mergedFileCache.RemoveExpiredItems();
