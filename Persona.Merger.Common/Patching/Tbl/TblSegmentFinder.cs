@@ -28,7 +28,7 @@ public unsafe struct TblSegmentFinder
             TblType.Encount => 3,
             TblType.Skill => 4,
             TblType.Item => 10,
-            TblType.Unit => 5,
+            TblType.Unit => 6,
             TblType.Visual => 6,
             TblType.Name => 38,
             _ => ThrowUnsupportedTblTypeException(type)

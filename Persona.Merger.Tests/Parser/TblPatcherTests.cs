@@ -16,6 +16,17 @@ public class TblPatcherTests
     }
     
     [Fact]
+    public void PatchTbl_Unit()
+    {
+        var original = File.ReadAllBytes(Assets.UnitBefore);
+        var after = File.ReadAllBytes(Assets.UnitAfter);
+        var patcher = new TblPatcher(original, TblType.Unit);
+        var patch = patcher.GeneratePatch(after);
+        var patched = patcher.Apply(new List<TblPatch>() { patch });
+        Assert.Equal(after, patched);
+    }
+    
+    [Fact]
     public void PatchTbl_Item_Extend()
     {
         var original = File.ReadAllBytes(Assets.ItemBefore);
