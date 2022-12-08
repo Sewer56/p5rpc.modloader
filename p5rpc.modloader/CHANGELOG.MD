@@ -1,3 +1,7 @@
+# 2.0.0
+
+- Added: TBL Merging
+
 # 1.2.2
 
 - Fixed: Incorrect update info for dependencies.  
