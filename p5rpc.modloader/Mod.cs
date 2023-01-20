@@ -87,7 +87,9 @@ public partial class Mod : ModBase // <= Do not Remove.
         if (fileName.StartsWith("p5r", StringComparison.OrdinalIgnoreCase))
             Game = Game.P5R;
         else if (fileName.StartsWith("p4g", StringComparison.OrdinalIgnoreCase))
-            Game = Game.P4G;
+            Game = Game.P4G;        
+        else if (fileName.StartsWith("p3p", StringComparison.OrdinalIgnoreCase))
+            Game = Game.P3P;
         else
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
@@ -137,5 +139,6 @@ public partial class Mod : ModBase // <= Do not Remove.
 public enum Game
 {
     P4G,
-    P5R
+    P5R,
+    P3P
 }
