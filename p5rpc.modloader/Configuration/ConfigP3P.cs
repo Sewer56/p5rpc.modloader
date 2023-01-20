@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace p5rpc.modloader.Configuration;
 
-public class ConfigP4G
+public class ConfigP3P
 {    
     [DisplayName("Intro Skip")]
     [DefaultValue(false)]

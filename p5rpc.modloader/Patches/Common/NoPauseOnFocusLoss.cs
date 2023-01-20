@@ -24,6 +24,7 @@ internal static class NoPauseOnFocusLoss
         {
             Game.P4G => "DX11_P4G__app",
             Game.P5R => "p5r",
+            Game.P3P => "DX11_P3P__app",
             _ => ""
         };
 

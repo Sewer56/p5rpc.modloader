@@ -94,7 +94,7 @@ public partial class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
 
-        modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi);
+        modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
         _criFsApi!.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)
@@ -102,6 +102,14 @@ public partial class Mod : ModBase // <= Do not Remove.
             Patches.P5R.SkipIntro.Activate(patchContext);
             var criLib = _criFsApi.GetCriFsLib();
             criLib.SetDefaultEncryptionFunction(criLib.GetKnownDecryptionFunction(KnownDecryptionFunction.P5R)!);
+        }
+        else if (Game == Game.P4G)
+        {
+            Patches.P4G.SkipIntro.Activate(patchContext);
+        }
+        else if (Game == Game.P3P)
+        {
+            Patches.P3P.SkipIntro.Activate(patchContext);
         }
         
         // Common Patches
