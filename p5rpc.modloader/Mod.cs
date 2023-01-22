@@ -54,14 +54,6 @@ public partial class Mod : ModBase // <= Do not Remove.
         _logger = new Logger(context.Logger, Configuration.Common.LogLevel);
         _modConfig = context.ModConfig;
 
-        // Read merged file cache in background.
-        _createMergedFileCacheTask = Task.Run(async () =>
-        {
-            var modFolder = modLoader.GetDirectoryForModId(context.ModConfig.ModId);
-            var cacheFolder = Path.Combine(modFolder, "Cache");
-            return _mergedFileCache = await MergedFileCache.FromPathAsync(cacheFolder);
-        });
-
         // For more information about this template, please see
         // https://reloaded-project.github.io/Reloaded-II/ModTemplate/
 
@@ -94,6 +86,14 @@ public partial class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
 
+        // Read merged file cache in background.
+        _createMergedFileCacheTask = Task.Run(async () =>
+        {
+            var modFolder = modLoader.GetDirectoryForModId(context.ModConfig.ModId);
+            var cacheFolder = Path.Combine(modFolder, "Cache", $"{Game}");
+            return _mergedFileCache = await MergedFileCache.FromPathAsync(context.ModConfig.ModVersion, cacheFolder);
+        });
+        
         modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
         _criFsApi!.AddBindCallback(OnBind);
         

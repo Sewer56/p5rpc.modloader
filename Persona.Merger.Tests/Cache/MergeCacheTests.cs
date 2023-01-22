@@ -131,7 +131,7 @@ public class MergeCacheTests
     [Fact]
     public async Task Can_CreateNewFile_WhenNotExist()
     {
-        Assert.NotNull(await MergedFileCache.FromPathAsync("Super Cool Imaginary Directory"));
+        Assert.NotNull(await MergedFileCache.FromPathAsync("1.0.0", "Super Cool Imaginary Directory"));
     }
     
     [Fact]
@@ -151,7 +151,7 @@ public class MergeCacheTests
         Assert.True(File.Exists(dummyCache.GetConfigPath()));
         
         // Read
-        var copy = await MergedFileCache.FromPathAsync(folderPath);
+        var copy = await MergedFileCache.FromPathAsync("1.0.0", folderPath);
         Assert.True(copy.KeyToFile.TryGetValue(dummyKey, out var copyFile));
         Assert.Equal(dummyFile.RelativePath, copyFile.RelativePath);
         Assert.Equal(dummyFile.LastAccessed, copyFile.LastAccessed);

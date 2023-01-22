@@ -18,6 +18,11 @@ public class MergedFileCache
     private const string FilesFolderName = "Files";
     
     /// <summary>
+    /// Version of mod this cache is associated with.
+    /// </summary>
+    public string Version { get; set; }
+    
+    /// <summary>
     /// Time it takes for merged files to expire.
     /// </summary>
     [JsonIgnore]
@@ -181,14 +186,15 @@ public class MergedFileCache
         builder.Append(relativePath);
         return builder.ToString();
     }
-    
+
     /// <summary>
     /// Loads a file cache from a given path asynchronously.
     /// If cache file does not exist or is corrupted, makes new one.
     /// </summary>
+    /// <param name="version">Version of the cache, or mod. If it does not match, cached data is wiped.</param>
     /// <param name="folderPath">The absolute file path of the cache folder.</param>
     /// <param name="token">Token that can be used to cancel deserialization</param>
-    public static async Task<MergedFileCache> FromPathAsync(string folderPath, CancellationToken token = default)
+    public static async Task<MergedFileCache> FromPathAsync(string version, string folderPath, CancellationToken token = default)
     {
         var path = GetConfigPath(folderPath);
         MergedFileCache result;
@@ -196,10 +202,16 @@ public class MergedFileCache
         {
             result = await Serialization.FromPathAsync(path, MergedFileCacheContext.Default.MergedFileCache, token);
             result.CacheFolder = folderPath;
+            if (result.Version != version)
+            {
+                result.Clear();
+                result.Version = version;
+            }
         }
         else
         {
             result = new MergedFileCache(folderPath);
+            result.Version = version;
             Directory.CreateDirectory(folderPath); // just in case.
         }
         
@@ -235,7 +247,9 @@ public class MergedFileCache
     private void RemoveFile(string key, CachedFile value)
     {
         KeyToFile.Remove(key, out _);
-        File.Delete(Path.Combine(CacheFolder, value.RelativePath));
+        var filePath = Path.Combine(CacheFolder, value.RelativePath);
+        try { File.Delete(filePath); }
+        catch (Exception) { /* Ignored, for now */ }
     }
 }
 
