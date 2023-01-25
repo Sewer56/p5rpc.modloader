@@ -10,6 +10,9 @@
   "ModR2RManagedDll64": "x64/p5rpc.modloader.pak.dll",
   "ModNativeDll32": "",
   "ModNativeDll64": "",
+  "Tags": [],
+  "CanUnload": false,
+  "HasExports": false,
   "IsLibrary": true,
   "ReleaseMetadataFileName": "p5rpc.modloader.pak.ReleaseMetadata.json",
   "PluginData": {
@@ -86,17 +89,17 @@
   },
   "IsUniversalMod": false,
   "ModDependencies": [
-    "reloaded.sharedlib.hooks",
     "Reloaded.Memory.SigScan.ReloadedII",
-    "CriFs.V2.Hook.Awb",
-    "crifs.v2.hook"
+    "reloaded.sharedlib.hooks",
+    "crifs.v2.hook",
+    "reloaded.universal.fileemulationframework.pak",
+    "p5rpc.modloader"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [
-    "p5r.exe",
-    "p4g.exe",
     "p3p.exe",
-    "p3p_sln_dt_m.exe"
+    "p4g.exe",
+    "p5r.exe"
   ],
   "ProjectUrl": "https://sewer56.dev/p5rpc.modloader/"
 }

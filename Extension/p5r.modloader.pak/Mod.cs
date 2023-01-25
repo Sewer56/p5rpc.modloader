@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CriFs.V2.Hook.Interfaces;
-using CriFsV2Lib.Definitions;
 using FileEmulationFramework.Lib.Utilities;
 using p5r.modloader.pak.Template;
 using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Cache;
 using Reloaded.Hooks.Definitions;
-using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 
 // Free perf gains, but you'll need to remember that any stackalloc isn't 0 initialized.
