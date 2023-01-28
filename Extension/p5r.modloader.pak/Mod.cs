@@ -64,7 +64,7 @@ public partial class Mod : ModBase // <= Do not Remove.
 
         modLoader.GetController<IPakEmulator>().TryGetTarget(out _pakEmulator!);
         modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
-
+        _criFsApi!.AddBindCallback(OnBind);
     }
     #region Standard Overrides
 
