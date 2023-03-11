@@ -36,15 +36,6 @@
           },
           "ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
         },
-        "CriFs.V2.Hook.Awb": {
-          "Config": {
-            "UserName": "Sewer56",
-            "RepositoryName": "CriFs.V2.Hook.ReloadedII",
-            "UseReleaseTag": false,
-            "AssetFileName": "Mod.zip"
-          },
-          "ReleaseMetadataName": "CriFs.V2.Hook.Awb.ReleaseMetadata.json"
-        },
         "crifs.v2.hook": {
           "Config": {
             "UserName": "Sewer56",
@@ -54,14 +45,14 @@
           },
           "ReleaseMetadataName": "CriFs.V2.Hook.ReleaseMetadata.json"
         },
-        "reloaded.universal.fileemulationframework.awb": {
+        "reloaded.universal.fileemulationframework.pak": {
           "Config": {
             "UserName": "Sewer56",
             "RepositoryName": "FileEmulationFramework",
             "UseReleaseTag": false,
             "AssetFileName": "Mod.zip"
           },
-          "ReleaseMetadataName": "AWB.Stream.Emulator.ReleaseMetadata.json"
+          "ReleaseMetadataName": "PAK.Stream.Emulator.ReleaseMetadata.json"
         },
         "reloaded.universal.fileemulationframework": {
           "Config": {
@@ -82,7 +73,7 @@
     },
     "GitHubRelease": {
       "UserName": "Sewer56",
-      "RepositoryName": "p5rpc.modloader",
+      "RepositoryName": "p5rpc.modloader.pak",
       "UseReleaseTag": true,
       "AssetFileName": "Mod.zip"
     }
