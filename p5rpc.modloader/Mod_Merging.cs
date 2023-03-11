@@ -14,7 +14,7 @@ public partial class Mod
     
     private void OnBind(ICriFsRedirectorApi.BindContext context)
     {
-        if (Game == Game.P4G)
+        if (Game != Game.P5R)
             return;
         
         // Wait for cache to init first.
