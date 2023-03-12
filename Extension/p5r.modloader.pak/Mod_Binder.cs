@@ -149,7 +149,7 @@ public partial class Mod
         // Reorder array to force EN.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("BASE.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("DATA.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data/", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[1]);
+            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[1]);
     }
 
     private void ForceEnCpkFirst(string[] cpkFiles)
@@ -157,7 +157,7 @@ public partial class Mod
         // Reorder array to force EN.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("EN.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_E.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_EN", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceBaseCpkFirst(string[] cpkFiles)
@@ -165,7 +165,7 @@ public partial class Mod
         // Reorder array to force BASE.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("BASE.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("DATA.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data/", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceDeCpkFirst(string[] cpkFiles)
@@ -173,7 +173,7 @@ public partial class Mod
         // Reorder array to force DE.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("DE.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_DE.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_DE", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceFrCpkFirst(string[] cpkFiles)
@@ -181,7 +181,7 @@ public partial class Mod
         // Reorder array to force FR.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("FR.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_FR.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_FR", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceItCpkFirst(string[] cpkFiles)
@@ -189,7 +189,7 @@ public partial class Mod
         // Reorder array to force IT.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("IT.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_IT.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_IT", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceKrCpkFirst(string[] cpkFiles)
@@ -197,7 +197,7 @@ public partial class Mod
         // Reorder array to force KR.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("KR.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_K.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_KR", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceEsCpkFirst(string[] cpkFiles)
@@ -205,7 +205,7 @@ public partial class Mod
         // Reorder array to force ES.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("ES.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_ES.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_ES", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceScCpkFirst(string[] cpkFiles)
@@ -213,7 +213,7 @@ public partial class Mod
         // Reorder array to force SC.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("SC.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_CH.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_CH", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 
     private void ForceTcCpkFirst(string[] cpkFiles)
@@ -221,6 +221,6 @@ public partial class Mod
         // Reorder array to force SC.CPK to be first
         var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("TC.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_CK.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("data_CK", StringComparison.OrdinalIgnoreCase));
         if (enIndex != -1)
-            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 }

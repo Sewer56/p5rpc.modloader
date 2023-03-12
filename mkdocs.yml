@@ -27,3 +27,5 @@ theme:
 nav:
   - Home: index.md
   - Usage: usage.md
+  - Extensions:
+    - PAK Emulator: pak.md
