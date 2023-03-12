@@ -1,7 +1,7 @@
 {
   "ModId": "p5rpc.modloader.pak",
   "ModName": "PAK Emulator Support for Persona Essentials",
-  "ModAuthor": "Sewer56",
+  "ModAuthor": "ltsophia",
   "ModVersion": "1.0.0",
   "ModDescription": "Mod which provides base modding support as well as miscellaneous basic quality of life fixes. See readme for Special Thanks!",
   "ModDll": "p5rpc.modloader.pak.dll",
