@@ -6,6 +6,18 @@ namespace p5r.modloader.pak;
 
 public class Config : Configurable<Config>
 {
+    public enum Language
+    {
+        English,
+        French,
+        Italian,
+        German,
+        Spanish,
+        Japanese,
+        Korean,
+        Simplified_Chinese,
+        Traditional_Chinese
+    }
     /*
         User Properties:
             - Please put all of your configurable properties here.
@@ -25,6 +37,11 @@ public class Config : Configurable<Config>
 
         The `DefaultValue` attribute is used as part of the `Reset` button in Reloaded-Launcher.
     */
+
+    [DisplayName("Language")]
+    [Description("Set which language to use for making files.\nSet this to what language you use in-game.")]
+    [DefaultValue(Language.English)]
+    public Language CPKLanguage { get; set; } = Language.English;
 
     [DisplayName("Log Level")]
     [Description("Declares which elements should be logged to the console.\nMessages less important than this level will not be logged.")]
