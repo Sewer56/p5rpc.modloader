@@ -38,7 +38,8 @@ public class Config : Configurable<Config>
         The `DefaultValue` attribute is used as part of the `Reset` button in Reloaded-Launcher.
     */
 
-    [DisplayName("Language")]
+    [Category("Language")]
+    [DisplayName("Game Language")]
     [Description("Set which language to use for making files.\nSet this to what language you use in-game.")]
     [DefaultValue(Language.English)]
     public Language CPKLanguage { get; set; } = Language.English;
