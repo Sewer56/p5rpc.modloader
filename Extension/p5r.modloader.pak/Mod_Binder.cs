@@ -15,12 +15,14 @@ public partial class Mod
     {
         // Wait for cache to init first.
         _createMergedFileCacheTask.Wait();
-
         bind = context;
         var input = _pakEmulator.GetEmulatorInput();
         var cpks = _criFsApi.GetCpkFilesInGameDir();
         var tasks = new List<ValueTask>();
         var watch = Stopwatch.StartNew();
+
+        ForceEnCpkFirst(cpks);
+        ForceBaseCpkSecond(cpks);
 
         var pathToFileMap = context.RelativePathToFileMap;
         foreach (RouteGroupTuple group in input)
@@ -40,7 +42,8 @@ public partial class Mod
     {
 
         string pathInCpk = RemoveR2Prefix(route);
-        if (!TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
+        string cpkFinderPath = Path.GetDirectoryName(pathInCpk) == "" || Path.GetDirectoryName(pathInCpk) == null ? "\\" + pathInCpk : pathInCpk;
+        if (!TryFindFileInAnyCpk(cpkFinderPath, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
         {
             _logger.Warning("Unable to find PAK in any CPK {0}", pathInCpk);
             return;
@@ -116,5 +119,20 @@ public partial class Mod
         return input.StartsWith(@"R2\")
             ? input.Substring(@"R2\".Length)
             : input;
+    }
+    private void ForceBaseCpkSecond(string[] cpkFiles)
+    {
+        // Reorder array to force EN.CPK to be first
+        var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("BASE.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("DATA.CPK", StringComparison.OrdinalIgnoreCase));
+        if (enIndex != -1)
+            (cpkFiles[0], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[1]);
+    }
+
+    private void ForceEnCpkFirst(string[] cpkFiles)
+    {
+        // Reorder array to force EN.CPK to be first
+        var enIndex = Array.FindIndex(cpkFiles, s => s.Contains("EN.CPK", StringComparison.OrdinalIgnoreCase) || s.Contains("_E.CPK", StringComparison.OrdinalIgnoreCase));
+        if (enIndex != -1)
+            (cpkFiles[1], cpkFiles[enIndex]) = (cpkFiles[enIndex], cpkFiles[0]);
     }
 }
