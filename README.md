@@ -2,7 +2,7 @@
 	<h1>Persona Essentials</h1>
 	<img src="./docs/images/icon.png" Width="200" /><br/>
 	<strong>⛸ Lookin' cool Joker 🛹</strong>
-    <p>Enables more advanced mod support for P4G (64 bit) and P5R PC.</p>
+    <p>Enables more advanced mod support for P3P PC, P4G (64 bit) and P5R PC.</p>
 </div>
 
 # About
