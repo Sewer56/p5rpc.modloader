@@ -2,23 +2,23 @@
 	<h1>Persona Essentials</h1>
 	<img src="./docs/images/icon.png" Width="200" /><br/>
 	<strong>⛸ Lookin' cool Joker 🛹</strong>
-    <p>Enables more advanced mod support for P4G (64 bit) and P5R PC.</p>
+    <p>Enables more advanced mod support for P3P PC, P4G (64 bit) and P5R PC.</p>
 </div>
 
 # About
 
-Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (64 Bit), and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
+Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (64 bit), and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
 
 For more information, [please visit the documentation](https://sewer56.dev/p5rpc.modloader/), it's cool.
 
-# Features
+# Features (for Modders)
 
 - Support for replacing CPK file contents via other mods.  
 - Support for injecting custom music into the game without extracting files.  
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges most .tbl files.  
   
-## Features
+## Features (for Users)
 - Intro Skip.  
 - Toggle Pause on Window Focus Loss.  
 
