@@ -7,7 +7,7 @@
 
 # About
 
-Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (64 Bit) and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
+Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (64 bit) and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
 
 # Features
 
