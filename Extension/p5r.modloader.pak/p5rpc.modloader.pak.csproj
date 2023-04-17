@@ -50,7 +50,6 @@
     <ProjectReference Include="..\..\p5rpc.modloader\p5rpc.modloader.csproj" />
     <ProjectReference Include="..\..\Persona.Merger.Common\Persona.Merger.Common.csproj" />
     <ProjectReference Include="..\..\Submodules\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj" />
-    <ProjectReference Include="..\..\Submodules\CriFs.V2.Hook.ReloadedII\Submodules\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

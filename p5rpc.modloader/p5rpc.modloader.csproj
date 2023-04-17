@@ -16,8 +16,8 @@
          Test trimming with: `BuildLinked.ps1` in PowerShell. -->
     <ReloadedILLink>true</ReloadedILLink>
   </PropertyGroup>
-
   <ItemGroup>
+
     <ReloadedLinkRoots Include="p5rpc.modloader" />
     <!-- Add assemblies to be trimmed. You might need to add their dependencies too!  -->
     <!-- <ReloadedLinkAssemblies Include="Reloaded.Memory" /> -->
