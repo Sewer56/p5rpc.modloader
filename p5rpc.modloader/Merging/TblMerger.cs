@@ -19,17 +19,20 @@ namespace p5rpc.modloader.Merging
         private Logger _logger;
         private MergedFileCache _mergedFileCache;
         private ICriFsRedirectorApi _criFsApi;
+        private Game _game;
 
-        internal TblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi)
+        internal TblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, Game game)
         {
             _utils = utils;
             _logger = logger;
             _mergedFileCache = mergedFileCache;
             _criFsApi = criFsApi;
+            _game = game;
         }
 
         public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
         {
+            if (_game != Game.P5R) return; // There's only tbl merging stuff for P5R
             // Note: Actual merging logic is optimised but code in mod could use some more work.
             var pathToFileMap = context.RelativePathToFileMap;
             var tasks = new List<ValueTask>

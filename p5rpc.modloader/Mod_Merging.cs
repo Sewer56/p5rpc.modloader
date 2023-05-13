@@ -28,7 +28,7 @@ public partial class Mod
         var mergeUtils = new MergeUtils(_criFsApi);
         List<IFileMerger> fileMergers = new()
         {
-            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi)
+            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, Game)
         };
         
         foreach (var fileMerger in fileMergers)
