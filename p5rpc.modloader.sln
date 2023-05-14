@@ -15,10 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CriFs.V2.Hook.Interfaces", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persona.Merger.Benchmarks", "Persona.Merger.Benchmarks\Persona.Merger.Benchmarks.csproj", "{F29DF666-2A4B-47F5-890F-6032F5DBBD32}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{3FEFF5A5-2915-4798-871D-ABF99A119A70}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p5rpc.modloader.pak", "Extension\p5r.modloader.pak\p5rpc.modloader.pak.csproj", "{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAK.Stream.Emulator.Interfaces", "Submodules\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj", "{CD3AA6F0-9C8E-4910-B1A0-652D1848D00E}"
 EndProject
 Global
@@ -47,10 +43,6 @@ Global
 		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F29DF666-2A4B-47F5-890F-6032F5DBBD32}.Release|Any CPU.Build.0 = Release|Any CPU
-		{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD3AA6F0-9C8E-4910-B1A0-652D1848D00E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CD3AA6F0-9C8E-4910-B1A0-652D1848D00E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD3AA6F0-9C8E-4910-B1A0-652D1848D00E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,7 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0873146F-6FA1-42CB-89FD-B0FF5433412F} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
-		{073CBF1C-50FE-4CE0-A96A-94CBA6B7B457} = {3FEFF5A5-2915-4798-871D-ABF99A119A70}
 		{CD3AA6F0-9C8E-4910-B1A0-652D1848D00E} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

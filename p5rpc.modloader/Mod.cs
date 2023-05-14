@@ -6,6 +6,7 @@ using FileEmulationFramework.Lib.Utilities;
 using p5rpc.modloader.Patches.Common;
 using p5rpc.modloader.Template;
 using p5rpc.modloader.Utilities;
+using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Cache;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
@@ -43,6 +44,7 @@ public partial class Mod : ModBase // <= Do not Remove.
 
     private readonly Logger _logger;
     private ICriFsRedirectorApi _criFsApi = null!;
+    private IPakEmulator _pakEmulator = null!;
     private MergedFileCache _mergedFileCache = null!;
     private Task _createMergedFileCacheTask = null!;
     
@@ -95,6 +97,7 @@ public partial class Mod : ModBase // <= Do not Remove.
         });
         
         modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
+        modLoader.GetController<IPakEmulator>().TryGetTarget(out _pakEmulator!);
         _criFsApi!.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)
