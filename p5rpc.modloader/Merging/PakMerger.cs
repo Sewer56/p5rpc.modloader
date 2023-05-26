@@ -43,6 +43,7 @@ namespace p5rpc.modloader.Merging
                 _logger.Info("Route: {0}", dir);
                 tasks.Add(CachePak(pathToFileMap, @"R2\" + dir, cpks, context.BindDirectory));
             }
+            Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
         }
 
         private async ValueTask CachePak(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, string bindDirectory)
