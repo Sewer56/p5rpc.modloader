@@ -91,6 +91,23 @@ Replaces 53rd audio track (`Signs of Love`).
     Encryption keys/scheme on the ADX/hca audio must match original file.  
     [Can someone please link Amicitia or other relevant wiki here??]  
 
+## Replacing Files In Archives
+
+!!! info
+
+    Essentials can be used to replace individual files in archives such as PAK, BIN, PAC, and ARC  
+
+[Uses FileRedirectionFramework under the hood, follow instructions here for more information.](https://sewer56.dev/FileEmulationFramework/emulators/pak.html)  
+Don't add dependency on PAK emulator (it's not necessary), but do follow rest of guide.
+    
+### Example
+
+As per usage guide above.  
+
+![PakExample](./images/PakExample.png)
+
+Replaces `battle/MSG.TBL` in `init_free.bin`.  
+
 ## Releasing/Uploading your Mods
 
 Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  
