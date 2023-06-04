@@ -58,38 +58,38 @@ internal class PakMerger : IFileMerger
             _logger.Warning("Unable to find PAK in any CPK {0}", pathInCpk);
             return;
         }
+        
+        // Then we store in cache.
+        string[] modids = { "p5rpc.modloader" };
+        var sources = new[] { new CachedFileSource() };
+        var cacheKey = MergedFileCache.CreateKey(route, modids);
 
-        // Else Merge our Data
-        // First we extract.
-        await Task.Run(async () =>
+        if (!_mergedFileCache.TryGet(cacheKey, sources, out var cachedPath))
         {
-            // Then we store in cache.
-            string[] modids = { "p5rpc.modloader" };
-            var sources = new[] { new CachedFileSource() };
-            var cacheKey = MergedFileCache.CreateKey(route, modids);
-
-            if (!_mergedFileCache.TryGet(cacheKey, sources, out var cachedPath))
+            // Else Merge our Data
+            // First we extract.
+            await Task.Run(async () =>
             {
                 await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
                 using var extractedFile = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
                 var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray.AsMemory(0, extractedFile.Count));
                 cachedPath = Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath);
-            }
+            });
+        }
             
-            string pakPath = Path.Combine(bindDirectory, route);
-            string? dir = Path.GetDirectoryName(pakPath);
-            if (dir != null)
-                Directory.CreateDirectory(dir);
+        string pakPath = Path.Combine(bindDirectory, route);
+        string? dir = Path.GetDirectoryName(pakPath);
+        if (dir != null)
+            Directory.CreateDirectory(dir);
             
-            if (!_pakEmulator.TryCreateFromFileSlice(cachedPath, 0, pathInCpk, pakPath))
-            {
-                _logger.Error($"Cannot Create File From Slice!");
-                return;
-            }
+        if (!_pakEmulator.TryCreateFromFileSlice(cachedPath, 0, pathInCpk, pakPath))
+        {
+            _logger.Error($"Cannot Create File From Slice!");
+            return;
+        }
 
-            _utils.ReplaceFileInBinderInput(pathToFileMap, route, pakPath);
-            _logger.Info("File emulated at {0}.", pakPath);
-        });
+        _utils.ReplaceFileInBinderInput(pathToFileMap, route, pakPath);
+        _logger.Info("File emulated at {0}.", pakPath);
     }
 }
