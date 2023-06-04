@@ -17,6 +17,7 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Support for injecting custom music into the game without extracting files.  
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges most .tbl files.  
+- Automatically merges most PAK (.bin) files.  
   
 ## Features (for Users)
 - Intro Skip.  
