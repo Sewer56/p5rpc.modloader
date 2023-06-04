@@ -3,91 +3,90 @@ using FileEmulationFramework.Lib.Utilities;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
 using Persona.Merger.Cache;
-using Reloaded.Mod.Interfaces;
-using System.Diagnostics;
 using static p5rpc.modloader.Merging.MergeUtils;
 
-namespace p5rpc.modloader.Merging
+namespace p5rpc.modloader.Merging;
+
+internal class PakMerger : IFileMerger
 {
-    internal class PakMerger : IFileMerger
+    private readonly MergeUtils _utils;
+    private readonly Logger _logger;
+    private readonly MergedFileCache _mergedFileCache;
+    private readonly ICriFsRedirectorApi _criFsApi;
+    private readonly IPakEmulator _pakEmulator;
+
+    internal PakMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
     {
-        private MergeUtils _utils;
-        private Logger _logger;
-        private MergedFileCache _mergedFileCache;
-        private ICriFsRedirectorApi _criFsApi;
-        private IPakEmulator _pakEmulator;
+        _utils = utils;
+        _logger = logger;
+        _mergedFileCache = mergedFileCache;
+        _criFsApi = criFsApi;
+        _pakEmulator = pakEmulator;
+    }
 
-        internal PakMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
+    public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
+    {
+        var input = _pakEmulator.GetEmulatorInput();
+        var pathToFileMap = context.RelativePathToFileMap;
+        var tasks = new List<ValueTask>();
+        
+        foreach (RouteGroupTuple group in input)
         {
-            _utils = utils;
-            _logger = logger;
-            _mergedFileCache = mergedFileCache;
-            _criFsApi = criFsApi;
-            _pakEmulator = pakEmulator;
-        }
-
-        public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
-        {
-            //Debugger.Launch();
-            var input = _pakEmulator.GetEmulatorInput();
-            var pathToFileMap = context.RelativePathToFileMap;
-            var tasks = new List<ValueTask>();
-            foreach (RouteGroupTuple group in input)
+            var route = group.Route;
+            string routeDir = Path.GetDirectoryName(route) ?? "";
+            if (routeDir.Contains('.'))
             {
-                var dir = group.Route;
-                string dirdir = Path.GetDirectoryName(dir) != null ? Path.GetDirectoryName(dir) : "";
-                if (dirdir.Contains('.'))
-                {
-                    dir = dir.Substring(0, dir.IndexOf(Path.DirectorySeparatorChar, dir.IndexOf(".")));
-                }
-                _logger.Info("Route: {0}", dir);
-                tasks.Add(CachePak(pathToFileMap, @"R2\" + dir, cpks, context.BindDirectory));
+                var extensionIndex = route.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+                var index = route.IndexOf(Path.DirectorySeparatorChar, extensionIndex);
+                route = route.Substring(0, index); // extract data after index.
             }
-            Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
+            
+            _logger.Info("Route: {0}", route);
+            tasks.Add(CachePak(pathToFileMap, @"R2\" + route, cpks, context.BindDirectory));
+        }
+        
+        Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
+    }
+
+    private async ValueTask CachePak(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, string bindDirectory)
+    {
+        string pathInCpk = RemoveR2Prefix(route);
+        string cpkFinderPath = string.IsNullOrEmpty(Path.GetDirectoryName(pathInCpk)) ? "\\" + pathInCpk : pathInCpk;
+        
+        if (!_utils.TryFindFileInAnyCpk(cpkFinderPath, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
+        {
+            _logger.Warning("Unable to find PAK in any CPK {0}", pathInCpk);
+            return;
         }
 
-        private async ValueTask CachePak(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, string bindDirectory)
+        // Else Merge our Data
+        // First we extract.
+        await Task.Run(async () =>
         {
+            await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
+            using var extractedFile = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
+            
+            // Then we store in cache.
+            string[] modids = { "p5rpc.modloader" };
+            var sources = new[] { new CachedFileSource() };
+            var cacheKey = MergedFileCache.CreateKey(route, modids);
 
-            string pathInCpk = RemoveR2Prefix(route);
-            string cpkFinderPath = Path.GetDirectoryName(pathInCpk) == "" || Path.GetDirectoryName(pathInCpk) == null ? "\\" + pathInCpk : pathInCpk;
-            if (!_utils.TryFindFileInAnyCpk(cpkFinderPath, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
+            var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray);
+
+            string pakPath = Path.Combine(bindDirectory, route);
+            string? dir = Path.GetDirectoryName(pakPath);
+            if (dir != null)
+                Directory.CreateDirectory(dir);
+            
+            if (!_pakEmulator.TryCreateFromFileSlice(Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath), 0, pathInCpk, pakPath))
             {
-                _logger.Warning("Unable to find PAK in any CPK {0}", pathInCpk);
+                _logger.Error($"Cannot Create File From Slice!");
                 return;
             }
 
-            // Else Merge our Data
-            // First we extract.
-            await Task.Run(async () =>
-            {
-                await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-                using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
-                using var extractedFile = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
-
-
-                // Then we store in cache.
-                string[] modids = new string[1] { "p5rpc.modloader" };
-                var sources = new CachedFileSource[1] { new CachedFileSource() };
-                var cacheKey = MergedFileCache.CreateKey(route, modids);
-
-                var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray);
-
-                string pakPath = Path.Combine(bindDirectory, route);
-                string dirs = Path.GetDirectoryName(pakPath);
-                if (dirs != null)
-                    Directory.CreateDirectory(Path.GetDirectoryName(pakPath));
-                if (!_pakEmulator.TryCreateFromFileSlice(Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath), 0, pathInCpk, pakPath))
-                {
-                    _logger.Error("Oops!");
-                    return;
-                }
-
-
-                _utils.ReplaceFileInBinderInput(pathToFileMap, route, pakPath);
-                _logger.Info("File emulated at {0}.", pakPath);
-
-            });
-        }
+            _utils.ReplaceFileInBinderInput(pathToFileMap, route, pakPath);
+            _logger.Info("File emulated at {0}.", pakPath);
+        });
     }
 }

@@ -5,10 +5,11 @@ using Persona.Merger.Patching.Tbl.FieldResolvers.Elsai;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Encounter;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Exist;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Item;
+using Persona.Merger.Patching.Tbl.FieldResolvers.Persona;
+using Persona.Merger.Patching.Tbl.FieldResolvers.Player;
+using Persona.Merger.Patching.Tbl.FieldResolvers.Skill;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Unit;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Visual;
-using Persona.Merger.Patching.Tbl.OffsetResolvers;
-using Persona.Merger.Patching.Tbl.OffsetResolvers.Player;
 using Persona.Merger.Utilities;
 using Reloaded.Memory.Streams;
 using Sewer56.StructuredDiff;
@@ -126,7 +127,7 @@ public struct TblPatcher
                     DiffSegment(patch, newSegments[5], originalSegments[5], new PersonaVisualVariablesBResolver());
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("Unsupported Table Type");
+                    throw new ArgumentOutOfRangeException($"Unsupported Table Type {TableType}");
             }
 
             return patch;

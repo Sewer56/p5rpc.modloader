@@ -124,7 +124,7 @@ public class MergeCacheTests
 
         // Assert
         Assert.True(dummyCache.KeyToFile.ContainsKey(dummyKey));
-        Assert.False(dummyCache.TryGet(dummyKey, new CachedFileSource[1] { new() }, out _));
+        Assert.False(dummyCache.TryGet(dummyKey, new CachedFileSource[] { new() }, out _));
         Assert.False(dummyCache.KeyToFile.ContainsKey(dummyKey));
     }
     

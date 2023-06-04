@@ -2,6 +2,7 @@ using Sewer56.StructuredDiff.Interfaces;
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.AICalc;
 
+// ReSharper disable once InconsistentNaming
 public struct AICalcSegment0Resolver : IEncoderFieldResolver
 {
     public bool Resolve(nuint offset, out int moveBy, out int length)

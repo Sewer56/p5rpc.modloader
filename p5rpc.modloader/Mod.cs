@@ -98,7 +98,7 @@ public partial class Mod : ModBase // <= Do not Remove.
         
         modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
         modLoader.GetController<IPakEmulator>().TryGetTarget(out _pakEmulator!);
-        _criFsApi!.AddBindCallback(OnBind);
+        _criFsApi.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)
         {

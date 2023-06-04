@@ -1,6 +1,6 @@
 using Sewer56.StructuredDiff.Interfaces;
 
-namespace Persona.Merger.Patching.Tbl.OffsetResolvers;
+namespace Persona.Merger.Patching.Tbl.FieldResolvers.Persona;
 
 public struct PersonaStatsResolver : IEncoderFieldResolver
 {

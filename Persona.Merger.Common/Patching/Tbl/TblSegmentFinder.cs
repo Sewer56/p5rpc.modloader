@@ -43,9 +43,10 @@ public unsafe struct TblSegmentFinder
         fixed(PointerLengthTuple* currentSegment = &segments[0]) 
             Populate(tblPointer, segments.Length, currentSegment);
     }
-    
+
     /// <summary/>
     /// <param name="tblPointer">Pointer to start of tbl.</param>
+    /// <param name="numSegments">Number of segments for this TBL section.</param>
     /// <param name="segments">The span of address and length tuples to fill.</param>
     public static void Populate(byte* tblPointer, int numSegments, PointerLengthTuple* segments)
     {

@@ -2,23 +2,21 @@ using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
 using Persona.Merger.Patching.Tbl.Name;
 using Persona.Merger.Tests;
-using Sewer56.StructuredDiff;
 
 namespace Persona.Merger.Benchmarks;
 
 [MemoryDiagnoser]
 public class DiffNameTbl
 {
-    
     private byte[] _origArr = null!;
     private byte[] _tgtArr = null!;
     private GCHandle _orig;
     private GCHandle _tgt;
 
     private ParsedNameTable _originalTable;
-    private ParsedNameTable _originalTable_ForApplyDiff;
+    private ParsedNameTable _originalTableForApplyDiff;
     private ParsedNameTable _targetTable;
-    private NameTableDiff[] _diffsToApply;
+    private NameTableDiff[] _diffsToApply = null!;
 
     [GlobalSetup]
     public void Setup()
@@ -30,7 +28,7 @@ public class DiffNameTbl
         _originalTable = ParsedNameTable.ParseTable(_origArr);
         _targetTable = ParsedNameTable.ParseTable(_tgtArr);
         _diffsToApply = NameTableMerger.CreateDiffs(_originalTable, new[] { _targetTable });
-        _originalTable_ForApplyDiff = _originalTable;
+        _originalTableForApplyDiff = _originalTable;
     }
 
     [GlobalCleanup]
@@ -49,5 +47,5 @@ public class DiffNameTbl
     
     // Due to nature of implementation, reusing instance is okay.
     [Benchmark]
-    public ParsedNameTable Apply_Diff() => NameTableMerger.Merge(_originalTable_ForApplyDiff, _diffsToApply);
+    public ParsedNameTable Apply_Diff() => NameTableMerger.Merge(_originalTableForApplyDiff, _diffsToApply);
 }

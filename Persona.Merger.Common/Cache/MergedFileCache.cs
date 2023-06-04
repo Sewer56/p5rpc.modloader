@@ -16,11 +16,11 @@ public class MergedFileCache
 {
     private const string JsonName = "MergedFileCache.json";
     private const string FilesFolderName = "Files";
-    
+
     /// <summary>
     /// Version of mod this cache is associated with.
     /// </summary>
-    public string Version { get; set; }
+    public string Version { get; set; } = null!;
     
     /// <summary>
     /// Time it takes for merged files to expire.
@@ -106,8 +106,8 @@ public class MergedFileCache
             RelativePath = GetUnusedRelativePath(out var fullPath),
             LastAccessed = DateTime.UtcNow
         };
-        
-        using var fileStream = new FileStream(fullPath, new FileStreamOptions()
+
+        await using var fileStream = new FileStream(fullPath, new FileStreamOptions()
         {
             Access = FileAccess.ReadWrite,
             Mode = FileMode.Create,
@@ -202,11 +202,11 @@ public class MergedFileCache
         {
             result = await Serialization.FromPathAsync(path, MergedFileCacheContext.Default.MergedFileCache, token);
             result.CacheFolder = folderPath;
-            if (result.Version != version)
-            {
-                result.Clear();
-                result.Version = version;
-            }
+            if (result.Version == version) 
+                return result;
+            
+            result.Clear();
+            result.Version = version;
         }
         else
         {

@@ -4,7 +4,6 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Memory.Pointers;
-using Reloaded.Memory.Sources;
 
 namespace p5rpc.modloader.Patches.P3P;
 
