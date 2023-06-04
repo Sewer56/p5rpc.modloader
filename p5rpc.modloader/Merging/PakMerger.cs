@@ -38,7 +38,7 @@ internal class PakMerger : IFileMerger
             {
                 var extensionIndex = route.IndexOf(".", StringComparison.OrdinalIgnoreCase);
                 var index = route.IndexOf(Path.DirectorySeparatorChar, extensionIndex);
-                route = route.Substring(0, index); // extract data after index.
+                route = route.Substring(0, index); // extract route CPK name
             }
             
             _logger.Info("Route: {0}", route);
@@ -72,7 +72,7 @@ internal class PakMerger : IFileMerger
             var sources = new[] { new CachedFileSource() };
             var cacheKey = MergedFileCache.CreateKey(route, modids);
 
-            var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray);
+            var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray.AsMemory(0, extractedFile.Count));
 
             string pakPath = Path.Combine(bindDirectory, route);
             string? dir = Path.GetDirectoryName(pakPath);
