@@ -51,6 +51,11 @@ jobs:
         fetch-depth: 0
         submodules: 'recursive'
         
+    - name: Setup .NET Core SDK (5.0)
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 5.0.x
+
     - name: Setup .NET Core SDK (7.0)
       uses: actions/setup-dotnet@v3
       with:
