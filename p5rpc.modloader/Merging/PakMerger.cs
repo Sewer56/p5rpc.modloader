@@ -29,7 +29,7 @@ internal class PakMerger : IFileMerger
         var input = _pakEmulator.GetEmulatorInput();
         var pathToFileMap = context.RelativePathToFileMap;
         var tasks = new List<ValueTask>();
-        List<string> doneRoutes = new();
+        HashSet<string> doneRoutes = new();
         
         foreach (RouteGroupTuple group in input)
         {
@@ -44,7 +44,7 @@ internal class PakMerger : IFileMerger
 
             if (doneRoutes.Contains(route))
                 continue;
-            doneRoutes.Add(route);
+            doneRoutes.Add(route); 
             _logger.Info("Route: {0}", route);
             tasks.Add(CachePak(pathToFileMap, @"R2\" + route, cpks, context.BindDirectory));
         }
