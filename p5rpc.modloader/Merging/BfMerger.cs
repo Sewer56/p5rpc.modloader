@@ -45,14 +45,14 @@ namespace p5rpc.modloader.Merging
                     continue;
 
                 // Loose bfs
-                var bfRoutes = pathToFileMap.Keys.Where(x => x.Contains(route));
+                var bfRoutes = pathToFileMap.Keys.Where(x => x.Contains(route, StringComparison.OrdinalIgnoreCase));
                 foreach (var bfRoute in bfRoutes)
                     tasks.Add(CacheBf(pathToFileMap, bfRoute, cpks, context.BindDirectory));
 
                 // bfs in pak files
                 foreach (var pakGroup in pakGroups)
                 {
-                    bfRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route));
+                    bfRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route, StringComparison.OrdinalIgnoreCase));
                     foreach (var bfRoute in bfRoutes)
                         tasks.Add(CachePakedBf(pathToFileMap, $@"{pakGroup.Files.Directory.FullPath}\{bfRoute}", $@"{pakGroup.Route}\{bfRoute}", cpks, context.BindDirectory));
 
