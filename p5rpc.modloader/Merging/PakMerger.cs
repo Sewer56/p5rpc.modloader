@@ -29,8 +29,9 @@ internal class PakMerger : IFileMerger
         var input = _pakEmulator.GetEmulatorInput();
         var pathToFileMap = context.RelativePathToFileMap;
         var tasks = new List<ValueTask>();
-        HashSet<string> doneRoutes = new();
-        
+        Dictionary<string, List<string>> doneRoutes = new();
+        CachedFileSource[] cpkSources = cpks.Select(cpk => new CachedFileSource { LastWrite = new FileInfo(cpk).LastWriteTime }).ToArray();
+
         foreach (RouteGroupTuple group in input)
         {
             var route = group.Route;
@@ -42,33 +43,47 @@ internal class PakMerger : IFileMerger
                 route = route.Substring(0, index); // extract route CPK name
             }
 
-            if (doneRoutes.Contains(route))
-                continue;
-            doneRoutes.Add(route); 
-            _logger.Info("Route: {0}", route);
-            tasks.Add(CachePak(pathToFileMap, @"R2\" + route, cpks, context.BindDirectory));
+            if (!doneRoutes.ContainsKey(route))
+                doneRoutes[route] = new List<string>(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
+            else
+                doneRoutes[route].AddRange(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
         }
-        
+
+        foreach (var routePair in doneRoutes)
+        {
+            _logger.Info("Route: {0}", routePair.Key);
+            tasks.Add(CachePak(pathToFileMap, @"R2\" + routePair.Key, cpks, cpkSources, routePair.Value, context.BindDirectory));
+        }
+
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
     }
 
-    private async ValueTask CachePak(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, string bindDirectory)
+    private async ValueTask CachePak(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, CachedFileSource[] cpkSources, List<string> innerFiles, string bindDirectory)
     {
         string pathInCpk = RemoveR2Prefix(route);
         string cpkFinderPath = string.IsNullOrEmpty(Path.GetDirectoryName(pathInCpk)) ? "\\" + pathInCpk : pathInCpk;
-        
+
         if (!_utils.TryFindFileInAnyCpk(cpkFinderPath, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
         {
             _logger.Warning("Unable to find PAK in any CPK {0}", pathInCpk);
             return;
         }
-        
-        // Then we store in cache.
-        string[] modids = { "p5rpc.modloader" };
-        var sources = new[] { new CachedFileSource() };
-        var cacheKey = MergedFileCache.CreateKey(route, modids);
 
-        if (!_mergedFileCache.TryGet(cacheKey, sources, out var cachedPath))
+        // Try and get cached merged file
+        string[] modIds = { "p5rpc.modloader" };
+        var mergedKey = MergedFileCache.CreateKey(route, modIds);
+        CachedFileSource[] innerSources = innerFiles.Select(file => new CachedFileSource { LastWrite = new FileInfo(file).LastWriteTime }).ToArray();
+        if(_mergedFileCache.TryGet(mergedKey, innerSources, out var mergedCachePath))
+        {
+            _logger.Info("Loading Merged PAK {0} from Cache ({1})", route, mergedCachePath);
+            _utils.ReplaceFileInBinderInput(pathToFileMap, route, mergedCachePath);
+            return;
+        }
+
+        // Try and get cached original file
+        var originalKey = MergedFileCache.CreateKey(pathInCpk, modIds);
+
+        if (!_mergedFileCache.TryGet(originalKey, cpkSources, out var cachedPath))
         {
             // Else Merge our Data
             // First we extract.
@@ -77,23 +92,25 @@ internal class PakMerger : IFileMerger
                 await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
                 using var extractedFile = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
-                var item = await _mergedFileCache.AddAsync(cacheKey, sources, extractedFile.RawArray.AsMemory(0, extractedFile.Count));
+                var item = await _mergedFileCache.AddAsync(originalKey, cpkSources, extractedFile.RawArray.AsMemory(0, extractedFile.Count));
                 cachedPath = Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath);
             });
         }
-            
+
         string pakPath = Path.Combine(bindDirectory, route);
         string? dir = Path.GetDirectoryName(pakPath);
         if (dir != null)
             Directory.CreateDirectory(dir);
-            
+
         if (!_pakEmulator.TryCreateFromFileSlice(cachedPath, 0, pathInCpk, pakPath))
         {
             _logger.Error($"Cannot Create File From Slice!");
             return;
         }
 
+        // Cache merged
+        var item = await _mergedFileCache.AddAsync(mergedKey, innerSources, File.ReadAllBytes(pakPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, pakPath);
-        _logger.Info("File emulated at {0}.", pakPath);
+        _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
     }
 }

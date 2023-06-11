@@ -35,44 +35,72 @@ namespace p5rpc.modloader.Merging
             var pathToFileMap = context.RelativePathToFileMap;
             var pakGroups = _pakEmulator.GetEmulatorInput();
             var tasks = new List<ValueTask>();
-            HashSet<string> doneRoutes = new();
+            Dictionary<string, List<string>> looseBfs = new();
+            Dictionary<string, (string bfPath, List<string> flowPaths)> pakedBfs = new();
+            CachedFileSource[] cpkSources = cpks.Select(cpk => new CachedFileSource { LastWrite = File.GetLastWriteTime(cpk) }).ToArray();
 
             foreach (RouteFileTuple group in input)
             {
                 var route = Path.ChangeExtension(group.Route, ".bf");
 
-                if (doneRoutes.Contains(route))
-                    continue;
-
                 // Loose bfs
                 var bfRoutes = pathToFileMap.Keys.Where(x => x.Contains(route, StringComparison.OrdinalIgnoreCase));
                 foreach (var bfRoute in bfRoutes)
-                    tasks.Add(CacheBf(pathToFileMap, bfRoute, cpks, context.BindDirectory));
+                {
+                    if (!looseBfs.ContainsKey(bfRoute))
+                        looseBfs[bfRoute] = new List<string> { group.File };
+                    else
+                        looseBfs[bfRoute].Add(group.File);
+                }
 
                 // bfs in pak files
                 foreach (var pakGroup in pakGroups)
                 {
-                    bfRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route, StringComparison.OrdinalIgnoreCase));
-                    foreach (var bfRoute in bfRoutes)
-                        tasks.Add(CachePakedBf(pathToFileMap, $@"{pakGroup.Files.Directory.FullPath}\{bfRoute}", $@"{pakGroup.Route}\{bfRoute}", cpks, context.BindDirectory));
+                    var looseBfRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route, StringComparison.OrdinalIgnoreCase));
+                    foreach (var bfRoute in looseBfRoutes)
+                    {
+                        var fullBfRoute = $@"{pakGroup.Route}\{bfRoute}";
+                        if (!pakedBfs.ContainsKey(fullBfRoute))
+                            pakedBfs[fullBfRoute] = ($@"{pakGroup.Files.Directory.FullPath}\{bfRoute}", new List<string> { group.File });
+                        else
+                            pakedBfs[fullBfRoute].flowPaths.Add(group.File);
+                    }
 
                 }
-
-                doneRoutes.Add(route);
                 _logger.Info("Route: {0}", route);
-
             }
+
+            foreach (var routePair in looseBfs)
+                tasks.Add(CacheBf(pathToFileMap, routePair.Key, cpks, routePair.Value, context.BindDirectory));
+
+            foreach (var routePair in pakedBfs)
+                tasks.Add(CachePakedBf(routePair.Value.flowPaths, routePair.Value.bfPath, routePair.Key, cpks, cpkSources));
 
             Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
             _logger.Info($"Finished merging bf files");
         }
 
-        private async ValueTask CachePakedBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string bfPath, string bfRoute, string[] cpks, string bindDirectory)
+        private async ValueTask CachePakedBf(List<string> flowPaths, string bfPath, string route, string[] cpks, CachedFileSource[] cpkSources)
         {
+            // Try and get cached merged bf
+            string[] modIds = { "p5rpc.modloader" };
+            var mergedKey = MergedFileCache.CreateKey(route, modIds);
+            CachedFileSource[] flowSources = flowPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
+            if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
+            {
+                _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
+                DateTime lastWrite = DateTime.MinValue;
+                foreach (var source in flowSources)
+                    if(source.LastWrite > lastWrite) lastWrite = source.LastWrite;
+                _bfEmulator.RegisterBf(mergedCachePath, bfPath);
+                File.SetLastWriteTime(bfPath, lastWrite);
+                return;
+            }
+
             // Get pak file
-            var extensionIndex = bfRoute.IndexOf(".", StringComparison.OrdinalIgnoreCase);
-            var index = bfRoute.IndexOf(Path.DirectorySeparatorChar, extensionIndex);
-            var pakPath = bfRoute.Substring(0, index);
+            var extensionIndex = route.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+            var index = route.IndexOf(Path.DirectorySeparatorChar, extensionIndex);
+            var pakPath = route.Substring(0, index);
 
             string cpkFinderPath = string.IsNullOrEmpty(Path.GetDirectoryName(pakPath)) ? "\\" + pakPath : pakPath;
 
@@ -83,13 +111,11 @@ namespace p5rpc.modloader.Merging
             }
 
             // Then we store in cache.
-            string[] modids = { "p5rpc.modloader" };
-            var sources = new[] { new CachedFileSource() };
-            var cacheKey = MergedFileCache.CreateKey(bfRoute, modids);
+            var originalKey = MergedFileCache.CreateKey($"OG/{route}", modIds);
 
-            var bfPathInPak = bfRoute.Substring(index + 1);
+            var bfPathInPak = route.Substring(index + 1);
 
-            if (!_mergedFileCache.TryGet(cacheKey, sources, out var cachedPath))
+            if (!_mergedFileCache.TryGet(originalKey, cpkSources, out var cachedPath))
             {
                 // Extract bf from pak
                 await Task.Run(async () =>
@@ -104,30 +130,42 @@ namespace p5rpc.modloader.Merging
                         return;
                     }
                     _logger.Info($"Extracted {bfPathInPak} from {pakPath}");
-                    var item = await _mergedFileCache.AddAsync(cacheKey, sources, (ReadOnlyMemory<byte>)bfFile);
+                    var item = await _mergedFileCache.AddAsync(originalKey, cpkSources, (ReadOnlyMemory<byte>)bfFile);
                     cachedPath = Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath);
                 });
             }
 
             if (cachedPath == null) return;
 
-            //string bfPath = Path.Combine(bindDirectory, bfRoute);
             string? dir = Path.GetDirectoryName(bfPath);
             if (dir != null)
                 Directory.CreateDirectory(dir);
 
-            if (!_bfEmulator.TryCreateFromBf(cachedPath, bfRoute, bfPath))
+            if (!_bfEmulator.TryCreateFromBf(cachedPath, route, bfPath))
             {
                 _logger.Error($"Cannot Create File From {bfPath}!");
                 return;
             }
 
-            //_utils.ReplaceFileInBinderInput(pathToFileMap, bfRoute, bfPath);
-            _logger.Info("File emulated at {0}.", bfPath);
+            // Cache merged
+            var item = await _mergedFileCache.AddAsync(mergedKey, flowSources, File.ReadAllBytes(bfPath));
+            _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
         }
 
-        private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, string bindDirectory)
+        private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)
         {
+            // Try and get cached merged bf
+            string bfPath = Path.Combine(bindDirectory, route);
+            string[] modIds = { "p5rpc.modloader" };
+            var mergedKey = MergedFileCache.CreateKey(route, modIds);
+            CachedFileSource[] flowSources = flowPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
+            if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
+            {
+                _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
+                _bfEmulator.RegisterBf(mergedCachePath, bfPath);
+                return;
+            }
+
             string pathInCpk = RemoveR2Prefix(route);
             string cpkFinderPath = string.IsNullOrEmpty(Path.GetDirectoryName(pathInCpk)) ? "\\" + pathInCpk : pathInCpk;
 
@@ -156,7 +194,6 @@ namespace p5rpc.modloader.Merging
                 });
             }
 
-            string bfPath = Path.Combine(bindDirectory, route);
             string? dir = Path.GetDirectoryName(bfPath);
             if (dir != null)
                 Directory.CreateDirectory(dir);
@@ -167,8 +204,16 @@ namespace p5rpc.modloader.Merging
                 return;
             }
 
+            // Cache merged
+            var item = await _mergedFileCache.AddAsync(mergedKey, flowSources, File.ReadAllBytes(bfPath));
             _utils.ReplaceFileInBinderInput(pathToFileMap, route, bfPath);
-            _logger.Info("File emulated at {0}.", bfPath);
+            _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
+
+            // Reset last write
+            DateTime lastWrite = DateTime.MinValue;
+            foreach (var source in flowSources)
+                if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
+            File.SetLastWriteTime(bfPath, lastWrite);
         }
     }
 }
