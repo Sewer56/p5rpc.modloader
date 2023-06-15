@@ -36,7 +36,7 @@ namespace p5rpc.modloader.Merging
             var pakGroups = _pakEmulator.GetEmulatorInput();
             var tasks = new List<ValueTask>();
             Dictionary<string, List<string>> looseBfs = new();
-            Dictionary<string, (string bfPath, List<string> flowPaths)> pakedBfs = new();
+            Dictionary<string, BfFlowTuple> pakedBfs = new();
             CachedFileSource[] cpkSources = cpks.Select(cpk => new CachedFileSource { LastWrite = File.GetLastWriteTime(cpk) }).ToArray();
 
             foreach (RouteFileTuple group in input)
@@ -61,9 +61,12 @@ namespace p5rpc.modloader.Merging
                     {
                         var fullBfRoute = $@"{pakGroup.Route}\{bfRoute}";
                         if (!pakedBfs.ContainsKey(fullBfRoute))
-                            pakedBfs[fullBfRoute] = ($@"{pakGroup.Files.Directory.FullPath}\{bfRoute}", new List<string> { group.File });
+                            pakedBfs[fullBfRoute] = new BfFlowTuple($@"{pakGroup.Files.Directory.FullPath}\{bfRoute}", new List<string> { group.File });
                         else
-                            pakedBfs[fullBfRoute].flowPaths.Add(group.File);
+                        {
+                            pakedBfs[fullBfRoute].FlowPaths.Add(group.File);
+                            pakedBfs[fullBfRoute].BfPath = $@"{pakGroup.Files.Directory.FullPath}\{bfRoute}"; // Ensure highest priority bf is used
+                        }
                     }
 
                 }
@@ -74,7 +77,7 @@ namespace p5rpc.modloader.Merging
                 tasks.Add(CacheBf(pathToFileMap, routePair.Key, cpks, routePair.Value, context.BindDirectory));
 
             foreach (var routePair in pakedBfs)
-                tasks.Add(CachePakedBf(routePair.Value.flowPaths, routePair.Value.bfPath, routePair.Key, cpks, cpkSources));
+                tasks.Add(CachePakedBf(routePair.Value.FlowPaths, routePair.Value.BfPath, routePair.Key, cpks, cpkSources));
 
             Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
             _logger.Info($"Finished merging bf files");
@@ -214,6 +217,18 @@ namespace p5rpc.modloader.Merging
             foreach (var source in flowSources)
                 if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
             File.SetLastWriteTime(bfPath, lastWrite);
+        }
+    }
+
+    internal class BfFlowTuple
+    {
+        internal string BfPath { get; set; }
+        internal List<string> FlowPaths { get; set; }
+
+        internal BfFlowTuple(string bfPath, List<string> flowPaths)
+        {
+            BfPath = bfPath;
+            FlowPaths = flowPaths;
         }
     }
 }
