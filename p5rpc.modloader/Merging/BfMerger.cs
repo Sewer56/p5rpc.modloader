@@ -7,6 +7,7 @@ using static p5rpc.modloader.Merging.MergeUtils;
 using BF.File.Emulator.Interfaces.Structures.IO;
 using PAK.Stream.Emulator.Interfaces;
 using System.Diagnostics;
+using System.IO;
 
 namespace p5rpc.modloader.Merging
 {
@@ -65,7 +66,7 @@ namespace p5rpc.modloader.Merging
                         else
                         {
                             pakedBfs[fullBfRoute].FlowPaths.Add(group.File);
-                            pakedBfs[fullBfRoute].BfPath = $@"{pakGroup.Files.Directory.FullPath}\{bfRoute}"; // Ensure highest priority bf is used
+                            pakedBfs[fullBfRoute].BfPaths.Add($@"{pakGroup.Files.Directory.FullPath}\{bfRoute}"); // Ensure highest priority bf is used
                         }
                     }
 
@@ -77,13 +78,13 @@ namespace p5rpc.modloader.Merging
                 tasks.Add(CacheBf(pathToFileMap, routePair.Key, cpks, routePair.Value, context.BindDirectory));
 
             foreach (var routePair in pakedBfs)
-                tasks.Add(CachePakedBf(routePair.Value.FlowPaths, routePair.Value.BfPath, routePair.Key, cpks, cpkSources));
+                tasks.Add(CachePakedBf(routePair.Value.FlowPaths, routePair.Value.BfPaths, routePair.Key, cpks, cpkSources));
 
             Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
             _logger.Info($"Finished merging bf files");
         }
 
-        private async ValueTask CachePakedBf(List<string> flowPaths, string bfPath, string route, string[] cpks, CachedFileSource[] cpkSources)
+        private async ValueTask CachePakedBf(List<string> flowPaths, List<string> bfPaths, string route, string[] cpks, CachedFileSource[] cpkSources)
         {
             // Try and get cached merged bf
             string[] modIds = { "p5rpc.modloader" };
@@ -94,9 +95,12 @@ namespace p5rpc.modloader.Merging
                 _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
                 DateTime lastWrite = DateTime.MinValue;
                 foreach (var source in flowSources)
-                    if(source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-                _bfEmulator.RegisterBf(mergedCachePath, bfPath);
-                File.SetLastWriteTime(bfPath, lastWrite);
+                    if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
+                foreach (var path in bfPaths)
+                {
+                    _bfEmulator.RegisterBf(mergedCachePath, path);
+                    File.SetLastWriteTime(path, lastWrite);
+                }
                 return;
             }
 
@@ -140,6 +144,7 @@ namespace p5rpc.modloader.Merging
 
             if (cachedPath == null) return;
 
+            var bfPath = bfPaths[bfPaths.Count-1];
             string? dir = Path.GetDirectoryName(bfPath);
             if (dir != null)
                 Directory.CreateDirectory(dir);
@@ -153,6 +158,10 @@ namespace p5rpc.modloader.Merging
             // Cache merged
             var item = await _mergedFileCache.AddAsync(mergedKey, flowSources, File.ReadAllBytes(bfPath));
             _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
+
+            // Register all the bfs to the one emulated one (only the highest priority should ever actually be used though)
+            for(int i = 0; i < bfPaths.Count-1; i++)
+                _bfEmulator.RegisterBf($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", bfPaths[i]);
         }
 
         private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)
@@ -222,12 +231,12 @@ namespace p5rpc.modloader.Merging
 
     internal class BfFlowTuple
     {
-        internal string BfPath { get; set; }
+        internal List<string> BfPaths { get; set; }
         internal List<string> FlowPaths { get; set; }
 
         internal BfFlowTuple(string bfPath, List<string> flowPaths)
         {
-            BfPath = bfPath;
+            BfPaths = new List<string> { bfPath };
             FlowPaths = flowPaths;
         }
     }
