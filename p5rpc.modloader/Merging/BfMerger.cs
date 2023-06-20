@@ -90,12 +90,14 @@ namespace p5rpc.modloader.Merging
             string[] modIds = { "p5rpc.modloader" };
             var mergedKey = MergedFileCache.CreateKey(route, modIds);
             CachedFileSource[] flowSources = flowPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
+
+            DateTime lastWrite = DateTime.MinValue;
+            foreach (var source in flowSources)
+                if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
+
             if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
             {
                 _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
-                DateTime lastWrite = DateTime.MinValue;
-                foreach (var source in flowSources)
-                    if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
                 foreach (var path in bfPaths)
                 {
                     _bfEmulator.RegisterBf(mergedCachePath, path);
@@ -144,7 +146,7 @@ namespace p5rpc.modloader.Merging
 
             if (cachedPath == null) return;
 
-            var bfPath = bfPaths[bfPaths.Count-1];
+            var bfPath = bfPaths[bfPaths.Count - 1];
             string? dir = Path.GetDirectoryName(bfPath);
             if (dir != null)
                 Directory.CreateDirectory(dir);
@@ -160,8 +162,12 @@ namespace p5rpc.modloader.Merging
             _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
 
             // Register all the bfs to the one emulated one (only the highest priority should ever actually be used though)
-            for(int i = 0; i < bfPaths.Count-1; i++)
+            for (int i = 0; i < bfPaths.Count - 1; i++)
                 _bfEmulator.RegisterBf($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", bfPaths[i]);
+
+            // Reset last write
+            foreach (var bf in bfPaths)
+                File.SetLastWriteTime(bf, lastWrite);
         }
 
         private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)
