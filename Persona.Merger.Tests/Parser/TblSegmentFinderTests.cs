@@ -1,4 +1,5 @@
 using Persona.Merger.Patching.Tbl;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
 using Persona.Merger.Utilities;
 
 namespace Persona.Merger.Tests.Parser;
@@ -8,12 +9,12 @@ public unsafe class TblSegmentFinderTests
     [Fact]
     public void FindsAllSegments_InSkill()
     {
-        var segmentCount = TblSegmentFinder.GetSegmentCount(TblType.Skill);
-        var tableData = File.ReadAllBytes(Assets.SkillBefore);
+        var segmentCount = P5RTblSegmentFinder.GetSegmentCount(TblType.Skill);
+        var tableData = File.ReadAllBytes(P5RAssets.SkillBefore);
         fixed (byte* tableDataPtr = &tableData[0])
         {
             Span<PointerLengthTuple> segments = stackalloc PointerLengthTuple[segmentCount];
-            TblSegmentFinder.Populate(tableDataPtr, ref segments);
+            P5RTblSegmentFinder.Populate(tableDataPtr, ref segments);
             
             // Assert
             Assert.Equal(8448, segments[0].Length);

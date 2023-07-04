@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using CriFs.V2.Hook.Interfaces;
 using p5rpc.modloader.Merging;
+using p5rpc.modloader.Merging.Tbl;
 using static p5rpc.modloader.Config;
 
 namespace p5rpc.modloader;
@@ -36,7 +37,7 @@ public partial class Mod
         var mergeUtils = new MergeUtils(_criFsApi);
         List<IFileMerger> fileMergers = new()
         {
-            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, Game),
+            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator, Game),
             new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator),
             new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator)
         };
