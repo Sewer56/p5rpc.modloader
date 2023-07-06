@@ -14,7 +14,7 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Automatically merges most .tbl files.  
 - Automatically merges most PAK (.bin) files.  
 
-## Features (for Users)
+# Features (for Users)
 - Intro Skip.  
 - Toggle Pause on Window Focus Loss.  
 
