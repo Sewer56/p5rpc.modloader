@@ -6,6 +6,10 @@ Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable
 
 For more information, [please visit the documentation](https://sewer56.dev/p5rpc.modloader/), it's cool.
 
+# Features (for Users)
+- Intro Skip.  
+- Toggle Pause on Window Focus Loss.  
+
 # Features (for Modders)
 
 - Support for replacing CPK file contents via other mods.  
@@ -13,10 +17,6 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges most .tbl files.  
 - Automatically merges most PAK (.bin) files.  
-
-# Features (for Users)
-- Intro Skip.  
-- Toggle Pause on Window Focus Loss.  
 
 # Special Thanks
 
