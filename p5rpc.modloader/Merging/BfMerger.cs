@@ -216,7 +216,7 @@ namespace p5rpc.modloader.Merging
             if (dir != null)
                 Directory.CreateDirectory(dir);
 
-            if (!_bfEmulator.TryCreateFromBf(cachedPath, pathInCpk, bfPath))
+            if (!_bfEmulator.TryCreateFromBf(cachedPath!, pathInCpk, bfPath))
             {
                 _logger.Error($"Cannot Create File From {bfPath}!");
                 return;
