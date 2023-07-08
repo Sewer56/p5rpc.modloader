@@ -2,7 +2,7 @@
   "ModId": "p5rpc.modloader",
   "ModName": "Persona Essentials",
   "ModAuthor": "Sewer56",
-  "ModVersion": "2.2.2",
+  "ModVersion": "2.3.0",
   "ModDescription": "Mod which provides base modding support as well as miscellaneous basic quality of life fixes. See readme for Special Thanks!",
   "ModDll": "p5rpc.modloader.dll",
   "ModIcon": "Preview.png",
@@ -62,6 +62,15 @@
             "AssetFileName": "Mod.zip"
           },
           "ReleaseMetadataName": "PAK.Stream.Emulator.ReleaseMetadata.json"
+        },
+        "reloaded.universal.fileemulationframework.bf": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "FileEmulationFramework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "BF.File.Emulator.ReleaseMetadata.json"
         },
         "reloaded.universal.fileemulationframework.awb": {
           "Config": {
