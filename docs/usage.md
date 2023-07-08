@@ -108,6 +108,40 @@ As per usage guide above.
 
 Replaces `battle/MSG.TBL` in `init_free.bin`.  
 
+## Editing BF Files
+
+!!! info
+
+    Essentials can be used to edit the procedures and messages in BF files such that multiple mods can edit the same file.
+
+[Uses FileRedirectionFramework under the hood, follow instructions here for more information.](https://sewer56.dev/FileEmulationFramework/emulators/bf.html)  
+Don't add dependency on BF emulator (it's not necessary), but do follow rest of guide.
+
+In addition to the `.flow` and/or `.msg` files you include in `FEmulator\BF` per the above guide you will also need to add dummy bf files where they would normally go in `FEmulator\PAK` or `P5REssentials\CPK`.
+
+### Example - Loose BF
+
+!!! info
+
+    To create a dummy bf file you can create a new empty text file and just rename it, changing the file extension.
+
+To edit the loose `e860_034a.bf` file in `event_data\script` you would first add a dummy bf file in `P5REssentials\CPK\data_e.cpk\event_data\script`
+
+![BFLooseExample1](./images/BFLooseExample1.png)
+
+Then you would put your `.flow` or `.msg` file with the same name in `FEmulator\BF`
+
+![BFLooseExample2](./images/BFLooseExample2.png)
+
+### Example - BF In Archivee
+To edit `f007.bf` in the archive `field\pack\fd007_003.arc` you would first add a dummy bf file in `FEmulator\PAK\field\pack\fd007_003.arc` (as per [the information above](#replacing-files-in-archives))
+
+![BFPakedExample1](./images/BFPakedExample1.png)
+
+Then you would put your `.flow` or `.msg` file with the same name in `FEmulator\BF`
+
+![BFPakedExample2](./images/BFPakedExample2.png)
+
 ## Releasing/Uploading your Mods
 
 Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  

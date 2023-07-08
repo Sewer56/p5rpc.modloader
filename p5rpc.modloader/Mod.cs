@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using BF.File.Emulator.Interfaces;
 using CriFs.V2.Hook.Interfaces;
 using CriFsV2Lib.Definitions;
 using FileEmulationFramework.Lib.Utilities;
@@ -45,6 +46,7 @@ public partial class Mod : ModBase // <= Do not Remove.
     private readonly Logger _logger;
     private ICriFsRedirectorApi _criFsApi = null!;
     private IPakEmulator _pakEmulator = null!;
+    private IBfEmulator _bfEmulator = null!;
     private MergedFileCache _mergedFileCache = null!;
     private Task _createMergedFileCacheTask = null!;
     
@@ -98,6 +100,7 @@ public partial class Mod : ModBase // <= Do not Remove.
         
         modLoader.GetController<ICriFsRedirectorApi>().TryGetTarget(out _criFsApi!);
         modLoader.GetController<IPakEmulator>().TryGetTarget(out _pakEmulator!);
+        modLoader.GetController<IBfEmulator>().TryGetTarget(out _bfEmulator!);
         _criFsApi.AddBindCallback(OnBind);
         
         if (Game == Game.P5R)

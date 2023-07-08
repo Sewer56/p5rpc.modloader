@@ -3,4 +3,4 @@
 	url = https://github.com/Sewer56/CriFs.V2.Hook.ReloadedII.git
 [submodule "Submodules/FileEmulationFramework"]
 	path = Submodules/FileEmulationFramework
-	url = https://github.com/LTSophia/FileEmulationFramework.git
+	url = https://github.com/Sewer56/FileEmulationFramework.git

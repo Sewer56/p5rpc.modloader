@@ -37,6 +37,7 @@ public partial class Mod
         List<IFileMerger> fileMergers = new()
         {
             new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, Game),
+            new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator),
             new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator)
         };
         

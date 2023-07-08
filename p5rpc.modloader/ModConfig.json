@@ -102,7 +102,8 @@
     "Reloaded.Memory.SigScan.ReloadedII",
     "CriFs.V2.Hook.Awb",
     "crifs.v2.hook",
-    "reloaded.universal.fileemulationframework.pak"
+    "reloaded.universal.fileemulationframework.pak",
+    "reloaded.universal.fileemulationframework.bf"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [
