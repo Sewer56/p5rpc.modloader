@@ -97,8 +97,9 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[1], originalSegments[1], new ActiveSkillDataResolver());
                     break;
                 case TblType.Model:
-                    DiffSegment(patch, newSegments[0], originalSegments[0], new ModelSegment0Resolver());
-                    DiffSegment(patch, newSegments[1], originalSegments[1], new ModelSegment1Resolver());
+                    DiffSegment(patch, newSegments[0], originalSegments[0], new PlayerVisualVariablesResolver());
+                    DiffSegment(patch, newSegments[1], originalSegments[1], new EnemyVisualVariablesResolver());
+                    DiffSegment(patch, newSegments[2], originalSegments[2], new PersonaVisualVariablesResolver());
                     break;
                 case TblType.Item:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new ItemInfoResolver());

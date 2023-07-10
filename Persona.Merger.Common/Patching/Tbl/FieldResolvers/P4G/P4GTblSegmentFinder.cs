@@ -56,7 +56,7 @@ public unsafe struct P4GTblSegmentFinder
             TblType.Skill => 2,
             TblType.Item => 3,
             TblType.Unit => 3,
-            TblType.Model => 2,
+            TblType.Model => 3,
             TblType.Effect => 1,
             TblType.Message => 5,
             _ => ThrowUnsupportedTblTypeException(type)
