@@ -4,23 +4,22 @@ using Persona.Merger.Utilities;
 using Reloaded.Memory.Streams;
 using Sewer56.StructuredDiff;
 using Sewer56.StructuredDiff.Interfaces;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Persona;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Skill;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Unit;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Model;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Encounter;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Effect;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.AICalc;
-using System.Buffers.Binary;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Item;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Message;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Persona;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Skill;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Unit;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Model;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Encounter;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Effect;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.AICalc;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Item;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Message;
 
-namespace Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
+namespace Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
 
 /// <summary>
 /// Utility class for patching P5R TBL files.
 /// </summary>
-public struct P4GTblPatcher
+public struct P3PTblPatcher
 {
     /// <summary>
     /// The table to patch.
@@ -32,7 +31,7 @@ public struct P4GTblPatcher
     /// </summary>
     public TblType TableType { get; set; }
 
-    public P4GTblPatcher(byte[] tblData, TblType tableType)
+    public P3PTblPatcher(byte[] tblData, TblType tableType)
     {
         TblData = tblData;
         TableType = tableType;
@@ -74,6 +73,16 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[3], originalSegments[3], new PartyLevelUpThresholdsResolver());
                     DiffSegment(patch, newSegments[4], originalSegments[4], new PersonaExistResolver());
                     DiffSegment(patch, newSegments[5], originalSegments[5], new PersonaFusionResolver());
+                    DiffSegment(patch, newSegments[6], originalSegments[6], new PersonaSegment6Resolver());
+                    DiffSegment(patch, newSegments[7], originalSegments[7], new PersonaSegment7Resolver());
+                    DiffSegment(patch, newSegments[8], originalSegments[8], new PersonaSegment8Resolver());
+                    DiffSegment(patch, newSegments[9], originalSegments[9], new PersonaSegment9Resolver());
+                    DiffSegment(patch, newSegments[10], originalSegments[10], new PersonaSegment10Resolver());
+                    DiffSegment(patch, newSegments[11], originalSegments[11], new PersonaSegment11Resolver());
+                    DiffSegment(patch, newSegments[12], originalSegments[12], new PersonaSegment12Resolver());
+                    DiffSegment(patch, newSegments[13], originalSegments[13], new PersonaSegment13Resolver());
+                    DiffSegment(patch, newSegments[14], originalSegments[14], new PersonaSegment14Resolver());
+                    DiffSegment(patch, newSegments[15], originalSegments[15], new PersonaSegment15Resolver());
                     break;
                 case TblType.AiCalc:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new AICalcSegment0Resolver());
@@ -85,6 +94,14 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[6], originalSegments[6], new AICalcSegment6Resolver());
                     DiffSegment(patch, newSegments[7], originalSegments[7], new AICalcSegment7Resolver());
                     DiffSegment(patch, newSegments[8], originalSegments[8], new AICalcSegment8Resolver());
+                    DiffSegment(patch, newSegments[9], originalSegments[9], new AICalcSegment9Resolver());
+                    DiffSegment(patch, newSegments[10], originalSegments[10], new AICalcSegment10Resolver());
+                    DiffSegment(patch, newSegments[11], originalSegments[11], new AICalcSegment11Resolver());
+                    DiffSegment(patch, newSegments[12], originalSegments[12], new AICalcSegment12Resolver());
+                    DiffSegment(patch, newSegments[13], originalSegments[13], new AICalcSegment13Resolver());
+                    DiffSegment(patch, newSegments[14], originalSegments[14], new AICalcSegment14Resolver());
+                    DiffSegment(patch, newSegments[15], originalSegments[15], new AICalcSegment15Resolver());
+
                     break;
                 case TblType.Encount:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new EncounterResolver());
@@ -95,6 +112,7 @@ public struct P4GTblPatcher
                 case TblType.Skill:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new ElementsResolver());
                     DiffSegment(patch, newSegments[1], originalSegments[1], new ActiveSkillDataResolver());
+                    DiffSegment(patch, newSegments[2], originalSegments[2], new SkillSegment2Resolver());
                     break;
                 case TblType.Model:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new PlayerVisualVariablesResolver());
@@ -102,9 +120,9 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[2], originalSegments[2], new PersonaVisualVariablesResolver());
                     break;
                 case TblType.Item:
-                    DiffSegment(patch, newSegments[0], originalSegments[0], new ItemInfoResolver());
-                    DiffSegment(patch, newSegments[1], originalSegments[1], new ItemSegment1Resolver());
-                    DiffSegment(patch, newSegments[2], originalSegments[2], new ItemNameResolver());
+                    DiffSegment(patch, newSegments[0], originalSegments[0], new ItemSegment0Resolver());
+                    DiffSegment(patch, newSegments[1], originalSegments[1], new ItemInfoResolver());
+                    DiffSegment(patch, newSegments[2], originalSegments[2], new ItemSegment2Resolver());
                     break;
                 case TblType.Unit:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new EnemyUnitStatsResolver());
@@ -189,7 +207,7 @@ public struct P4GTblPatcher
             if (type == TblType.Item)
             {
                 // itemtbl stores number of entries, not length
-                memoryStream.Write(segments[0].Length / 68); 
+                memoryStream.Write(segments[1].Length / 56); 
                 foreach(var segment in segments)
                     memoryStream.Write(segment.Span);
                 return result;

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
+namespace Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
 
 public unsafe struct P3PTblSegmentFinder
 {
@@ -50,14 +50,14 @@ public unsafe struct P3PTblSegmentFinder
     {
         return type switch
         {
-            TblType.Persona => 6,
-            TblType.AiCalc => 9,
+            TblType.AiCalc => 16,
+            TblType.Persona => 16,
             TblType.Encount => 1,
-            TblType.Skill => 2,
+            TblType.Effect => 1,
+            TblType.Skill => 3,
             TblType.Item => 3,
             TblType.Unit => 3,
             TblType.Model => 3,
-            TblType.Effect => 1,
             TblType.Message => 5,
             _ => ThrowUnsupportedTblTypeException(type)
         };

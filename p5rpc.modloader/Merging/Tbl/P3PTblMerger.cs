@@ -1,15 +1,14 @@
 ﻿using CriFs.V2.Hook.Interfaces;
 using FileEmulationFramework.Lib.Utilities;
 using Persona.Merger.Cache;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
 using Persona.Merger.Patching.Tbl;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
-using System.Diagnostics;
 
 namespace p5rpc.modloader.Merging.Tbl
 {
-    internal class P4GTblMerger : IFileMerger
+    internal class P3PTblMerger : IFileMerger
     {
         private readonly MergeUtils _utils;
         private readonly Logger _logger;
@@ -17,7 +16,7 @@ namespace p5rpc.modloader.Merging.Tbl
         private readonly ICriFsRedirectorApi _criFsApi;
         private readonly IPakEmulator _pakEmulator;
 
-        internal P4GTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
+        internal P3PTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
         {
             _utils = utils;
             _logger = logger;
@@ -109,7 +108,7 @@ namespace p5rpc.modloader.Merging.Tbl
 
         private static async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
         {
-            var patcher = new P4GTblPatcher(extractedTable, type);
+            var patcher = new P3PTblPatcher(extractedTable, type);
             var patches = new List<TblPatch>(candidates.Count);
             for (var x = 0; x < candidates.Count; x++)
                 patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));

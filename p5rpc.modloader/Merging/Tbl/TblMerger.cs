@@ -1,11 +1,6 @@
 ﻿using CriFs.V2.Hook.Interfaces;
-using CriFsV2Lib.Definitions.Utilities;
 using Persona.Merger.Cache;
-using Persona.Merger.Patching.Tbl;
-using static p5rpc.modloader.Merging.MergeUtils;
 using FileEmulationFramework.Lib.Utilities;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
 using PAK.Stream.Emulator.Interfaces;
 
 namespace p5rpc.modloader.Merging.Tbl;
@@ -23,6 +18,9 @@ internal class TblMerger : IFileMerger
                 break;
             case Game.P4G:
                 _tblMerger = new P4GTblMerger(utils, logger, mergedFileCache, criFsApi, pakEmulator);
+                break;
+            case Game.P3P:
+                _tblMerger = new P3PTblMerger(utils, logger, mergedFileCache, criFsApi, pakEmulator);
                 break;
             default:
                 logger.Warning($"{game} does not support tbl merging");
