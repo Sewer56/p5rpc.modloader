@@ -6,6 +6,7 @@ using Persona.Merger.Patching.Tbl;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
 using System.Diagnostics;
+using FileEmulationFramework.Lib;
 
 namespace p5rpc.modloader.Merging.Tbl
 {
@@ -49,13 +50,14 @@ namespace p5rpc.modloader.Merging.Tbl
         {
             var route = tblPath.Substring(0, tblPath.LastIndexOf('\\'));
             var tblName = Path.GetFileName(tblPath);
-            List<string> candidates = new();
-            foreach (var group in pakFiles.Where(x => x.Route.Equals(route, StringComparison.OrdinalIgnoreCase)))
+            List<string> candidates = FindInPaks(pakFiles, route, tblName);
+            if (type is TblType.Message)
+                candidates.AddRange(FindInPaks(pakFiles, @"init_free.bin\battle", "MSGTBL.bmd"));
+            else if(type is TblType.AiCalc)
             {
-                candidates.AddRange(group.Files.Files.Where(x => x.Equals(tblName, StringComparison.OrdinalIgnoreCase)).
-                    Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
+                candidates.AddRange(FindInPaks(pakFiles, @"init_free.bin\battle", "enemy.bf"));
+                candidates.AddRange(FindInPaks(pakFiles, @"init_free.bin\battle", "friend.bf"));
             }
-
             if (candidates.Count == 0) return;
 
             var extIndex = tblPath.IndexOf('.');
@@ -98,7 +100,19 @@ namespace p5rpc.modloader.Merging.Tbl
                 }
 
                 // Then we merge
-                byte[] patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
+                byte[] patched;
+                switch(type)
+                {
+                    case TblType.Message:
+                        patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                        break;
+                    case TblType.AiCalc:
+                        patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                        break;
+                    default:
+                        patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
+                        break;
+                }
 
                 // Then we store in cache.
                 var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
@@ -107,7 +121,7 @@ namespace p5rpc.modloader.Merging.Tbl
             });
         }
 
-        private static async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
+        private async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
         {
             var patcher = new P4GTblPatcher(extractedTable, type);
             var patches = new List<TblPatch>(candidates.Count);
@@ -116,6 +130,60 @@ namespace p5rpc.modloader.Merging.Tbl
 
             var patched = patcher.Apply(patches, type);
             return patched;
+        }
+
+        private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+        {
+            var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
+            byte[][] bmds = new byte[5][];
+            var bmdFile = candidates.FirstOrDefault(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase));
+            if(bmdFile != null)
+            {
+                _logger.Info($"Embedding {bmdFile} into MSG.TBL");
+                bmds[4] = File.ReadAllBytes(bmdFile);
+                candidates.Remove(bmdFile);
+            }
+
+            var patcher = new P4GTblPatcher(extractedTable, TblType.Message);
+            var patches = new List<TblPatch>(candidates.Count);
+            for (var x = 0; x < candidates.Count; x++)
+                patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+
+            var patched = patcher.Apply(patches, TblType.Message, bmds);
+            return patched;
+        }
+
+        private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+        {
+            var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
+            byte[][] bfs = new byte[11][];
+            var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
+            foreach(var bfFile in bfFiles.ToList())
+            {
+                _logger.Info($"Embedding {bfFile} into AICALC.TBL");
+                var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 9 : 10;
+                bfs[index] = File.ReadAllBytes(bfFile);
+                candidates.Remove(bfFile);
+            }
+
+            var patcher = new P4GTblPatcher(extractedTable, TblType.AiCalc);
+            var patches = new List<TblPatch>(candidates.Count);
+            for (var x = 0; x < candidates.Count; x++)
+                patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+
+            var patched = patcher.Apply(patches, TblType.AiCalc, bfs);
+            return patched;
+        }
+
+        private List<string> FindInPaks(RouteGroupTuple[] pakFiles, string route, string fileName)
+        {
+            List<string> candidates = new();
+            foreach (var group in pakFiles.Where(x => x.Route.Equals(route, StringComparison.OrdinalIgnoreCase)))
+            {
+                candidates.AddRange(group.Files.Files.Where(x => x.Equals(fileName, StringComparison.OrdinalIgnoreCase)).
+                    Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
+            }
+            return candidates;
         }
     }
 }

@@ -33,4 +33,20 @@ public class P4GTblPatcherTests
         File.WriteAllBytes("merged.tbl", patched);
         Assert.Equal(merged, patched);
     }
+
+    [Fact]
+    public void PatchTbl_AiCalcBf()
+    {
+        var original = File.ReadAllBytes(P4GAssets.AiCalcBefore);
+        var after = File.ReadAllBytes(P4GAssets.AiCalcAfter);
+        var patcher = new P4GTblPatcher(original, TblType.AiCalc);
+
+        byte[][] bfs = new byte[11][];
+        bfs[9] = File.ReadAllBytes(P4GAssets.AiCalcFriendBf);
+        bfs[10] = File.ReadAllBytes(P4GAssets.AiCalcEnemyBf);
+        
+        var patched = patcher.Apply(new List<TblPatch>(), TblType.AiCalc, bfs);
+        Assert.Equal(after, patched);
+    }
+
 }

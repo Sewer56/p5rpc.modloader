@@ -48,7 +48,7 @@ public struct P4GTblPatcher
         fixed (byte* tblData = &TblData[0])
         {
             var patch = new TblPatch();
-            var segmentCount = P3PTblSegmentFinder.GetSegmentCount(TableType);
+            var segmentCount = P4GTblSegmentFinder.GetSegmentCount(TableType);
             var originalSegments = stackalloc PointerLengthTuple[segmentCount]; // using pointer to elide bounds checks below
             var newSegments = stackalloc PointerLengthTuple[segmentCount];
 
@@ -60,8 +60,8 @@ public struct P4GTblPatcher
             }
             else
             {
-                P3PTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
-                P3PTblSegmentFinder.Populate(otherTblData, segmentCount, newSegments);
+                P4GTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
+                P4GTblSegmentFinder.Populate(otherTblData, segmentCount, newSegments);
             }
 
             // Skill specific code
@@ -116,8 +116,6 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[1], originalSegments[1], new SkillNameResolver());
                     DiffSegment(patch, newSegments[2], originalSegments[2], new EnemyNameResolver());
                     DiffSegment(patch, newSegments[3], originalSegments[3], new PersonaNameResolver());
-                    // TODO: Make this bmd actually merge (use BMD emulator when it exists, cannot release like this!!!)
-                    DiffSegment(patch, newSegments[4], originalSegments[4], new EmbeddedBmdResolver());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unsupported Table Type {TableType}");
@@ -131,17 +129,17 @@ public struct P4GTblPatcher
     /// Applies a list of table patches.
     /// </summary>
     /// <param name="patches">List of patches to apply.</param>
-    public unsafe byte[] Apply(List<TblPatch> patches, TblType type)
+    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[][]? overrides = null)
     {
         fixed (byte* tblData = &TblData[0])
         {
             // Get original segments.
-            var segmentCount = P3PTblSegmentFinder.GetSegmentCount(TableType);
+            var segmentCount = P4GTblSegmentFinder.GetSegmentCount(TableType);
             var originalSegments = stackalloc PointerLengthTuple[segmentCount]; // using pointer to elide bounds checks below
             if (type == TblType.Item)
                 ItemTbl.Populate(tblData, segmentCount, originalSegments);
             else
-                P3PTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
+                P4GTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
 
             // Convert original segments into Memory<T>.
             var segments = new Memory<byte>[segmentCount];
@@ -154,6 +152,12 @@ public struct P4GTblPatcher
 
             // Apply Patch(es).
             for (int x = 0; x < segmentCount; x++)
+            {
+                if (overrides != null && overrides.Length > x && overrides[x] != null)
+                {
+                    segments[x] = new Memory<byte>(overrides[x]);
+                    continue;
+                }
                 foreach (var patch in CollectionsMarshal.AsSpan(patches))
                 {
                     var destination = GC.AllocateUninitializedArray<byte>(Math.Max(patch.SegmentDiffs[x].LengthAfterPatch, segments[x].Length));
@@ -167,6 +171,7 @@ public struct P4GTblPatcher
                         segments[x] = new Memory<byte>(destination, 0, (int)numWritten);
                     }
                 }
+            }
 
             // Produce new file.
             var fileSize = 0;
@@ -180,17 +185,17 @@ public struct P4GTblPatcher
             else
             {
                 foreach (var segment in segments)
-                    fileSize += Mathematics.RoundUp(4 + segment.Length, P3PTblSegmentFinder.TblSegmentAlignment);
+                    fileSize += Mathematics.RoundUp(4 + segment.Length, P4GTblSegmentFinder.TblSegmentAlignment);
             }
 
             var result = GC.AllocateUninitializedArray<byte>(fileSize);
             using var memoryStream = new ExtendedMemoryStream(result, true);
-            
+
             if (type == TblType.Item)
             {
                 // itemtbl stores number of entries, not length
-                memoryStream.Write(segments[0].Length / 68); 
-                foreach(var segment in segments)
+                memoryStream.Write(segments[0].Length / 68);
+                foreach (var segment in segments)
                     memoryStream.Write(segment.Span);
                 return result;
             }
@@ -199,7 +204,7 @@ public struct P4GTblPatcher
             {
                 memoryStream.Write(segment.Length);
                 memoryStream.Write(segment.Span);
-                memoryStream.AddPadding(P3PTblSegmentFinder.TblSegmentAlignment);
+                memoryStream.AddPadding(P4GTblSegmentFinder.TblSegmentAlignment);
             }
 
             return result;
@@ -221,6 +226,31 @@ public struct P4GTblPatcher
                 Data = destination.AsMemory(0, (int)numEncoded),
                 LengthAfterPatch = newSegment.Length
             });
+        }
+    }
+
+    public static unsafe Memory<byte>? GetSegment(byte[] data, TblType type, int segment)
+    {
+        var segmentCount = P4GTblSegmentFinder.GetSegmentCount(type);
+        if (segment >= segmentCount)
+            return null;
+
+        fixed (byte* tblData = &data[0])
+        {
+            var segments = stackalloc PointerLengthTuple[segmentCount]; // using pointer to elide bounds checks below
+
+            if (type is TblType.Item)
+            {
+                // itemtbl.bin is special
+                ItemTbl.Populate(tblData, segmentCount, segments);
+            }
+            else
+            {
+                P4GTblSegmentFinder.Populate(tblData, segmentCount, segments);
+            }
+
+            var offset = segments[segment].Pointer - tblData;
+            return new Memory<byte>(data, (int)offset, segments[segment].Length);
         }
     }
 }

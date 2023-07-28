@@ -8,6 +8,7 @@ using BF.File.Emulator.Interfaces.Structures.IO;
 using PAK.Stream.Emulator.Interfaces;
 using System.Diagnostics;
 using System.IO;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 
 namespace p5rpc.modloader.Merging
 {
@@ -132,7 +133,7 @@ namespace p5rpc.modloader.Merging
                     await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                     using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
                     using var extractedFile = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
-                    var bfFile = _pakEmulator.GetEntry(new MemoryStream(extractedFile.RawArray), bfPathInPak);
+                    var bfFile = ExtractBf(extractedFile.RawArray, bfPathInPak);
                     if (bfFile == null)
                     {
                         _logger.Error($"Failed to extract {bfPathInPak} from {pakPath}");
@@ -168,6 +169,23 @@ namespace p5rpc.modloader.Merging
             // Reset last write
             foreach (var bf in bfPaths)
                 File.SetLastWriteTime(bf, lastWrite);
+        }
+
+        private ReadOnlyMemory<byte>? ExtractBf(byte[] pak, string bfPathInPak)
+        {
+            int index = 0;
+            if (bfPathInPak.Equals(@"battle\friend.bf", StringComparison.OrdinalIgnoreCase))
+                index = 9;
+            else if (bfPathInPak.Equals(@"battle\enemy.bf", StringComparison.OrdinalIgnoreCase))
+                index = 10;
+
+            if(index == 0)    
+                return _pakEmulator.GetEntry(new MemoryStream(pak), bfPathInPak);
+
+            var aiCalc = _pakEmulator.GetEntry(new MemoryStream(pak), "battle/AICALC.TBL");
+            if (aiCalc == null)
+                return null;
+            return P4GTblPatcher.GetSegment(aiCalc.Value.ToArray(), TblType.AiCalc, index);
         }
 
         private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)

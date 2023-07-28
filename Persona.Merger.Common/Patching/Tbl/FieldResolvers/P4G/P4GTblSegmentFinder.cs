@@ -1,15 +1,10 @@
 ﻿using FileEmulationFramework.Lib.Utilities;
 using Persona.Merger.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 
-public unsafe struct P3PTblSegmentFinder
+public unsafe struct P4GTblSegmentFinder
 {
     /// <summary>
     /// Alignment of individual tbl segments.
@@ -51,7 +46,7 @@ public unsafe struct P3PTblSegmentFinder
         return type switch
         {
             TblType.Persona => 6,
-            TblType.AiCalc => 9,
+            TblType.AiCalc => 11,
             TblType.Encount => 1,
             TblType.Skill => 2,
             TblType.Item => 3,
