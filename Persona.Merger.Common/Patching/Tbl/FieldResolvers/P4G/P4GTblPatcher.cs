@@ -160,6 +160,7 @@ public struct P4GTblPatcher
                 }
                 foreach (var patch in CollectionsMarshal.AsSpan(patches))
                 {
+                    if (patch.SegmentDiffs.Count <= x) continue;
                     var destination = GC.AllocateUninitializedArray<byte>(Math.Max(patch.SegmentDiffs[x].LengthAfterPatch, segments[x].Length));
                     var patchDiff = patch.SegmentDiffs[x].Data;
 
