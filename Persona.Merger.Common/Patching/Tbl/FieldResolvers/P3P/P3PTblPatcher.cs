@@ -101,7 +101,6 @@ public struct P3PTblPatcher
                     DiffSegment(patch, newSegments[13], originalSegments[13], new AICalcSegment13Resolver());
                     DiffSegment(patch, newSegments[14], originalSegments[14], new AICalcSegment14Resolver());
                     DiffSegment(patch, newSegments[15], originalSegments[15], new AICalcSegment15Resolver());
-
                     break;
                 case TblType.Encount:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new EncounterResolver());
@@ -134,8 +133,6 @@ public struct P3PTblPatcher
                     DiffSegment(patch, newSegments[1], originalSegments[1], new SkillNameResolver());
                     DiffSegment(patch, newSegments[2], originalSegments[2], new EnemyNameResolver());
                     DiffSegment(patch, newSegments[3], originalSegments[3], new PersonaNameResolver());
-                    // TODO: Make this bmd actually merge (use BMD emulator when it exists, cannot release like this!!!)
-                    DiffSegment(patch, newSegments[4], originalSegments[4], new EmbeddedBmdResolver());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unsupported Table Type {TableType}");
@@ -149,7 +146,7 @@ public struct P3PTblPatcher
     /// Applies a list of table patches.
     /// </summary>
     /// <param name="patches">List of patches to apply.</param>
-    public unsafe byte[] Apply(List<TblPatch> patches, TblType type)
+    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[][]? overrides = null)
     {
         fixed (byte* tblData = &TblData[0])
         {
@@ -172,6 +169,13 @@ public struct P3PTblPatcher
 
             // Apply Patch(es).
             for (int x = 0; x < segmentCount; x++)
+            {
+                if (overrides != null && overrides.Length > x && overrides[x] != null)
+                {
+                    segments[x] = new Memory<byte>(overrides[x]);
+                    continue;
+                }
+
                 foreach (var patch in CollectionsMarshal.AsSpan(patches))
                 {
                     var destination = GC.AllocateUninitializedArray<byte>(Math.Max(patch.SegmentDiffs[x].LengthAfterPatch, segments[x].Length));
@@ -185,6 +189,7 @@ public struct P3PTblPatcher
                         segments[x] = new Memory<byte>(destination, 0, (int)numWritten);
                     }
                 }
+            }
 
             // Produce new file.
             var fileSize = 0;
@@ -241,6 +246,32 @@ public struct P3PTblPatcher
             });
         }
     }
+
+    public static unsafe Memory<byte>? GetSegment(byte[] data, TblType type, int segment)
+    {
+        var segmentCount = P3PTblSegmentFinder.GetSegmentCount(type);
+        if (segment >= segmentCount)
+            return null;
+
+        fixed (byte* tblData = &data[0])
+        {
+            var segments = stackalloc PointerLengthTuple[segmentCount]; // using pointer to elide bounds checks below
+
+            if (type is TblType.Item)
+            {
+                // itemtbl.bin is special
+                ItemTbl.Populate(tblData, segmentCount, segments);
+            }
+            else
+            {
+                P3PTblSegmentFinder.Populate(tblData, segmentCount, segments);
+            }
+
+            var offset = segments[segment].Pointer - tblData;
+            return new Memory<byte>(data, (int)offset, segments[segment].Length);
+        }
+    }
+
 }
 
 /// <summary>

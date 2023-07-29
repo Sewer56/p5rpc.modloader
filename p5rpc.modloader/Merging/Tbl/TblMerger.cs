@@ -2,6 +2,7 @@
 using Persona.Merger.Cache;
 using FileEmulationFramework.Lib.Utilities;
 using PAK.Stream.Emulator.Interfaces;
+using PAK.Stream.Emulator.Interfaces.Structures.IO;
 
 namespace p5rpc.modloader.Merging.Tbl;
 
@@ -32,4 +33,16 @@ internal class TblMerger : IFileMerger
     {
         _tblMerger?.Merge(cpks, context);
     }
+
+    internal static List<string> FindInPaks(RouteGroupTuple[] pakFiles, string route, string fileName)
+    {
+        List<string> candidates = new();
+        foreach (var group in pakFiles.Where(x => x.Route.Equals(route, StringComparison.OrdinalIgnoreCase)))
+        {
+            candidates.AddRange(group.Files.Files.Where(x => x.Equals(fileName, StringComparison.OrdinalIgnoreCase)).
+                Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
+        }
+        return candidates;
+    }
+
 }

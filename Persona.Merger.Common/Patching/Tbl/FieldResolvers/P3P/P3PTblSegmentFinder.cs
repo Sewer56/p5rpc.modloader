@@ -50,7 +50,7 @@ public unsafe struct P3PTblSegmentFinder
     {
         return type switch
         {
-            TblType.AiCalc => 16,
+            TblType.AiCalc => 18,
             TblType.Persona => 16,
             TblType.Encount => 1,
             TblType.Effect => 1,

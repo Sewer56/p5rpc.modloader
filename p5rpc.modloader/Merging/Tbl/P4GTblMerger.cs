@@ -5,8 +5,7 @@ using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 using Persona.Merger.Patching.Tbl;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
-using System.Diagnostics;
-using FileEmulationFramework.Lib;
+using static p5rpc.modloader.Merging.Tbl.TblMerger;
 
 namespace p5rpc.modloader.Merging.Tbl
 {
@@ -173,17 +172,6 @@ namespace p5rpc.modloader.Merging.Tbl
 
             var patched = patcher.Apply(patches, TblType.AiCalc, bfs);
             return patched;
-        }
-
-        private List<string> FindInPaks(RouteGroupTuple[] pakFiles, string route, string fileName)
-        {
-            List<string> candidates = new();
-            foreach (var group in pakFiles.Where(x => x.Route.Equals(route, StringComparison.OrdinalIgnoreCase)))
-            {
-                candidates.AddRange(group.Files.Files.Where(x => x.Equals(fileName, StringComparison.OrdinalIgnoreCase)).
-                    Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
-            }
-            return candidates;
         }
     }
 }

@@ -1,14 +1,12 @@
 ﻿using CriFs.V2.Hook.Interfaces;
 using FileEmulationFramework.Lib.Utilities;
-using PAK.Stream.Emulator.Interfaces.Structures.IO;
 using Persona.Merger.Cache;
 using BF.File.Emulator.Interfaces;
 using static p5rpc.modloader.Merging.MergeUtils;
 using BF.File.Emulator.Interfaces.Structures.IO;
 using PAK.Stream.Emulator.Interfaces;
-using System.Diagnostics;
-using System.IO;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
 
 namespace p5rpc.modloader.Merging
 {
@@ -20,8 +18,9 @@ namespace p5rpc.modloader.Merging
         private readonly ICriFsRedirectorApi _criFsApi;
         private readonly IBfEmulator _bfEmulator;
         private readonly IPakEmulator _pakEmulator;
+        private readonly Game _game;
 
-        internal BfMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IBfEmulator bfEmulator, IPakEmulator pakEmulator)
+        internal BfMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IBfEmulator bfEmulator, IPakEmulator pakEmulator, Game game)
         {
             _utils = utils;
             _logger = logger;
@@ -29,6 +28,7 @@ namespace p5rpc.modloader.Merging
             _criFsApi = criFsApi;
             _bfEmulator = bfEmulator;
             _pakEmulator = pakEmulator;
+            _game = game;
         }
 
         public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -175,9 +175,9 @@ namespace p5rpc.modloader.Merging
         {
             int index = 0;
             if (bfPathInPak.Equals(@"battle\friend.bf", StringComparison.OrdinalIgnoreCase))
-                index = 9;
+                index = _game == Game.P4G ? 9 : 16;
             else if (bfPathInPak.Equals(@"battle\enemy.bf", StringComparison.OrdinalIgnoreCase))
-                index = 10;
+                index = _game == Game.P4G ? 10 : 17;
 
             if(index == 0)    
                 return _pakEmulator.GetEntry(new MemoryStream(pak), bfPathInPak);
@@ -185,7 +185,11 @@ namespace p5rpc.modloader.Merging
             var aiCalc = _pakEmulator.GetEntry(new MemoryStream(pak), "battle/AICALC.TBL");
             if (aiCalc == null)
                 return null;
-            return P4GTblPatcher.GetSegment(aiCalc.Value.ToArray(), TblType.AiCalc, index);
+
+            if(_game == Game.P4G)
+                return P4GTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P4G.TblType.AiCalc, index);
+            else
+                return P3PTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P3P.TblType.AiCalc, index);
         }
 
         private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)

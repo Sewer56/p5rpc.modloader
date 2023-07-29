@@ -15,4 +15,19 @@ public class P3PTblPatcherTests
         File.WriteAllBytes("patched.bin", patched);
         Assert.Equal(after, patched);
     }
+
+    [Fact]
+    public void PatchTbl_AiCalcBf()
+    {
+        var original = File.ReadAllBytes(P3PAssets.AiCalcBefore);
+        var after = File.ReadAllBytes(P3PAssets.AiCalcAfter);
+        var patcher = new P3PTblPatcher(original, TblType.AiCalc);
+
+        byte[][] bfs = new byte[18][];
+        bfs[16] = File.ReadAllBytes(P3PAssets.AiCalcFriendBf);
+        bfs[17] = File.ReadAllBytes(P3PAssets.AiCalcEnemyBf);
+
+        var patched = patcher.Apply(new List<TblPatch>(), TblType.AiCalc, bfs);
+        Assert.Equal(after, patched);
+    }
 }
