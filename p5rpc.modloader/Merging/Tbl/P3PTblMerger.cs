@@ -104,10 +104,10 @@ namespace p5rpc.modloader.Merging.Tbl
                 switch (type)
                 {
                     case TblType.Message:
-                        patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                        patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
                         break;
                     case TblType.AiCalc:
-                        patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                        patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
                         break;
                     default:
                         patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
@@ -132,15 +132,14 @@ namespace p5rpc.modloader.Merging.Tbl
             return patched;
         }
 
-        private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+        private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
         {
-            var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
             byte[][] bmds = new byte[5][];
             var bmdFile = candidates.FirstOrDefault(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase));
             if (bmdFile != null)
             {
                 _logger.Info($"Embedding {bmdFile} into MSG.TBL");
-                bmds[4] = File.ReadAllBytes(bmdFile);
+                bmds[4] = await File.ReadAllBytesAsync(bmdFile);
                 candidates.Remove(bmdFile);
             }
 
@@ -153,16 +152,15 @@ namespace p5rpc.modloader.Merging.Tbl
             return patched;
         }
 
-        private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+        private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
         {
-            var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
             byte[][] bfs = new byte[18][];
             var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
             foreach (var bfFile in bfFiles.ToList())
             {
                 _logger.Info($"Embedding {bfFile} into AICALC.TBL");
                 var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 16 : 17;
-                bfs[index] = File.ReadAllBytes(bfFile);
+                bfs[index] = await File.ReadAllBytesAsync(bfFile);
                 candidates.Remove(bfFile);
             }
 

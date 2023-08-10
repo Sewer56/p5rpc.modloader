@@ -139,7 +139,7 @@ namespace p5rpc.modloader.Merging.Tbl
             if(bmdFile != null)
             {
                 _logger.Info($"Embedding {bmdFile} into MSG.TBL");
-                bmds[4] = File.ReadAllBytes(bmdFile);
+                bmds[4] = await File.ReadAllBytesAsync(bmdFile);
                 candidates.Remove(bmdFile);
             }
 
@@ -161,7 +161,7 @@ namespace p5rpc.modloader.Merging.Tbl
             {
                 _logger.Info($"Embedding {bfFile} into AICALC.TBL");
                 var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 9 : 10;
-                bfs[index] = File.ReadAllBytes(bfFile);
+                bfs[index] = await File.ReadAllBytesAsync(bfFile);
                 candidates.Remove(bfFile);
             }
 
