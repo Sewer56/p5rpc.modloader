@@ -186,10 +186,9 @@ namespace p5rpc.modloader.Merging
             if (aiCalc == null)
                 return null;
 
-            if(_game == Game.P4G)
-                return P4GTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P4G.TblType.AiCalc, index);
-            else
-                return P3PTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P3P.TblType.AiCalc, index);
+            return _game == Game.P4G ? 
+                P4GTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P4G.TblType.AiCalc, index) : 
+                P3PTblPatcher.GetSegment(aiCalc.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P3P.TblType.AiCalc, index);
         }
 
         private async ValueTask CacheBf(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> flowPaths, string bindDirectory)

@@ -13,6 +13,7 @@ using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Effect;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.AICalc;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Item;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Message;
+using static Persona.Merger.Patching.Tbl.FieldResolvers.TblPatcherCommon;
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 
@@ -143,13 +144,7 @@ public struct P4GTblPatcher
                 P4GTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
 
             // Convert original segments into Memory<T>.
-            var segments = new Memory<byte>[segmentCount];
-            for (int x = 0; x < segmentCount; x++)
-            {
-                ref var originalSegment = ref originalSegments[x];
-                var offset = originalSegment.Pointer - tblData;
-                segments[x] = new Memory<byte>(TblData, (int)offset, originalSegment.Length);
-            }
+            var segments = ConvertSegmentsToMemory(segmentCount, originalSegments, tblData, TblData);
 
             // Apply Patch(es).
             for (int x = 0; x < segmentCount; x++)
@@ -159,19 +154,13 @@ public struct P4GTblPatcher
                     segments[x] = new Memory<byte>(overrides[x]);
                     continue;
                 }
+                
                 foreach (var patch in CollectionsMarshal.AsSpan(patches))
                 {
-                    if (patch.SegmentDiffs.Count <= x) continue;
-                    var destination = GC.AllocateUninitializedArray<byte>(Math.Max(patch.SegmentDiffs[x].LengthAfterPatch, segments[x].Length));
-                    var patchDiff = patch.SegmentDiffs[x].Data;
-
-                    fixed (byte* destinationPtr = &destination[0])
-                    fixed (byte* currentSegmentPtr = segments[x].Span)
-                    fixed (byte* patchPtr = patchDiff.Span)
-                    {
-                        S56DiffDecoder.Decode(currentSegmentPtr, patchPtr, destinationPtr, (nuint)patch.SegmentDiffs[x].Data.Length, out var numWritten);
-                        segments[x] = new Memory<byte>(destination, 0, (int)numWritten);
-                    }
+                    if (patch.SegmentDiffs.Count <= x) 
+                        continue;
+                    
+                    ApplyPatch(patches, x, segments);
                 }
             }
 
@@ -203,31 +192,9 @@ public struct P4GTblPatcher
             }
 
             foreach (var segment in segments)
-            {
-                memoryStream.Write(segment.Length);
-                memoryStream.Write(segment.Span);
-                memoryStream.AddPadding(P4GTblSegmentFinder.TblSegmentAlignment);
-            }
+                WriteSegment(memoryStream, segment, P4GTblSegmentFinder.TblSegmentAlignment);
 
             return result;
-        }
-    }
-
-    /// <summary>
-    /// Creates a diff for an individual segment and adds it to the patch.
-    /// </summary>
-    private unsafe void DiffSegment<T>(TblPatch patch, PointerLengthTuple newSegment, PointerLengthTuple originalSegment, T resolver) where T : IEncoderFieldResolver
-    {
-        var destination = GC.AllocateUninitializedArray<byte>((int)S56DiffEncoder.CalculateMaxDestinationLength(newSegment.Length));
-        fixed (byte* destinationPtr = destination)
-        {
-            var numEncoded = S56DiffEncoder.Encode(originalSegment.Pointer, newSegment.Pointer,
-                destinationPtr, (nuint)originalSegment.Length, (nuint)newSegment.Length, resolver);
-            patch.SegmentDiffs.Add(new TblPatch.SegmentDiff()
-            {
-                Data = destination.AsMemory(0, (int)numEncoded),
-                LengthAfterPatch = newSegment.Length
-            });
         }
     }
 

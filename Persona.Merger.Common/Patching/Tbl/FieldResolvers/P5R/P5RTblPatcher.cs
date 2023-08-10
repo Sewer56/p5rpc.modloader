@@ -14,6 +14,7 @@ using Persona.Merger.Utilities;
 using Reloaded.Memory.Streams;
 using Sewer56.StructuredDiff;
 using Sewer56.StructuredDiff.Interfaces;
+using static Persona.Merger.Patching.Tbl.FieldResolvers.TblPatcherCommon;
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
 
@@ -148,29 +149,11 @@ public struct P5RTblPatcher
             P5RTblSegmentFinder.Populate(tblData, segmentCount, originalSegments);
 
             // Convert original segments into Memory<T>.
-            var segments = new Memory<byte>[segmentCount];
-            for (int x = 0; x < segmentCount; x++)
-            {
-                ref var originalSegment = ref originalSegments[x];
-                var offset = originalSegment.Pointer - tblData;
-                segments[x] = new Memory<byte>(TblData, (int)offset, originalSegment.Length);
-            }
+            var segments = ConvertSegmentsToMemory(segmentCount, originalSegments, tblData, TblData);
 
             // Apply Patch(es).
             for (int x = 0; x < segmentCount; x++)
-                foreach (var patch in CollectionsMarshal.AsSpan(patches))
-                {
-                    var destination = GC.AllocateUninitializedArray<byte>(Math.Max(patch.SegmentDiffs[x].LengthAfterPatch, segments[x].Length));
-                    var patchDiff = patch.SegmentDiffs[x].Data;
-
-                    fixed (byte* destinationPtr = &destination[0])
-                    fixed (byte* currentSegmentPtr = segments[x].Span)
-                    fixed (byte* patchPtr = patchDiff.Span)
-                    {
-                        S56DiffDecoder.Decode(currentSegmentPtr, patchPtr, destinationPtr, (nuint)patch.SegmentDiffs[x].Data.Length, out var numWritten);
-                        segments[x] = new Memory<byte>(destination, 0, (int)numWritten);
-                    }
-                }
+                ApplyPatch(patches, x, segments);
 
             // Produce new file.
             var fileSize = 0;
@@ -187,24 +170,6 @@ public struct P5RTblPatcher
             }
 
             return result;
-        }
-    }
-
-    /// <summary>
-    /// Creates a diff for an individual segment and adds it to the patch.
-    /// </summary>
-    private unsafe void DiffSegment<T>(TblPatch patch, PointerLengthTuple newSegment, PointerLengthTuple originalSegment, T resolver) where T : IEncoderFieldResolver
-    {
-        var destination = GC.AllocateUninitializedArray<byte>((int)S56DiffEncoder.CalculateMaxDestinationLength(newSegment.Length));
-        fixed (byte* destinationPtr = destination)
-        {
-            var numEncoded = S56DiffEncoder.Encode(originalSegment.Pointer, newSegment.Pointer,
-                destinationPtr, (nuint)originalSegment.Length, (nuint)newSegment.Length, resolver);
-            patch.SegmentDiffs.Add(new TblPatch.SegmentDiff()
-            {
-                Data = destination.AsMemory(0, (int)numEncoded),
-                LengthAfterPatch = newSegment.Length
-            });
         }
     }
 }
