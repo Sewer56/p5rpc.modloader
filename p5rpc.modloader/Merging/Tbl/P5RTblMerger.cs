@@ -2,21 +2,22 @@
 using CriFsV2Lib.Definitions.Utilities;
 using FileEmulationFramework.Lib.Utilities;
 using Persona.Merger.Cache;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
 using Persona.Merger.Patching.Tbl;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
 using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging.Tbl;
 
 internal class P5RTblMerger : IFileMerger
 {
-    private readonly MergeUtils _utils;
+    private readonly ICriFsRedirectorApi _criFsApi;
     private readonly Logger _logger;
     private readonly MergedFileCache _mergedFileCache;
-    private readonly ICriFsRedirectorApi _criFsApi;
+    private readonly MergeUtils _utils;
 
-    internal P5RTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi)
+    internal P5RTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
+        ICriFsRedirectorApi criFsApi)
     {
         _utils = utils;
         _logger = logger;
@@ -46,13 +47,14 @@ internal class P5RTblMerger : IFileMerger
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
     }
 
-    private async ValueTask PatchTbl(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string tblPath, TblType type, string[] cpks)
+    private async ValueTask PatchTbl(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap,
+        string tblPath, TblType type, string[] cpks)
     {
         if (!pathToFileMap.TryGetValue(tblPath, out var candidates))
             return;
 
         var pathInCpk = RemoveR2Prefix(tblPath);
-        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
+        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out var fileIndex))
         {
             _logger.Warning("Unable to find TBL in any CPK {0}", pathInCpk);
             return;
@@ -72,7 +74,8 @@ internal class P5RTblMerger : IFileMerger
         await Task.Run(async () =>
         {
             _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
-            await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            await using var cpkStream =
+                new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
             using var extractedTable = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
 
@@ -85,23 +88,26 @@ internal class P5RTblMerger : IFileMerger
 
             // Then we store in cache.
             var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
-            _utils.ReplaceFileInBinderInput(pathToFileMap, tblPath, Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
+            _utils.ReplaceFileInBinderInput(pathToFileMap, tblPath,
+                Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
             _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
         });
     }
 
-    private async Task<byte[]> PatchNameTable(ArrayRental extractedTable, List<ICriFsRedirectorApi.BindFileInfo> candidates)
+    private async Task<byte[]> PatchNameTable(ArrayRental extractedTable,
+        List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
         var table = ParsedNameTable.ParseTable(extractedTable.RawArray);
         var otherTables = new ParsedNameTable[candidates.Count];
-        for (int x = 0; x < otherTables.Length; x++)
+        for (var x = 0; x < otherTables.Length; x++)
             otherTables[x] = ParsedNameTable.ParseTable(await File.ReadAllBytesAsync(candidates[x].FullPath));
 
         var diff = NameTableMerger.CreateDiffs(table, otherTables);
         return NameTableMerger.Merge(table, diff).ToArray();
     }
 
-    private static async Task<byte[]> PatchTable(TblType type, ArrayRental extractedTable, List<ICriFsRedirectorApi.BindFileInfo> candidates)
+    private static async Task<byte[]> PatchTable(TblType type, ArrayRental extractedTable,
+        List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
         var patcher = new P5RTblPatcher(extractedTable.Span.ToArray(), type);
         var patches = new List<TblPatch>(candidates.Count);

@@ -1,23 +1,24 @@
 ﻿using CriFs.V2.Hook.Interfaces;
 using FileEmulationFramework.Lib.Utilities;
-using Persona.Merger.Cache;
-using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
-using Persona.Merger.Patching.Tbl;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
+using Persona.Merger.Cache;
+using Persona.Merger.Patching.Tbl;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
 using static p5rpc.modloader.Merging.Tbl.TblMerger;
 
 namespace p5rpc.modloader.Merging.Tbl;
 
 internal class P3PTblMerger : IFileMerger
 {
-    private readonly MergeUtils _utils;
+    private readonly ICriFsRedirectorApi _criFsApi;
     private readonly Logger _logger;
     private readonly MergedFileCache _mergedFileCache;
-    private readonly ICriFsRedirectorApi _criFsApi;
     private readonly IPakEmulator _pakEmulator;
+    private readonly MergeUtils _utils;
 
-    internal P3PTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
+    internal P3PTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
+        ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
     {
         _utils = utils;
         _logger = logger;
@@ -39,7 +40,7 @@ internal class P3PTblMerger : IFileMerger
             PatchTbl(pakFiles, @"init_free.bin\battle\PERSONA.TBL", TblType.Persona, cpks),
             PatchTbl(pakFiles, @"init_free.bin\battle\SKILL.TBL", TblType.Skill, cpks),
             PatchTbl(pakFiles, @"init_free.bin\battle\UNIT.TBL", TblType.Unit, cpks),
-            PatchTbl(pakFiles, @"init_free.bin\init\itemtbl.bin", TblType.Item, cpks),
+            PatchTbl(pakFiles, @"init_free.bin\init\itemtbl.bin", TblType.Item, cpks)
         };
 
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
@@ -49,9 +50,11 @@ internal class P3PTblMerger : IFileMerger
     {
         var route = tblPath.Substring(0, tblPath.LastIndexOf('\\'));
         var tblName = Path.GetFileName(tblPath);
-        List<string> candidates = FindInPaks(pakFiles, route, tblName);
+        var candidates = FindInPaks(pakFiles, route, tblName);
         if (type is TblType.Message)
+        {
             candidates.AddRange(FindInPaks(pakFiles, @"init_free.bin\battle", "MSGTBL.bmd"));
+        }
         else if (type is TblType.AiCalc)
         {
             candidates.AddRange(FindInPaks(pakFiles, @"init_free.bin\battle", "enemy.bf"));
@@ -65,7 +68,7 @@ internal class P3PTblMerger : IFileMerger
         var pathInCpk = '\\' + tblPath.Substring(0, dirIndex);
         var pathInPak = tblPath.Substring(dirIndex + 1);
 
-        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out int fileIndex))
+        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out var fileIndex))
         {
             _logger.Warning("Unable to find TBL in any CPK {0}", tblPath);
             return;
@@ -88,12 +91,13 @@ internal class P3PTblMerger : IFileMerger
         await Task.Run(async () =>
         {
             _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
-            await using var cpkStream = new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            await using var cpkStream =
+                new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
             using var extractedPak = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
 
             var extractedTbl = _pakEmulator.GetEntry(new MemoryStream(extractedPak.RawArray), pathInPak);
-            if(extractedTbl == null)
+            if (extractedTbl == null)
             {
                 _logger.Error($"Unable to extract {pathInPak} from {pathInCpk}");
                 return;
@@ -134,7 +138,7 @@ internal class P3PTblMerger : IFileMerger
 
     private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
-        byte[][] bmds = new byte[5][];
+        var bmds = new byte[5][];
         var bmdFile = candidates.FirstOrDefault(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase));
         if (bmdFile != null)
         {
@@ -154,8 +158,10 @@ internal class P3PTblMerger : IFileMerger
 
     private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
     {
-        byte[][] bfs = new byte[18][];
-        var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
+        var bfs = new byte[18][];
+        var bfFiles = candidates.Where(x =>
+            x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) ||
+            x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
         foreach (var bfFile in bfFiles)
         {
             _logger.Info($"Embedding {bfFile} into AICALC.TBL");
