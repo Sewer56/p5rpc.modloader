@@ -146,7 +146,9 @@ public struct P3PTblPatcher
     /// Applies a list of table patches.
     /// </summary>
     /// <param name="patches">List of patches to apply.</param>
-    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[][]? overrides = null)
+    /// <param name="type">Type of the TBL file.</param>
+    /// <param name="overrides">Overrides for entire sections within the file.</param>
+    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[]?[]? overrides = null)
     {
         fixed (byte* tblData = &TblData[0])
         {

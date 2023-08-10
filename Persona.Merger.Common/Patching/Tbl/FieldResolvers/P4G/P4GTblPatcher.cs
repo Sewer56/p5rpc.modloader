@@ -11,7 +11,6 @@ using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Model;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Encounter;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Effect;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.AICalc;
-using System.Buffers.Binary;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Item;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Message;
 
@@ -129,7 +128,9 @@ public struct P4GTblPatcher
     /// Applies a list of table patches.
     /// </summary>
     /// <param name="patches">List of patches to apply.</param>
-    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[][]? overrides = null)
+    /// <param name="type">Type of the TBL file.</param>
+    /// <param name="overrides">Overrides for entire sections within the file.</param>
+    public unsafe byte[] Apply(List<TblPatch> patches, TblType type, byte[]?[]? overrides = null)
     {
         fixed (byte* tblData = &TblData[0])
         {
