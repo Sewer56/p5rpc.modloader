@@ -159,9 +159,10 @@ internal class P4GTblMerger : IFileMerger
     private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
     {
         var bfs = new byte[11][];
+        // ToArray so we can remove items from the collection in the foreach
         var bfFiles = candidates.Where(x =>
             x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) ||
-            x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
+            x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase)).ToArray();
         foreach (var bfFile in bfFiles)
         {
             _logger.Info($"Embedding {bfFile} into AICALC.TBL");
