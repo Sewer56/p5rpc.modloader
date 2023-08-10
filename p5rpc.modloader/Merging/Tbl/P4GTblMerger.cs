@@ -103,10 +103,10 @@ internal class P4GTblMerger : IFileMerger
             switch(type)
             {
                 case TblType.Message:
-                    patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                    patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
                     break;
                 case TblType.AiCalc:
-                    patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates, pakFiles);
+                    patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
                     break;
                 default:
                     patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
@@ -131,9 +131,8 @@ internal class P4GTblMerger : IFileMerger
         return patched;
     }
 
-    private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+    private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
-        var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
         byte[][] bmds = new byte[5][];
         var bmdFile = candidates.FirstOrDefault(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase));
         if(bmdFile != null)
@@ -152,9 +151,8 @@ internal class P4GTblMerger : IFileMerger
         return patched;
     }
 
-    private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates, RouteGroupTuple[] pakFiles)
+    private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
     {
-        var groups = pakFiles.Where(x => x.Route.Equals("init_free.bin/battle"));
         byte[][] bfs = new byte[11][];
         var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
         foreach(var bfFile in bfFiles.ToList())
