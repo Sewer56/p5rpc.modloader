@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
-using Persona.Merger.Patching.Tbl.Name;
+using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
 using Persona.Merger.Tests;
 
 namespace Persona.Merger.Benchmarks;
@@ -21,8 +21,8 @@ public class DiffNameTbl
     [GlobalSetup]
     public void Setup()
     {
-        _origArr = File.ReadAllBytes(Assets.NameBefore);
-        _tgtArr  = File.ReadAllBytes(Assets.NameAfter);
+        _origArr = File.ReadAllBytes(P5RAssets.NameBefore);
+        _tgtArr  = File.ReadAllBytes(P5RAssets.NameAfter);
         _orig    = GCHandle.Alloc(_origArr, GCHandleType.Pinned);
         _tgt     = GCHandle.Alloc(_tgtArr, GCHandleType.Pinned);
         _originalTable = ParsedNameTable.ParseTable(_origArr);

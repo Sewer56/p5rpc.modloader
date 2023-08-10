@@ -142,6 +142,20 @@ Then you would put your `.flow` or `.msg` file with the same name in `FEmulator\
 
 ![BFPakedExample2](./images/BFPakedExample2.png)
 
+## Editing TBL Files
+Any TBL files in P3P, P4G and P5R (such as `SKILL.TBL` and `UNIT.TBL`) will automatically be merged if multiple mods edit them. This includes `itemtbl.bin` in P4G and P3P.
+
+### Embedded BF in AICALC.TBL
+In P3P and P4G `AICALC.TBL` contains two embedded bf files, `friend.bf` and `enemy.bf`. 
+To edit these place a dummy bf with the same name in `FEmulator\PAK\init_free.bin\battle` and then hook anything you want to the same way you would any other bf file.
+
+### Embedded BMD in MSG.TBL
+In P3P and P4G `MSG.TBL` contains an embedded bmd file. To edit this place your edited version in `FEmulator\PAK\init_free.bin\battle\msgtbl.bmd`.
+
+!!! info
+
+    When BMD emulator releases you will be able to use it to edit only individual messages in this (and other) bmds, for now though you will have to replace the entire file.
+
 ## Releasing/Uploading your Mods
 
 Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  

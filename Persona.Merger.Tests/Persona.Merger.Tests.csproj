@@ -41,7 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Assets\Skill\Extend" />
+      <Folder Include="Assets\P5R\Skill\Extend" />
     </ItemGroup>
 
 </Project>
