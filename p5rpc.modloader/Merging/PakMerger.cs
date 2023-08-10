@@ -102,7 +102,7 @@ internal class PakMerger : IFileMerger
         if (dir != null)
             Directory.CreateDirectory(dir);
 
-        if (!_pakEmulator.TryCreateFromFileSlice(cachedPath, 0, pathInCpk, pakPath))
+        if (!_pakEmulator.TryCreateFromFileSlice(cachedPath!, 0, pathInCpk, pakPath))
         {
             _logger.Error($"Cannot Create File From Slice!");
             return;

@@ -7,7 +7,11 @@
 
 # About
 
-Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (64 bit) and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
+Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable (PC), Persona 4 Golden (PC, 64 bit) and Persona 5 Royal (PC) based on [Reloaded II](https://reloaded-project.github.io/Reloaded-II/).  
+
+# Features (for Users)
+- Intro Skip.  
+- Toggle Pause on Window Focus Loss.  
 
 # Features (for Modders)
 
@@ -17,10 +21,6 @@ Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.
 - Automatically merges .bf files
-
-## Features (for Users)
-- Intro Skip.  
-- Toggle Pause on Window Focus Loss.  
 
 # Building
 

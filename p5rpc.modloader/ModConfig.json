@@ -10,6 +10,9 @@
   "ModR2RManagedDll64": "x64/p5rpc.modloader.dll",
   "ModNativeDll32": "",
   "ModNativeDll64": "",
+  "Tags": [],
+  "CanUnload": null,
+  "HasExports": null,
   "IsLibrary": false,
   "ReleaseMetadataFileName": "p5rpc.modloader.ReleaseMetadata.json",
   "PluginData": {
@@ -17,8 +20,8 @@
       "IdToConfigMap": {
         "reloaded.sharedlib.hooks": {
           "Config": {
-            "UserName": "Reloaded.SharedLib.Hooks.ReloadedII",
-            "RepositoryName": "Sewer56",
+            "UserName": "Sewer56",
+            "RepositoryName": "Reloaded.SharedLib.Hooks.ReloadedII",
             "UseReleaseTag": true,
             "AssetFileName": "reloaded.sharedlib.hooks.zip"
           },
@@ -50,6 +53,24 @@
             "AssetFileName": "Mod.zip"
           },
           "ReleaseMetadataName": "CriFs.V2.Hook.ReleaseMetadata.json"
+        },
+        "reloaded.universal.fileemulationframework.pak": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "FileEmulationFramework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "PAK.Stream.Emulator.ReleaseMetadata.json"
+        },
+        "reloaded.universal.fileemulationframework.bf": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "FileEmulationFramework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "BF.File.Emulator.ReleaseMetadata.json"
         },
         "reloaded.universal.fileemulationframework.awb": {
           "Config": {
