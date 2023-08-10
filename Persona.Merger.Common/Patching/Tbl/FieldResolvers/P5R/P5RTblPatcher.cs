@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using FileEmulationFramework.Lib.Utilities;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.AICalc;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Elsai;
@@ -12,8 +11,6 @@ using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Unit;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Visual;
 using Persona.Merger.Utilities;
 using Reloaded.Memory.Streams;
-using Sewer56.StructuredDiff;
-using Sewer56.StructuredDiff.Interfaces;
 using static Persona.Merger.Patching.Tbl.FieldResolvers.TblPatcherCommon;
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.P5R;

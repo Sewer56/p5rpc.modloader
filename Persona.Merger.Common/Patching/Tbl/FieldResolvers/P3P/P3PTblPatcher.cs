@@ -2,8 +2,6 @@ using System.Runtime.InteropServices;
 using FileEmulationFramework.Lib.Utilities;
 using Persona.Merger.Utilities;
 using Reloaded.Memory.Streams;
-using Sewer56.StructuredDiff;
-using Sewer56.StructuredDiff.Interfaces;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Persona;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Skill;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P.Unit;
