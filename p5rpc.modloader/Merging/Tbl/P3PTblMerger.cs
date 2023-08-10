@@ -156,7 +156,7 @@ internal class P3PTblMerger : IFileMerger
     {
         byte[][] bfs = new byte[18][];
         var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
-        foreach (var bfFile in bfFiles.ToList())
+        foreach (var bfFile in bfFiles)
         {
             _logger.Info($"Embedding {bfFile} into AICALC.TBL");
             var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 16 : 17;

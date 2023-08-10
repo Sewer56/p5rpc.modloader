@@ -155,7 +155,7 @@ internal class P4GTblMerger : IFileMerger
     {
         byte[][] bfs = new byte[11][];
         var bfFiles = candidates.Where(x => x.EndsWith("enemy.bf", StringComparison.OrdinalIgnoreCase) || x.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase));
-        foreach(var bfFile in bfFiles.ToList())
+        foreach(var bfFile in bfFiles)
         {
             _logger.Info($"Embedding {bfFile} into AICALC.TBL");
             var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 9 : 10;
