@@ -166,7 +166,7 @@ internal class P3PTblMerger : IFileMerger
         {
             _logger.Info($"Embedding {bfFile} into AICALC.TBL");
             var index = bfFile.EndsWith("friend.bf", StringComparison.OrdinalIgnoreCase) ? 16 : 17;
-            bfs[index] = await File.ReadAllBytesAsync(bfFile);
+            bfs[index] = File.ReadAllBytes(bfFile);
             candidates.Remove(bfFile);
         }
 
