@@ -8,12 +8,16 @@ public class P4GTblPatcherTests
     [Fact]
     public void PatchTbl_Item()
     {
-        var original = File.ReadAllBytes(P4GAssets.ItemBefore);
-        var after = File.ReadAllBytes(P4GAssets.ItemAfter);
+        var original = File.ReadAllBytes(P4GAssets.ItemOriginal);
+        var edited1 = File.ReadAllBytes(P4GAssets.ItemEdited1);
+        var edited2 = File.ReadAllBytes(P4GAssets.ItemEdited2);
+        var merged = File.ReadAllBytes(P4GAssets.ItemMerged);
         var patcher = new P4GTblPatcher(original, TblType.Item);
-        var patch = patcher.GeneratePatch(after);
-        var patched = patcher.Apply(new List<TblPatch>() { patch }, TblType.Item);
-        Assert.Equal(after, patched);
+        var patch1 = patcher.GeneratePatch(edited1);
+        var patch2 = patcher.GeneratePatch(edited2);
+        var patched = patcher.Apply(new List<TblPatch>() { patch1, patch2 }, TblType.Item);
+        File.WriteAllBytes("patched.bin", patched);
+        Assert.Equal(merged, patched);
     }
 
     [Fact]
