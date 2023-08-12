@@ -11,15 +11,25 @@ public struct ItemInfoResolver : IEncoderFieldResolver
         // There's one u32
         if(offsetInStruct is 16)
         {
-            moveBy = (int)(offsetInStruct - 4);
+            var fourByteAligned = offsetInStruct / 4 * 4;
+            moveBy = (int)(offsetInStruct - fourByteAligned);
             length = 4;
             return true;
         }
 
-        // I know it's not aligned, it's weird...
-        if (offsetInStruct >= 5)
+        // This one short isn't aligned, ik it's weird
+        if(offsetInStruct is 5 or 6)
         {
-            moveBy = (int)(offsetInStruct - 2);
+            moveBy = (int)(offsetInStruct - 5);
+            length = 2;
+            return true;
+        }
+
+        // Everything after that weird one is aligned shorts
+        if (offsetInStruct >= 8)
+        {
+            var twoByteAligned = offsetInStruct / 2 * 2;
+            moveBy = (int)(offsetInStruct - twoByteAligned);
             length = 2;
             return true;
         }
