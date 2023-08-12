@@ -20,8 +20,9 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Support for replacing CPK file contents via other mods.  
 - Support for injecting custom music into the game without extracting files.  
 - Support for hot reload (update files on the fly without game reboot).  
-- Automatically merges most .tbl files.  
-- Automatically merges most PAK (.bin) files.  
+- Automatically merges .tbl files.  
+- Automatically merges PAK (.bin) files.  
+- Automatically merges .bf files  
 
 # Building
 
