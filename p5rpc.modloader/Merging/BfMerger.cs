@@ -202,6 +202,7 @@ internal class BfMerger : IFileMerger
         {
             _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
             _bfEmulator.RegisterBf(mergedCachePath, bfPath);
+            _utils.ReplaceFileInBinderInput(pathToFileMap, route, mergedCachePath);
             return;
         }
 
