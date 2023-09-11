@@ -116,6 +116,7 @@ public partial class Mod : ModBase // <= Do not Remove.
         else if (Game == Game.P3P)
         {
             Patches.P3P.SkipIntro.Activate(patchContext);
+            _criFsApi.SetMaxFilesMultiplier(6); // P3P uses 3 binders.
         }
         
         // Common Patches
