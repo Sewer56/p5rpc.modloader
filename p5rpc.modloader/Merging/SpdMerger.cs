@@ -1,14 +1,10 @@
 ﻿using CriFs.V2.Hook.Interfaces;
 using FileEmulationFramework.Lib.Utilities;
+using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Cache;
 using SPD.File.Emulator.Interfaces;
-using static p5rpc.modloader.Merging.MergeUtils;
 using SPD.File.Emulator.Interfaces.Structures.IO;
-using PAK.Stream.Emulator.Interfaces;
-using System.Reflection.Metadata.Ecma335;
-using FileEmulationFramework.Lib;
-using BF.File.Emulator.Interfaces;
-using Reloaded.Memory.Streams;
+using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging;
 
