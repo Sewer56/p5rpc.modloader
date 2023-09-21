@@ -72,6 +72,15 @@
           },
           "ReleaseMetadataName": "BF.File.Emulator.ReleaseMetadata.json"
         },
+        "reloaded.universal.fileemulationframework.spd": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "FileEmulationFramework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "Spd.File.Emulator.ReleaseMetadata.json"
+        },
         "reloaded.universal.fileemulationframework.awb": {
           "Config": {
             "UserName": "Sewer56",
@@ -112,7 +121,8 @@
     "CriFs.V2.Hook.Awb",
     "crifs.v2.hook",
     "reloaded.universal.fileemulationframework.pak",
-    "reloaded.universal.fileemulationframework.bf"
+    "reloaded.universal.fileemulationframework.bf",
+    "reloaded.universal.fileemulationframework.spd"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [

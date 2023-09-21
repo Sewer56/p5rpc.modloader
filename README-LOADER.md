@@ -18,6 +18,7 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.  
 - Automatically merges .bf files  
+- Automatically merges .spd files
 
 # Special Thanks
 

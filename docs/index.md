@@ -21,6 +21,7 @@ Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.
 - Automatically merges .bf files
+- Automatically merges .spd files
 
 # Building
 
