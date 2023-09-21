@@ -60,7 +60,7 @@ internal class SpdMerger : IFileMerger
                         else
                         {
                             pakSpdRoutes[fullSpdRoute].spdRoutes.AddRange(group.Files.Files);
-                            pakSpdRoutes[fullSpdRoute].pakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}"); // Ensure highest priority bf is used
+                            pakSpdRoutes[fullSpdRoute].pakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}"); // Ensure highest priority spd is used
                         }
                     }
 
@@ -145,11 +145,17 @@ internal class SpdMerger : IFileMerger
         var item = await _mergedFileCache.AddAsync(mergedKey, innerSources, File.ReadAllBytes(spdPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, spdPath);
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
+
+        // Reset last write
+        DateTime lastWrite = DateTime.MinValue;
+        foreach (var source in innerSources)
+            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
+        File.SetLastWriteTime(spdPath, lastWrite);
     }
 
     private async ValueTask CachePakedSpd(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, CachedFileSource[] cpkSources, PakSpdRoutes innerFiles, string bindDirectory)
     {
-        // Try and get cached merged bf
+        // Try and get cached merged spd
         string[] modIds = { "p5rpc.modloader" };
         var mergedKey = MergedFileCache.CreateKey(route, modIds);
 
@@ -161,7 +167,7 @@ internal class SpdMerger : IFileMerger
 
         if (_mergedFileCache.TryGet(mergedKey, spdSources, out var mergedCachePath))
         {
-            _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
+            _logger.Info("Loading Merged SPD {0} from Cache ({1})", route, mergedCachePath);
             foreach (var path in innerFiles.pakRoutes)
             {
                 _spdEmulator.RegisterSpd(mergedCachePath, path);
@@ -225,13 +231,13 @@ internal class SpdMerger : IFileMerger
         var item = await _mergedFileCache.AddAsync(mergedKey, spdSources, File.ReadAllBytes(spdPath));
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
 
-        // Register all the bfs to the one emulated one (only the highest priority should ever actually be used though)
+        // Register all the spds to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < innerFiles.pakRoutes.Count - 1; i++)
             _spdEmulator.RegisterSpd($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", innerFiles.pakRoutes[i]);
 
         // Reset last write
-        foreach (var bf in innerFiles.pakRoutes)
-            File.SetLastWriteTime(bf, lastWrite);
+        foreach (var spd in innerFiles.pakRoutes)
+            File.SetLastWriteTime(spd, lastWrite);
     }
 }
 
