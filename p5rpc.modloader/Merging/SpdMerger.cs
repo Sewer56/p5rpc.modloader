@@ -52,10 +52,10 @@ internal class SpdMerger : IFileMerger
                     {
                         var fullSpdRoute = $@"{pakGroup.Route}\{spdRoute}";
                         if (!pakSpdRoutes.ContainsKey(fullSpdRoute))
-                            pakSpdRoutes[fullSpdRoute] = new PakSpdRoutes($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}", new List<string>(group.Files.Files));
+                            pakSpdRoutes[fullSpdRoute] = new PakSpdRoutes($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}", new List<string>(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}")));
                         else
                         {
-                            pakSpdRoutes[fullSpdRoute].spdRoutes.AddRange(group.Files.Files);
+                            pakSpdRoutes[fullSpdRoute].spdRoutes.AddRange(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
                             pakSpdRoutes[fullSpdRoute].pakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}"); // Ensure highest priority spd is used
                         }
                     }
@@ -141,12 +141,6 @@ internal class SpdMerger : IFileMerger
         var item = await _mergedFileCache.AddAsync(mergedKey, innerSources, File.ReadAllBytes(spdPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, spdPath);
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
-
-        // Reset last write
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in innerSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-        File.SetLastWriteTime(spdPath, lastWrite);
     }
 
     private async ValueTask CachePakedSpd(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, CachedFileSource[] cpkSources, PakSpdRoutes innerFiles, string bindDirectory)
@@ -230,8 +224,8 @@ internal class SpdMerger : IFileMerger
         // Register all the spds to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < innerFiles.pakRoutes.Count - 1; i++)
             _spdEmulator.RegisterSpd($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", innerFiles.pakRoutes[i]);
-
-        // Reset last write
+        
+        // Reset last write for pak
         foreach (var spd in innerFiles.pakRoutes)
             File.SetLastWriteTime(spd, lastWrite);
     }
