@@ -62,9 +62,9 @@ public class MergedFileCache
         cachedPath = null;
         if (!KeyToFile.TryGetValue(key, out var value))
             return false;
-        
-        // Note: Checking length of 2 collections is not necessary, key uses character invalid
-        // in modIds, and thus should never have collisions where source count would be different.
+
+        if (sources.Length != value.Sources.Length)
+            return false;
         
         // We write it this way however to elide bounds checks.
         fixed (CachedFileSource* currentValueSource = &value.Sources[0])
