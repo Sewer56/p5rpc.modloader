@@ -47,7 +47,7 @@ public unsafe struct P4GTblSegmentFinder
         {
             TblType.Persona => 6,
             TblType.AiCalc => 11,
-            TblType.Encount => 1,
+            TblType.Encount => 5,
             TblType.Skill => 2,
             TblType.Item => 3,
             TblType.Unit => 3,

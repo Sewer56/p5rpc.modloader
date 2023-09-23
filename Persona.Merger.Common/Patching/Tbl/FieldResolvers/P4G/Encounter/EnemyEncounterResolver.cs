@@ -2,7 +2,7 @@
 
 namespace Persona.Merger.Patching.Tbl.FieldResolvers.P4G.Encounter;
 
-public struct EncounterResolver : IEncoderFieldResolver
+public struct EnemyEncounterResolver : IEncoderFieldResolver
 {
     public bool Resolve(nuint offset, out int moveBy, out int length)
     {
