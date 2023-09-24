@@ -85,7 +85,11 @@ public struct P4GTblPatcher
                     DiffSegment(patch, newSegments[8], originalSegments[8], new AICalcSegment8Resolver());
                     break;
                 case TblType.Encount:
-                    DiffSegment(patch, newSegments[0], originalSegments[0], new EncounterResolver());
+                    DiffSegment(patch, newSegments[0], originalSegments[0], new EnemyEncounterResolver());
+                    DiffSegment(patch, newSegments[1], originalSegments[1], new EncountSegment1Resolver());
+                    DiffSegment(patch, newSegments[2], originalSegments[2], new EncountSegment2Resolver());
+                    DiffSegment(patch, newSegments[3], originalSegments[3], new EncountSegment3Resolver());
+                    DiffSegment(patch, newSegments[4], originalSegments[4], new EncountSegment4Resolver());
                     break;
                 case TblType.Effect:
                     DiffSegment(patch, newSegments[0], originalSegments[0], new EffectResolver());
