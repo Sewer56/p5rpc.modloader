@@ -84,13 +84,13 @@ public partial class Mod : ModBase // <= Do not Remove.
         var fileName = Path.GetFileName(mainModule.FileName);
         if (fileName.StartsWith("p5r", StringComparison.OrdinalIgnoreCase))
             Game = Game.P5R;
-        else if (fileName.StartsWith("p4g", StringComparison.OrdinalIgnoreCase))
+        else if (fileName.StartsWith("p4g", StringComparison.OrdinalIgnoreCase) || fileName.StartsWith("p4pc_DT_mc", StringComparison.OrdinalIgnoreCase))
             Game = Game.P4G;        
         else if (fileName.StartsWith("p3p", StringComparison.OrdinalIgnoreCase))
             Game = Game.P3P;
         else
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
-                            "Consider renaming your EXE back to something that starts with 'p4g' or 'p5r'.");
+                            "Consider renaming your EXE back to something that starts with 'p4g' or 'p4pc_DT_mc' or 'p5r'.");
 
         // Read merged file cache in background.
         _createMergedFileCacheTask = Task.Run(async () =>
