@@ -17,7 +17,7 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.  
-- Automatically merges .bf files  
+- Automatically merges .bf and .bmd files  
 
 # Special Thanks
 
