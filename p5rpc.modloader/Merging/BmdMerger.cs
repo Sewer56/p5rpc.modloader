@@ -173,12 +173,7 @@ internal class BmdMerger : IFileMerger
 
     private ReadOnlyMemory<byte>? ExtractBmd(byte[] pak, string bmdPathInPak)
     {
-        //TODO: replace msgtbl.bmd in p3p/p4g
-        int index = 0;
-        if (bmdPathInPak.Equals(@"battle\friend.bmd", StringComparison.OrdinalIgnoreCase))
-            index = _game == Game.P4G ? 9 : 16; //idk what index this needs to be
-
-        if(index == 0)    
+        if (!bmdPathInPak.Equals(@"battle\msgtbl.bmd", StringComparison.OrdinalIgnoreCase))
             return _pakEmulator.GetEntry(new MemoryStream(pak), bmdPathInPak);
 
         var msgTbl = _pakEmulator.GetEntry(new MemoryStream(pak), "battle/MSG.TBL");
@@ -186,8 +181,8 @@ internal class BmdMerger : IFileMerger
             return null;
 
         return _game == Game.P4G ? 
-            P4GTblPatcher.GetSegment(msgTbl.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P4G.TblType.Message, index) : 
-            P3PTblPatcher.GetSegment(msgTbl.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P3P.TblType.Message, index);
+            P4GTblPatcher.GetSegment(msgTbl.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P4G.TblType.Message, 4) : 
+            P3PTblPatcher.GetSegment(msgTbl.Value.ToArray(), Persona.Merger.Patching.Tbl.FieldResolvers.P3P.TblType.Message, 4);
     }
 
     private async ValueTask CacheBmd(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, List<string> msgPaths, string bindDirectory)
