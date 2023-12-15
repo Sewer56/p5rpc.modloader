@@ -80,7 +80,7 @@ internal class SpdMerger : IFileMerger
         foreach(var routePair in pakSpdRoutes)
         {
             _logger.Info("Route: {0}", routePair.Key);
-            tasks.Add(CachePakedSpd(pathToFileMap, routePair.Key, cpks, cpkSources, routePair.Value));
+            tasks.Add(CachePakedSpd(routePair.Key, cpks, cpkSources, routePair.Value));
         }
 
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
@@ -143,7 +143,7 @@ internal class SpdMerger : IFileMerger
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
     }
 
-    private async ValueTask CachePakedSpd(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap, string route, string[] cpks, CachedFileSource[] cpkSources, PakSpdRoutes innerFiles)
+    private async ValueTask CachePakedSpd(string route, string[] cpks, CachedFileSource[] cpkSources, PakSpdRoutes innerFiles)
     {
         // Try and get cached merged spd
         string[] modIds = { "p5rpc.modloader" };
