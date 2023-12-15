@@ -52,14 +52,15 @@ internal class SpdMerger : IFileMerger
                     {
                         var fullSpdRoute = $@"{pakGroup.Route}\{spdRoute}";
                         if (!pakSpdRoutes.ContainsKey(fullSpdRoute))
-                            pakSpdRoutes[fullSpdRoute] = new PakSpdRoutes($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}", new List<string>(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}")));
+                            pakSpdRoutes[fullSpdRoute] = new PakSpdRoutes(
+                                $@"{pakGroup.Files.Directory.FullPath}\{spdRoute}", 
+                                group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}").ToList());
                         else
                         {
                             pakSpdRoutes[fullSpdRoute].SpdRoutes.AddRange(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
                             pakSpdRoutes[fullSpdRoute].PakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}"); // Ensure highest priority spd is used
                         }
                     }
-
                 }
             }
             else
