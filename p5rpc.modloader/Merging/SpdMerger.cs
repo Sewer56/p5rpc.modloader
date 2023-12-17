@@ -139,7 +139,7 @@ internal class SpdMerger : IFileMerger
         }
 
         // Cache merged
-        var item = await _mergedFileCache.AddAsync(mergedKey, innerSources, await File.ReadAllBytesAsync(spdPath));
+        var item = await _mergedFileCache.AddAsync(mergedKey, innerSources, File.ReadAllBytes(spdPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, spdPath);
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
     }
