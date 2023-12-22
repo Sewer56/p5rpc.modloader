@@ -152,17 +152,12 @@ internal class SpdMerger : IFileMerger
 
         CachedFileSource[] spdSources = innerFiles.SpdRoutes.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
 
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in spdSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-
         if (_mergedFileCache.TryGet(mergedKey, spdSources, out var mergedCachePath))
         {
             _logger.Info("Loading Merged SPD {0} from Cache ({1})", route, mergedCachePath);
             foreach (var path in innerFiles.PakRoutes)
             {
                 _spdEmulator.RegisterSpd(mergedCachePath, path);
-                File.SetLastWriteTime(path, lastWrite);
             }
             return;
         }
@@ -225,10 +220,6 @@ internal class SpdMerger : IFileMerger
         // Register all the spds to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < innerFiles.PakRoutes.Count - 1; i++)
             _spdEmulator.RegisterSpd($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", innerFiles.PakRoutes[i]);
-        
-        // Reset last write for pak
-        foreach (var spd in innerFiles.PakRoutes)
-            File.SetLastWriteTime(spd, lastWrite);
     }
 }
 
