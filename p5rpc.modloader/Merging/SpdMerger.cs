@@ -3,7 +3,6 @@ using FileEmulationFramework.Lib.Utilities;
 using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Cache;
 using SPD.File.Emulator.Interfaces;
-using SPD.File.Emulator.Interfaces.Structures.IO;
 using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging;
@@ -30,36 +29,40 @@ internal class SpdMerger : IFileMerger
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
     {
         // Variable setup
-        var input = _spdEmulator.GetEmulatorInput();
-        var pakGroups = _pakEmulator.GetEmulatorInput();
+        var spdInput = _spdEmulator.GetEmulatorInput();
+        var pakInput = _pakEmulator.GetEmulatorInput();
         var pathToFileMap = context.RelativePathToFileMap;
         var tasks = new List<ValueTask>();
         Dictionary<string, List<string>> looseSpds = new();
-        Dictionary<string, PakSpdRoutes> pakSpdRoutes = new();
+        Dictionary<string, PakSpdRoutes> pakedSpds = new();
         CachedFileSource[] cpkSources = cpks.Select(cpk => new CachedFileSource { LastWrite = File.GetLastWriteTime(cpk) }).ToArray();
 
-        foreach (RouteGroupTuple group in input)
+        foreach (var group in spdInput)
         {
             var route = group.Route;
-            string routeDir = Path.GetDirectoryName(route) ?? "";
+            var routeDir = Path.GetDirectoryName(route) ?? string.Empty;
+            var pakRouteIndex = routeDir.LastIndexOf('.');
 
-            if (routeDir.Contains('.')) // Check for spds in a pak
+            // check for .pak extensions
+            if (pakRouteIndex != -1)
             {
-                foreach (var pakGroup in pakGroups)
+                pakRouteIndex = LastEndIndexOfAny(routeDir, [".pak", ".pac", ".bin", ".tbl"], routeDir.IndexOf('\\', pakRouteIndex));
+                var pakRoute = routeDir[..pakRouteIndex];
+                var pakName = pakRoute[(pakRoute.LastIndexOf('\\') + 1)..];
+
+                var pakGroup = pakInput.First(x => x.Route.Contains(pakName));
+                var looseSpdRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route, StringComparison.OrdinalIgnoreCase));
+
+                foreach (var spdRoute in looseSpdRoutes)
                 {
-                    var looseSpdRoutes = pakGroup.Files.Files.Where(x => $@"{pakGroup.Route}\{x}".Contains(route, StringComparison.OrdinalIgnoreCase));
-                    foreach (var spdRoute in looseSpdRoutes)
+                    var fullSpdRoute = $@"{pakGroup.Route}\{spdRoute}";
+
+                    if (!pakedSpds.TryAdd(fullSpdRoute, new PakSpdRoutes(
+                            $@"{pakGroup.Files.Directory.FullPath}\{spdRoute}",
+                            group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}").ToList())))
                     {
-                        var fullSpdRoute = $@"{pakGroup.Route}\{spdRoute}";
-                        if (!pakSpdRoutes.ContainsKey(fullSpdRoute))
-                            pakSpdRoutes[fullSpdRoute] = new PakSpdRoutes(
-                                $@"{pakGroup.Files.Directory.FullPath}\{spdRoute}", 
-                                group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}").ToList());
-                        else
-                        {
-                            pakSpdRoutes[fullSpdRoute].SpdRoutes.AddRange(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
-                            pakSpdRoutes[fullSpdRoute].PakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}"); // Ensure highest priority spd is used
-                        }
+                        pakedSpds[fullSpdRoute].PakRoutes.Add($@"{pakGroup.Files.Directory.FullPath}\{spdRoute}");
+                        pakedSpds[fullSpdRoute].SpdRoutes.AddRange(group.Files.Files.Select(file => $@"{group.Files.Directory.FullPath}\{file}"));
                     }
                 }
             }
@@ -78,7 +81,7 @@ internal class SpdMerger : IFileMerger
             tasks.Add(CacheSpd(pathToFileMap, @"R2\" + routePair.Key, cpks, cpkSources, routePair.Value, context.BindDirectory));
         }
 
-        foreach(var routePair in pakSpdRoutes)
+        foreach(var routePair in pakedSpds)
         {
             _logger.Info("Route: {0}", routePair.Key);
             tasks.Add(CachePakedSpd(routePair.Key, cpks, cpkSources, routePair.Value));
@@ -220,6 +223,22 @@ internal class SpdMerger : IFileMerger
         // Register all the spds to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < innerFiles.PakRoutes.Count - 1; i++)
             _spdEmulator.RegisterSpd($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", innerFiles.PakRoutes[i]);
+    }
+
+    private static int LastEndIndexOfAny(string input, string[] anyOf, int startIndex, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+    {
+        if (startIndex == -1)
+            startIndex = input.Length - 1;
+
+        foreach (var of in anyOf)
+        {
+            var indexOf = input.LastIndexOf(of, startIndex, stringComparison);
+
+            if (indexOf != -1)
+                return indexOf + of.Length;
+        }
+
+        return -1;
     }
 }
 
