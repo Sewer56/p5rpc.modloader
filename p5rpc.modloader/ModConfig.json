@@ -79,7 +79,7 @@
             "UseReleaseTag": false,
             "AssetFileName": "Mod.zip"
           },
-          "ReleaseMetadataName": "Spd.File.Emulator.ReleaseMetadata.json"
+          "ReleaseMetadataName": "SPD.File.Emulator.ReleaseMetadata.json"
         },
         "reloaded.universal.fileemulationframework.awb": {
           "Config": {
