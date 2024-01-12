@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAK.Stream.Emulator.Interfa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileEmulationFramework.Lib", "Submodules\FileEmulationFramework\FileEmulationFramework.Lib\FileEmulationFramework.Lib.csproj", "{3D9C1C67-FFB1-48D0-87B0-17D15AA93E00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPD.File.Emulator.Interfaces", "..\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj", "{425E6521-F58A-46D4-AD08-30006C929C7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPD.File.Emulator.Interfaces", "Submodules\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj", "{73CFF175-8E6A-4C31-8D10-D05B8D64755E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,10 +64,10 @@ Global
 		{3D9C1C67-FFB1-48D0-87B0-17D15AA93E00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D9C1C67-FFB1-48D0-87B0-17D15AA93E00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D9C1C67-FFB1-48D0-87B0-17D15AA93E00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{425E6521-F58A-46D4-AD08-30006C929C7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{425E6521-F58A-46D4-AD08-30006C929C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{425E6521-F58A-46D4-AD08-30006C929C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{425E6521-F58A-46D4-AD08-30006C929C7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73CFF175-8E6A-4C31-8D10-D05B8D64755E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73CFF175-8E6A-4C31-8D10-D05B8D64755E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73CFF175-8E6A-4C31-8D10-D05B8D64755E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73CFF175-8E6A-4C31-8D10-D05B8D64755E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,7 +77,7 @@ Global
 		{9E0290C1-C8F7-453F-9049-0CDA7E3B80BC} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
 		{66B0D482-C88B-483F-995F-32F3308C7859} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
 		{3D9C1C67-FFB1-48D0-87B0-17D15AA93E00} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
-		{425E6521-F58A-46D4-AD08-30006C929C7C} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
+		{73CFF175-8E6A-4C31-8D10-D05B8D64755E} = {D0885FA9-1AF6-4CB1-8CED-E49AC9F99EC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56D65FA2-2A48-49CB-BA59-C44FDDB11E8D}
