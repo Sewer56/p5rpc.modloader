@@ -46,7 +46,7 @@ internal class SpdMerger : IFileMerger
             // check for .pak extensions
             if (pakRouteIndex != -1)
             {
-                pakRouteIndex = LastEndIndexOfAny(routeDir, [".pak", ".pac", ".bin", ".tbl"], routeDir.IndexOf('\\', pakRouteIndex));
+                pakRouteIndex += 4;
                 var pakRoute = routeDir[..pakRouteIndex];
                 var pakName = pakRoute[(pakRoute.LastIndexOf('\\') + 1)..];
 
@@ -81,7 +81,7 @@ internal class SpdMerger : IFileMerger
             tasks.Add(CacheSpd(pathToFileMap, @"R2\" + routePair.Key, cpks, cpkSources, routePair.Value, context.BindDirectory));
         }
 
-        foreach(var routePair in pakedSpds)
+        foreach (var routePair in pakedSpds)
         {
             _logger.Info("Route: {0}", routePair.Key);
             tasks.Add(CachePakedSpd(routePair.Key, cpks, cpkSources, routePair.Value));
