@@ -142,6 +142,41 @@ Then you would put your `.flow` or `.msg` file with the same name in `FEmulator\
 
 ![BFPakedExample2](./images/BFPakedExample2.png)
 
+## Editing BMD Files
+
+!!! info
+
+    Essentials can be used to edit messages in BMD files such that multiple mods can edit the same file.
+
+[Uses FileRedirectionFramework under the hood, follow instructions here for more information.](https://sewer56.dev/FileEmulationFramework/emulators/bmd.html)  
+Don't add dependency on BMD emulator (it's not necessary), but do follow rest of guide.
+
+In addition to the `.msg` files you include in `FEmulator\BMD` per the above guide you will also need to add dummy bmd files where they would normally go in `FEmulator\PAK` or `P5REssentials\CPK`.
+
+### Example - Loose BMD
+
+!!! info
+
+    To create a dummy bf file you can create a new empty text file and just rename it, changing the file extension.
+
+To edit the loose `e722_103.bmd` file in `event_data\message` you would first add a dummy bmd file in `P5REssentials\CPK\en.cpk\event_data\message`
+
+![BMDLooseExample1](./images/BMDLooseExample1.png)
+
+Then you would put your `.msg` file with the same name in `FEmulator\BMD`
+
+![BMDLooseExample2](./images/BMDLooseExample2.png)
+
+### Example - BMD In Archives
+
+To edit `datSkillHelp.bmd` in the archive `init\datmsg.pak` you would first add a dummy bmd file in `FEmulator\PAK\init\datmsg.pak` (as per [the information above](#replacing-files-in-archives))
+
+![BMDPakedExample1](./images/BMDPakedExample1.png)
+
+Then you would put your `.msg` file with the same name in `FEmulator\BMD`
+
+![BMDPakedExample2](./images/BMDPakedExample2.png)
+
 ## Editing TBL Files
 Any TBL files in P3P, P4G and P5R (such as `SKILL.TBL` and `UNIT.TBL`) will automatically be merged if multiple mods edit them. This includes `itemtbl.bin` in P4G and P3P.
 
