@@ -19,8 +19,9 @@ Persona Essentials is a set of miscellaneous improvements for Persona 3 Portable
 - Support for injecting custom music into the game without extracting files.  
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges .tbl files.  
-- Automatically merges PAK (.bin) files.
-- Automatically merges .bf files
+- Automatically merges PAK (.bin) files.  
+- Automatically merges .bf files.  
+- Automatically merges .spd files.  
 
 # Building
 
@@ -41,3 +42,5 @@ Refer to the [usage section](./usage.md).
 - Lipsum (zarroboogs): Original Implementation  
 - CherryCreamSoda: Project Logo  
 - Shujynx, Covfefe: Mod Test Data  
+- AnimatedSwine37: PAK Merging  
+- Secre-C: SPD Merging  

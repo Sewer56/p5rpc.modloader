@@ -40,7 +40,8 @@ public partial class Mod
             new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator, Game),
             new BmdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bmdEmulator, _pakEmulator, Game),
             new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator, Game),
-            new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator)
+            new SpdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _spdEmulator, _pakEmulator),
+            new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator),
         };
         
         foreach (var fileMerger in fileMergers)

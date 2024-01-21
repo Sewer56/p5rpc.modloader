@@ -133,7 +133,7 @@ Then you would put your `.flow` or `.msg` file with the same name in `FEmulator\
 
 ![BFLooseExample2](./images/BFLooseExample2.png)
 
-### Example - BF In Archivee
+### Example - BF In Archive
 To edit `f007.bf` in the archive `field\pack\fd007_003.arc` you would first add a dummy bf file in `FEmulator\PAK\field\pack\fd007_003.arc` (as per [the information above](#replacing-files-in-archives))
 
 ![BFPakedExample1](./images/BFPakedExample1.png)
@@ -190,6 +190,41 @@ In P3P and P4G `MSG.TBL` contains an embedded bmd file. To edit this place your 
 !!! info
 
     When BMD emulator releases you will be able to use it to edit only individual messages in this (and other) bmds, for now though you will have to replace the entire file.
+
+## Editing SPD Files
+
+!!! info
+
+    Essentials can be used to edit textures and sprites in SPD files such that multiple mods can edit sprites in the same texture.
+
+[Uses FileRedirectionFramework under the hood, follow instructions here for more information.](https://sewer56.dev/FileEmulationFramework/emulators/spd.html)  
+Don't add dependency on SPD emulator (it's not necessary), but do follow rest of guide.
+
+In addition to the sprite entry files `(.spdspr/.sprt)` and/or textures `(.dds/.tmx)` files you include in `FEmulator\SPD` per the above guide you may need to add dummy spd files where they would normally go in `FEmulator\PAK` (only if the spd you're editing is located in an archive).
+
+### Example - Loose SPD
+
+To edit the loose `CHAT.SPD` file in `FONT\CHAT` you would first create a directory mimicking the path of the spd in `FEmulator\SPD`, including the spds filename.
+
+![SpdLooseExample1](./images/SpdLooseExample1.png)
+
+Then you would put your sprite entry and/or texture files in `FEmulator\SPD\FONT\CHAT\CHAT.SPD\`
+
+![SpdLooseExample2](./images/SpdLooseExample2.png)
+
+### Example - SPD in archive
+
+!!! info
+
+    To create a dummy spd file you can create a new empty text file and just rename it, changing the file extension.
+
+To edit `higawari_common.spd` in the archive `CALENDAR\HIGAWARI.PAK` you would first add a dummy spd file in `FEmulator\PAK\CALENDAR\HIGAWARI.PAK` (as per [the information above](#replacing-files-in-archives))
+
+![SpdPakedExample1](./images/SpdPakedExample1.png)
+
+Then follow the steps for loose spds.
+
+![SpdPakedExample2](./images/SpdPakedExample2.png)
 
 ## Releasing/Uploading your Mods
 

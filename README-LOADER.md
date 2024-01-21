@@ -17,10 +17,13 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Support for hot reload (update files on the fly without game reboot).  
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.  
-- Automatically merges .bf and .bmd files  
+- Automatically merges .bf files.  
+- Automatically merges .spd files.  
 
 # Special Thanks
 
 - Lipsum (zarroboogs): Original Implementation  
 - CherryCreamSoda: Project Logo  
 - Shujynx, Covfefe: Mod Test Data  
+- AnimatedSwine37: PAK Merging  
+- Secre-C: SPD Merging  
