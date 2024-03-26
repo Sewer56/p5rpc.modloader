@@ -43,6 +43,6 @@ Refer to the [usage section](./usage.md).
 - Lipsum (zarroboogs): Original Implementation  
 - CherryCreamSoda: Project Logo  
 - Shujynx, Covfefe: Mod Test Data  
-- AnimatedSwine37: PAK Merging  
+- AnimatedSwine37: PAK and BF Merging  
 - Secre-C: SPD Merging  
 - oceanstuck: BMD Merging
