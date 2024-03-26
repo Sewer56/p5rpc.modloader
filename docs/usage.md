@@ -185,11 +185,8 @@ In P3P and P4G `AICALC.TBL` contains two embedded bf files, `friend.bf` and `ene
 To edit these place a dummy bf with the same name in `FEmulator\PAK\init_free.bin\battle` and then hook anything you want to the same way you would any other bf file.
 
 ### Embedded BMD in MSG.TBL
-In P3P and P4G `MSG.TBL` contains an embedded bmd file. To edit this place your edited version in `FEmulator\PAK\init_free.bin\battle\msgtbl.bmd`.
-
-!!! info
-
-    When BMD emulator releases you will be able to use it to edit only individual messages in this (and other) bmds, for now though you will have to replace the entire file.
+In P3P and P4G `MSG.TBL` contains an embedded bmd file, `msgtbl.bmd`.
+To edit it, place a dummy bmd with the same name in `FEmulator\PAK\init_free.bin\battle` and then hook anything you want the same way you would any other bmd file.
 
 ## Editing SPD Files
 
