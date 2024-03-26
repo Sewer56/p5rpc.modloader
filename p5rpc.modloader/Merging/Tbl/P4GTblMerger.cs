@@ -139,11 +139,11 @@ internal class P4GTblMerger : IFileMerger
     private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
         var bmds = new byte[5][];
-        var bmdFile = candidates.FirstOrDefault(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase));
-        if (bmdFile != null)
+        var bmdFiles = candidates.Where(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase)).ToArray();
+        foreach (var bmdFile in bmdFiles)
         {
             _logger.Info($"Embedding {bmdFile} into MSG.TBL");
-            bmds[4] = await File.ReadAllBytesAsync(bmdFile);
+            bmds[4] = File.ReadAllBytes(bmdFile);
             candidates.Remove(bmdFile);
         }
 
