@@ -157,7 +157,7 @@ In addition to the `.msg` files you include in `FEmulator\BMD` per the above gui
 
 !!! info
 
-    To create a dummy bf file you can create a new empty text file and just rename it, changing the file extension.
+    To create a dummy bmd file you can create a new empty text file and just rename it, changing the file extension.
 
 To edit the loose `e722_103.bmd` file in `event_data\message` you would first add a dummy bmd file in `P5REssentials\CPK\en.cpk\event_data\message`
 

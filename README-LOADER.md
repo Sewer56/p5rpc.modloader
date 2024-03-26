@@ -18,6 +18,7 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Automatically merges .tbl files.  
 - Automatically merges PAK (.bin) files.  
 - Automatically merges .bf files.  
+- Automatically merges .bmd files.
 - Automatically merges .spd files.  
 
 # Special Thanks
@@ -27,3 +28,4 @@ For more information, [please visit the documentation](https://sewer56.dev/p5rpc
 - Shujynx, Covfefe: Mod Test Data  
 - AnimatedSwine37: PAK Merging  
 - Secre-C: SPD Merging  
+- oceanstuck: BMD Merging
