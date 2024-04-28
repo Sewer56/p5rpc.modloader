@@ -63,7 +63,7 @@ internal class BmdMerger : IFileMerger
                 {
                     var fullBmdRoute = $@"{pakGroup.Route}\{bmdRoute}";
                     if (!pakedBmds.ContainsKey(fullBmdRoute))
-                        pakedBmds[fullBmdRoute] = new BmdMsgTuple($@"{pakGroup.Files.Directory.FullPath}\{bmdRoute}", new List<string> { group.File });
+                        pakedBmds[fullBmdRoute] = new BmdMsgTuple($@"{pakGroup.Files.Directory.FullPath}\{bmdRoute}", [group.File]);
                     else
                     {
                         pakedBmds[fullBmdRoute].MsgPaths.Add(group.File);
