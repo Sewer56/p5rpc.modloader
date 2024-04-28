@@ -38,6 +38,7 @@ public partial class Mod
         List<IFileMerger> fileMergers = new()
         {
             new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator, Game),
+            new BmdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bmdEmulator, _pakEmulator, Game),
             new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator, Game),
             new SpdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _spdEmulator, _pakEmulator),
             new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator),
