@@ -2,7 +2,7 @@
   "ModId": "p5rpc.modloader",
   "ModName": "Persona Essentials",
   "ModAuthor": "Sewer56",
-  "ModVersion": "2.7.0",
+  "ModVersion": "2.7.1",
   "ModDescription": "Mod which provides base modding support as well as miscellaneous basic quality of life fixes. See readme for Special Thanks!",
   "ModDll": "p5rpc.modloader.dll",
   "ModIcon": "Preview.png",

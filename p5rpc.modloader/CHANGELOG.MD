@@ -1,3 +1,7 @@
+# 2.7.1
+
+- Fixed: Introskip on P5R Ver 1.04
+
 # 2.0.0
 
 - Added: TBL Merging
