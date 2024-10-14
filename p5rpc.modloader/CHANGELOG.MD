@@ -1,3 +1,8 @@
+# 2.8.0
+
+- Fixed TBL Merging bug related to expanded TBL files
+- Added generic file merging for a bunch of files for P3P, P4G and P5R
+
 # 2.7.1
 
 - Fixed: Introskip on P5R Ver 1.04

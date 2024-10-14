@@ -42,6 +42,10 @@
 
     <ItemGroup>
       <Folder Include="Assets\P5R\Skill\Extend" />
+      <Folder Include="Assets\P5R\Visual\Before\" />
+      <Folder Include="Assets\P5R\Visual\After\" />
+      <Folder Include="Assets\P5R\Visual\After2\" />
+      <Folder Include="Assets\P5R\Visual\After3\" />
     </ItemGroup>
 
 </Project>

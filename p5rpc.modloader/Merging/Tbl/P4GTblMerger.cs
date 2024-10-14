@@ -1,11 +1,14 @@
 ﻿using CriFs.V2.Hook.Interfaces;
+using CriFsV2Lib.Definitions.Utilities;
 using FileEmulationFramework.Lib.Utilities;
 using PAK.Stream.Emulator.Interfaces;
 using PAK.Stream.Emulator.Interfaces.Structures.IO;
 using Persona.Merger.Cache;
 using Persona.Merger.Patching.Tbl;
+using Persona.Merger.Patching.Tbl.FieldResolvers.Generic;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 using static p5rpc.modloader.Merging.Tbl.TblMerger;
+using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging.Tbl;
 
@@ -30,6 +33,7 @@ internal class P4GTblMerger : IFileMerger
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
     {
         var pakFiles = _pakEmulator.GetEmulatorInput();
+        var pathToFileMap = context.RelativePathToFileMap;
         var tasks = new List<ValueTask>
         {
             PatchTbl(pakFiles, @"init_free.bin\battle\AICALC.TBL", TblType.AiCalc, cpks),
@@ -40,7 +44,8 @@ internal class P4GTblMerger : IFileMerger
             PatchTbl(pakFiles, @"init_free.bin\battle\PERSONA.TBL", TblType.Persona, cpks),
             PatchTbl(pakFiles, @"init_free.bin\battle\SKILL.TBL", TblType.Skill, cpks),
             PatchTbl(pakFiles, @"init_free.bin\battle\UNIT.TBL", TblType.Unit, cpks),
-            PatchTbl(pakFiles, @"init_free.bin\init\itemtbl.bin", TblType.Item, cpks)
+            PatchTbl(pakFiles, @"init_free.bin\init\itemtbl.bin", TblType.Item, cpks),
+            PatchAnyFile(pathToFileMap, @"facility\cmbroot\ps_model.bin", 4, cpks)
         };
 
         Task.WhenAll(tasks.Select(x => x.AsTask())).Wait();
@@ -125,6 +130,109 @@ internal class P4GTblMerger : IFileMerger
         });
     }
 
+    private async ValueTask PatchAnyFile(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap,
+        string tblPath, int ResolverSize, string[] cpks)
+    {
+        if (!pathToFileMap.TryGetValue(tblPath, out var candidates))
+            return;
+
+        var pathInCpk = tblPath;
+        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out var fileIndex))
+        {
+            _logger.Warning("Unable to find TBL in any CPK {0}", pathInCpk);
+            return;
+        }
+
+        // Build cache key
+        var cacheKey = GetCacheKeyAndSources(tblPath, candidates, out var sources);
+        if (_mergedFileCache.TryGet(cacheKey, sources, out var cachedFilePath))
+        {
+            _logger.Info("Loading Merged TBL {0} from Cache ({1})", tblPath, cachedFilePath);
+            _utils.ReplaceFileInBinderInput(pathToFileMap, tblPath, cachedFilePath);
+            return;
+        }
+
+        // Else Merge our Data
+        // First we extract.
+        await Task.Run(async () =>
+        {
+            _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
+            await using var cpkStream =
+                new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
+            using var extractedTable = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
+
+            // Then we merge
+            byte[] patched;
+            patched = await PatchAny(extractedTable.Span.ToArray(), candidates, ResolverSize);
+
+            // Then we store in cache.
+            var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
+            _utils.ReplaceFileInBinderInput(pathToFileMap, tblPath,
+                Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath));
+            _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
+        });
+    }
+
+    private async ValueTask PatchAnyFileInPak(RouteGroupTuple[] pakFiles, string tblPath, int ResolverSize, string[] cpks)
+    {
+        var route = tblPath.Substring(0, tblPath.LastIndexOf('\\'));
+        var tblName = Path.GetFileName(tblPath);
+        var candidates = FindInPaks(pakFiles, route, tblName);
+
+        if (candidates.Count == 0) return;
+
+        var extIndex = tblPath.IndexOf('.');
+        var dirIndex = tblPath.IndexOf('\\', extIndex);
+        var pathInCpk = '\\' + tblPath.Substring(0, dirIndex);
+        var pathInPak = tblPath.Substring(dirIndex + 1);
+
+        if (!_utils.TryFindFileInAnyCpk(pathInCpk, cpks, out var cpkPath, out var cpkEntry, out var fileIndex))
+        {
+            _logger.Warning("Unable to find TBL in any CPK {0}", tblPath);
+            return;
+        }
+
+        // Build cache key
+        string[] modIds = { "p5rpc.modloader" };
+        var cacheKey = MergedFileCache.CreateKey(tblPath, modIds);
+        var sources = candidates.Select(x => new CachedFileSource { LastWrite = File.GetLastWriteTime(x) }).ToArray();
+
+        if (_mergedFileCache.TryGet(cacheKey, sources, out var cachedFilePath))
+        {
+            _logger.Info("Loading Merged TBL {0} from Cache ({1})", tblPath, cachedFilePath);
+            _pakEmulator.AddFile(cachedFilePath, route, pathInPak);
+            return;
+        }
+
+        // Else Merge our Data
+        // First we extract.
+        await Task.Run(async () =>
+        {
+            _logger.Info("Merging {0} with key {1}.", tblPath, cacheKey);
+            await using var cpkStream =
+                new FileStream(cpkPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var reader = _criFsApi.GetCriFsLib().CreateCpkReader(cpkStream, false);
+            using var extractedPak = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
+
+            var extractedTbl = _pakEmulator.GetEntry(new MemoryStream(extractedPak.RawArray), pathInPak);
+            if (extractedTbl == null)
+            {
+                _logger.Error($"Unable to extract {pathInPak} from {pathInCpk}");
+                return;
+            }
+
+            // Then we merge
+            byte[] patched;
+            patched = await PatchAny(extractedTbl.Value.ToArray(), candidates, ResolverSize);
+
+            // Then we store in cache.
+            var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
+            _pakEmulator.AddFile(Path.Combine(_mergedFileCache.CacheFolder, item.RelativePath), route, pathInPak);
+            _logger.Info("Merge {0} Complete. Cached to {1}.", tblPath, item.RelativePath);
+        });
+    }
+
     private async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
     {
         var patcher = new P4GTblPatcher(extractedTable, type);
@@ -177,6 +285,27 @@ internal class P4GTblMerger : IFileMerger
             patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
 
         var patched = patcher.Apply(patches, TblType.AiCalc, bfs);
+        return patched;
+    }
+
+    private static async Task<byte[]> PatchAny(byte[] extractedTable, List<string> candidates, int ResolverSize)
+    {
+        var patcher = new GenericPatcher(extractedTable);
+        var patches = new List<TblPatch>(candidates.Count);
+        for (var x = 0; x < candidates.Count; x++)
+            patches.Add(patcher.GeneratePatchGeneric(await File.ReadAllBytesAsync(candidates[x]), ResolverSize));
+
+        var patched = patcher.ApplyGeneric(patches);
+        return patched;
+    }
+    private static async Task<byte[]> PatchAny(byte[] extractedTable, List<ICriFsRedirectorApi.BindFileInfo> candidates, int ResolverSize)
+    {
+        var patcher = new GenericPatcher(extractedTable);
+        var patches = new List<TblPatch>(candidates.Count);
+        for (var x = 0; x < candidates.Count; x++)
+            patches.Add(patcher.GeneratePatchGeneric(await File.ReadAllBytesAsync(candidates[x].FullPath), ResolverSize));
+
+        var patched = patcher.ApplyGeneric(patches);
         return patched;
     }
 }
