@@ -72,9 +72,7 @@ public struct GenericPatcher
             using var memoryStream = new ExtendedMemoryStream(result, true);
             foreach (var segment in segments)
             {
-                // memoryStream.WriteBigEndianPrimitive(segment.Length);
                 memoryStream.Write(segment.Span);
-                // memoryStream.AddPadding(P5RTblSegmentFinder.TblSegmentAlignment);
             }
 
             return result;
