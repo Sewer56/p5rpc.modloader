@@ -45,7 +45,7 @@
       <Folder Include="Assets\P5R\Visual\Before\" />
       <Folder Include="Assets\P5R\Visual\After\" />
       <Folder Include="Assets\P5R\Visual\After2\" />
-      <Folder Include="Assets\P5R\Visual\After3\" />
+      <Folder Include="Assets\P5R\Visual\Expected\" />
     </ItemGroup>
 
 </Project>

@@ -47,13 +47,13 @@ public class P5RTblPatcherTests
         var original = File.ReadAllBytes(P5RAssets.PDDBefore);
         var after = File.ReadAllBytes(P5RAssets.PDDAfter);
         var after2 = File.ReadAllBytes(P5RAssets.PDDAfter2);
-        var after3 = File.ReadAllBytes(P5RAssets.PDDAfter3);
+        var expected = File.ReadAllBytes(P5RAssets.PDDExpected);
         var patcher = new GenericPatcher(original);
         patches.Add(patcher.GeneratePatchGeneric(after, 4));
         patches.Add(patcher.GeneratePatchGeneric(after2, 4));
         var patched = patcher.ApplyGeneric(patches);
 
-        Assert.Equal(patched, after3);
+        Assert.Equal(patched, expected);
     }
     
     [Fact]
@@ -64,14 +64,12 @@ public class P5RTblPatcherTests
         var original = File.ReadAllBytes(P5RAssets.VisualBefore);
         var after = File.ReadAllBytes(P5RAssets.VisualAfter);
         var after2 = File.ReadAllBytes(P5RAssets.VisualAfter2);
-        var after3 = File.ReadAllBytes(P5RAssets.VisualAfter3);
+        var expected = File.ReadAllBytes(P5RAssets.VisualExpected);
         var patcher = new P5RTblPatcher(original, TblType.Visual);
         patches.Add(patcher.GeneratePatch(after));
         patches.Add(patcher.GeneratePatch(after2));
         var patched = patcher.Apply(patches);
 
-        File.WriteAllBytes("D:\\Game Modding\\R2\\Loader\\VISUAL.TBL", patched);
-
-        Assert.Equal(patched, after3);
+        Assert.Equal(patched, expected);
     }
 }
