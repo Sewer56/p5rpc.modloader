@@ -41,32 +41,34 @@ internal class TblPatcherCommon
     /// <summary>
     /// Applies a given list of table patches to the current file's TBL segments.
     /// </summary>
-    internal static unsafe void ApplyPatch(List<TblPatch> patches, int x, Memory<byte>[] segments)
+    /// <param name="patches">A list of patches to apply, these are applied in order of the list</param>
+    /// <param name="segment">The index of the segment in the table to apply the patches to</param>
+    /// <param name="segments">A list of the data of each segment. segments[segment] will be replaced with the patched segment data.</param>
+    internal static unsafe void ApplyPatch(List<TblPatch> patches, int segment, Memory<byte>[] segments)
     {
-        patches.Sort((a, b) => a.SegmentDiffs[x].LengthAfterPatch.CompareTo(b.SegmentDiffs[x].LengthAfterPatch));
-
         int newLength = 0;
 
         foreach (var patch in CollectionsMarshal.AsSpan(patches))
         {
-            if (patch.SegmentDiffs[x].LengthAfterPatch > newLength)
+            if (patch.SegmentDiffs[segment].LengthAfterPatch > newLength)
             {
-                newLength = patch.SegmentDiffs[x].LengthAfterPatch;
+                newLength = patch.SegmentDiffs[segment].LengthAfterPatch;
             }
         }
 
         foreach (var patch in CollectionsMarshal.AsSpan(patches))
         {
-            var destination = GC.AllocateUninitializedArray<byte>(Math.Max(newLength, segments[x].Length));
-            var patchDiff = patch.SegmentDiffs[x].Data;
+            var destination = GC.AllocateUninitializedArray<byte>(Math.Max(newLength, segments[segment].Length));
+            segments[segment].CopyTo(destination);
+            var patchDiff = patch.SegmentDiffs[segment].Data;
 
             fixed (byte* destinationPtr = &destination[0])
-            fixed (byte* currentSegmentPtr = segments[x].Span)
+            fixed (byte* currentSegmentPtr = segments[segment].Span)
             fixed (byte* patchPtr = patchDiff.Span)
             {
-                S56DiffDecoder.Decode(currentSegmentPtr, patchPtr, destinationPtr, (nuint)patch.SegmentDiffs[x].Data.Length,
-                    out var numWritten);
-                segments[x] = new Memory<byte>(destination, 0, (int)numWritten);
+                S56DiffDecoder.Decode(currentSegmentPtr, patchPtr, destinationPtr, (nuint)patch.SegmentDiffs[segment].Data.Length,
+                    out _);
+                segments[segment] = destination;
             }
         }
     }
