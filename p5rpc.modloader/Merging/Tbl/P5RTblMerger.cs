@@ -127,8 +127,7 @@ internal class P5RTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x].FullPath)));
 
-        var patched = patcher.Apply(patches);
-        return patched;
+        return patcher.Apply(patches);
     }
 
     private async ValueTask PatchAnyFile(Dictionary<string, List<ICriFsRedirectorApi.BindFileInfo>> pathToFileMap,
@@ -164,8 +163,7 @@ internal class P5RTblMerger : IFileMerger
             using var extractedTable = reader.ExtractFile(cpkEntry.Files[fileIndex].File);
 
             // Then we merge
-            byte[] patched;
-            patched = await PatchAny(extractedTable, candidates, ResolverSize);
+            var patched = await PatchAny(extractedTable, candidates, ResolverSize);
 
             // Then we store in cache.
             var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
@@ -183,7 +181,6 @@ internal class P5RTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatchGeneric(await File.ReadAllBytesAsync(candidates[x].FullPath), ResolverSize));
 
-        var patched = patcher.ApplyGeneric(patches);
-        return patched;
+        return patcher.ApplyGeneric(patches);
     }
 }

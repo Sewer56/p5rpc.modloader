@@ -23,10 +23,10 @@ public static class P5RAssets
     public static readonly string VisualBefore = Path.Combine(AssetsFolder, "Visual", "Before", "VISUAL.TBL");
     public static readonly string VisualAfter = Path.Combine(AssetsFolder, "Visual", "After", "VISUAL.TBL");
     public static readonly string VisualAfter2 = Path.Combine(AssetsFolder, "Visual", "After2", "VISUAL.TBL");
-    public static readonly string VisualAfter3 = Path.Combine(AssetsFolder, "Visual", "After3", "VISUAL.TBL");
+    public static readonly string VisualExpected = Path.Combine(AssetsFolder, "Visual", "Expected", "VISUAL.TBL");
 
     public static readonly string PDDBefore = Path.Combine(AssetsFolder, "PDD", "Before", "SHDPERSONAENEMY.PDD");
     public static readonly string PDDAfter = Path.Combine(AssetsFolder, "PDD", "After", "SHDPERSONAENEMY.PDD");
     public static readonly string PDDAfter2 = Path.Combine(AssetsFolder, "PDD", "After2", "SHDPERSONAENEMY.PDD");
-    public static readonly string PDDAfter3 = Path.Combine(AssetsFolder, "PDD", "After3", "SHDPERSONAENEMY.PDD");
+    public static readonly string PDDExpected = Path.Combine(AssetsFolder, "PDD", "Expected", "SHDPERSONAENEMY.PDD");
 }

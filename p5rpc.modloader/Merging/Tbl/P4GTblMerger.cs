@@ -223,8 +223,7 @@ internal class P4GTblMerger : IFileMerger
             }
 
             // Then we merge
-            byte[] patched;
-            patched = await PatchAny(extractedTbl.Value.ToArray(), candidates, ResolverSize);
+            var patched = await PatchAny(extractedTbl.Value.ToArray(), candidates, ResolverSize);
 
             // Then we store in cache.
             var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
@@ -240,8 +239,7 @@ internal class P4GTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
 
-        var patched = patcher.Apply(patches, type);
-        return patched;
+        return patcher.Apply(patches, type);
     }
 
     private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
@@ -260,8 +258,7 @@ internal class P4GTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
 
-        var patched = patcher.Apply(patches, TblType.Message, bmds);
-        return patched;
+        return patcher.Apply(patches, TblType.Message, bmds);
     }
 
     private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
@@ -284,8 +281,7 @@ internal class P4GTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
 
-        var patched = patcher.Apply(patches, TblType.AiCalc, bfs);
-        return patched;
+        return patcher.Apply(patches, TblType.AiCalc, bfs);
     }
 
     private static async Task<byte[]> PatchAny(byte[] extractedTable, List<string> candidates, int ResolverSize)
@@ -295,8 +291,7 @@ internal class P4GTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatchGeneric(await File.ReadAllBytesAsync(candidates[x]), ResolverSize));
 
-        var patched = patcher.ApplyGeneric(patches);
-        return patched;
+        return patcher.ApplyGeneric(patches);
     }
     private static async Task<byte[]> PatchAny(byte[] extractedTable, List<ICriFsRedirectorApi.BindFileInfo> candidates, int ResolverSize)
     {
@@ -305,7 +300,6 @@ internal class P4GTblMerger : IFileMerger
         for (var x = 0; x < candidates.Count; x++)
             patches.Add(patcher.GeneratePatchGeneric(await File.ReadAllBytesAsync(candidates[x].FullPath), ResolverSize));
 
-        var patched = patcher.ApplyGeneric(patches);
-        return patched;
+        return patcher.ApplyGeneric(patches);
     }
 }
