@@ -1,0 +1,1073 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://sewer56.dev/p5rpc.modloader/usage/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>Usage - P5R PC Essentials Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bcfcd587.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#usage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="P5R PC Essentials Documentation" class="md-header__button md-logo" aria-label="P5R PC Essentials Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            P5R PC Essentials Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Usage
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Sewer56/p5rpc.modloader" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Sewer56/p5rpc.modloader
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="P5R PC Essentials Documentation" class="md-nav__button md-logo" aria-label="P5R PC Essentials Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    P5R PC Essentials Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Sewer56/p5rpc.modloader" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Sewer56/p5rpc.modloader
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Usage
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Usage
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-reloaded-mod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a Reloaded Mod
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#download-mod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Download Mod
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-dependency-on-p5r-essentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set Dependency on P5R Essentials
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-files-in-cpks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing files in CPKs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing files in CPKs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opening-the-mod-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opening the Mod Folder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-some-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add Some Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing Music
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing Music">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-files-in-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing Files In Archives
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing Files In Archives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-bf-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing BF Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing BF Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-bf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose BF
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-bf-in-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - BF In Archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-bmd-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing BMD Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing BMD Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-bmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose BMD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-bmd-in-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - BMD In Archives
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-tbl-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing TBL Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing TBL Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embedded-bf-in-aicalctbl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded BF in AICALC.TBL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-bmd-in-msgtbl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded BMD in MSG.TBL
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-spd-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing SPD Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing SPD Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-spd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose SPD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-spd-in-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - SPD in archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#releasinguploading-your-mods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Releasing/Uploading your Mods
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-reloaded-mod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a Reloaded Mod
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#download-mod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Download Mod
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-dependency-on-p5r-essentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set Dependency on P5R Essentials
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-files-in-cpks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing files in CPKs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing files in CPKs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opening-the-mod-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opening the Mod Folder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-some-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add Some Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing Music
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing Music">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replacing-files-in-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replacing Files In Archives
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replacing Files In Archives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-bf-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing BF Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing BF Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-bf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose BF
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-bf-in-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - BF In Archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-bmd-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing BMD Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing BMD Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-bmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose BMD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-bmd-in-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - BMD In Archives
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-tbl-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing TBL Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing TBL Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#embedded-bf-in-aicalctbl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded BF in AICALC.TBL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-bmd-in-msgtbl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded BMD in MSG.TBL
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-spd-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editing SPD Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Editing SPD Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-loose-spd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - Loose SPD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-spd-in-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example - SPD in archive
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#releasinguploading-your-mods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Releasing/Uploading your Mods
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="usage">Usage</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="create-a-reloaded-mod">Create a Reloaded Mod</h3>
+<p>Follow the guidance in the <a href="https://reloaded-project.github.io/Reloaded-II/CreatingMods/">Reloaded wiki</a> to create a new Reloaded mod.  </p>
+<h3 id="download-mod">Download Mod</h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This image needs updated.</p>
+</div>
+<p>If you don't have it already, download the <code>Persona 5 Royal Essentials</code> Mod.  </p>
+<p><img alt="DownloadMod" src="../images/DownloadMod.png" /></p>
+<h3 id="set-dependency-on-p5r-essentials">Set Dependency on P5R Essentials</h3>
+<p>In the <code>Edit Mod</code> menu (right click your mod in mods list) we're going to add <code>Persona 5 Royal Essentials</code> as a dependency.  </p>
+<p><img alt="AddDependency" src="../images/AddDependency.png" /></p>
+<p>Adding a 'dependency' to your mod will make it such that P5R Essentials will always be loaded when your mod is loaded. This is a necessary step. </p>
+<h2 id="replacing-files-in-cpks">Replacing files in CPKs</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Files inside CPKs can be replaced by creating a folder called <code>P5REssentials/CPK</code> in your mod, and adding folders corresponding to the names of the CPKs inside those folders.</p>
+</div>
+<h3 id="opening-the-mod-folder">Opening the Mod Folder</h3>
+<p><img alt="OpenModFolder" src="../images/OpenModFolder.png" /></p>
+<p>Go to the folder where your mod is stored, this can be done by simply clicking the <code>Open Folder</code> button.  </p>
+<h3 id="add-some-files">Add Some Files</h3>
+<p>Make a folder called <code>P5REssentials</code>, and inside that a folder called <code>CPK</code>. <br />
+Inside that folder, make a folder [or multiple!] where you will store your mod files (you can call it anything you want!).  </p>
+<p><img alt="FileRedirectorFolder" src="../images/CpkRedirectorFolder.png" /></p>
+<p>I used <code>EN.CPK</code> for clarity to match the game's structure.  </p>
+<p><img alt="FileRedirectorFolder" src="../images/CpkRedirectorFolder2.png" /></p>
+<p>We will replace these two files to enable different button prompts 😇.</p>
+<hr />
+<p>The contents of our mod folder would now look as follows.</p>
+<div class="highlight"><pre><span></span><code>// Mod Contents
+ModConfig.json
+Preview.png
+P5REssentials
+└─CPK
+  └─EN.CPK
+    └─BUTTON
+      ├─BUTTON_XBOX.PAK
+      └─BUTTONXBOXTEXINFO.DAT
+</code></pre></div>
+<p>The connectors <code>└─</code> represent folders.</p>
+<h2 id="replacing-music">Replacing Music</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Essentials can be used to replace audio inside AWB &amp; ACB pairs.  </p>
+</div>
+<p><a href="https://sewer56.dev/FileEmulationFramework/emulators/awb.html">Uses FileRedirectionFramework under the hood, follow instructions here for more information.</a><br />
+Don't add dependency on AWB emulator (it's not necessary), but do follow rest of guide.</p>
+<h3 id="example">Example</h3>
+<p>As per usage guide above.<br />
+This works the same as it does in Persona 4 Golden 64-bit/2023 version.</p>
+<p><img alt="AwbExample" src="../images/AwbExample.png" /></p>
+<p>Replaces 53rd audio track (<code>Signs of Love</code>).  </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Encryption keys/scheme on the ADX/hca audio must match original file.<br />
+[Can someone please link Amicitia or other relevant wiki here??]  </p>
+</div>
+<h2 id="replacing-files-in-archives">Replacing Files In Archives</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Essentials can be used to replace individual files in archives such as PAK, BIN, PAC, and ARC  </p>
+</div>
+<p><a href="https://sewer56.dev/FileEmulationFramework/emulators/pak.html">Uses FileRedirectionFramework under the hood, follow instructions here for more information.</a><br />
+Don't add dependency on PAK emulator (it's not necessary), but do follow rest of guide.</p>
+<h3 id="example_1">Example</h3>
+<p>As per usage guide above.  </p>
+<p><img alt="PakExample" src="../images/PakExample.png" /></p>
+<p>Replaces <code>battle/MSG.TBL</code> in <code>init_free.bin</code>.  </p>
+<h2 id="editing-bf-files">Editing BF Files</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Essentials can be used to edit the procedures and messages in BF files such that multiple mods can edit the same file.</p>
+</div>
+<p><a href="https://sewer56.dev/FileEmulationFramework/emulators/bf.html">Uses FileRedirectionFramework under the hood, follow instructions here for more information.</a><br />
+Don't add dependency on BF emulator (it's not necessary), but do follow rest of guide.</p>
+<p>In addition to the <code>.flow</code> and/or <code>.msg</code> files you include in <code>FEmulator\BF</code> per the above guide you will also need to add dummy bf files where they would normally go in <code>FEmulator\PAK</code> or <code>P5REssentials\CPK</code>.</p>
+<h3 id="example-loose-bf">Example - Loose BF</h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>To create a dummy bf file you can create a new empty text file and just rename it, changing the file extension.</p>
+</div>
+<p>To edit the loose <code>e860_034a.bf</code> file in <code>event_data\script</code> you would first add a dummy bf file in <code>P5REssentials\CPK\data_e.cpk\event_data\script</code></p>
+<p><img alt="BFLooseExample1" src="../images/BFLooseExample1.png" /></p>
+<p>Then you would put your <code>.flow</code> or <code>.msg</code> file with the same name in <code>FEmulator\BF</code></p>
+<p><img alt="BFLooseExample2" src="../images/BFLooseExample2.png" /></p>
+<h3 id="example-bf-in-archive">Example - BF In Archive</h3>
+<p>To edit <code>f007.bf</code> in the archive <code>field\pack\fd007_003.arc</code> you would first add a dummy bf file in <code>FEmulator\PAK\field\pack\fd007_003.arc</code> (as per <a href="#replacing-files-in-archives">the information above</a>)</p>
+<p><img alt="BFPakedExample1" src="../images/BFPakedExample1.png" /></p>
+<p>Then you would put your <code>.flow</code> or <code>.msg</code> file with the same name in <code>FEmulator\BF</code></p>
+<p><img alt="BFPakedExample2" src="../images/BFPakedExample2.png" /></p>
+<h2 id="editing-bmd-files">Editing BMD Files</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Essentials can be used to edit messages in BMD files such that multiple mods can edit the same file.</p>
+</div>
+<p><a href="https://sewer56.dev/FileEmulationFramework/emulators/bmd.html">Uses FileRedirectionFramework under the hood, follow instructions here for more information.</a><br />
+Don't add dependency on BMD emulator (it's not necessary), but do follow rest of guide.</p>
+<p>In addition to the <code>.msg</code> files you include in <code>FEmulator\BMD</code> per the above guide you will also need to add dummy bmd files where they would normally go in <code>FEmulator\PAK</code> or <code>P5REssentials\CPK</code>.</p>
+<h3 id="example-loose-bmd">Example - Loose BMD</h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>To create a dummy bmd file you can create a new empty text file and just rename it, changing the file extension.</p>
+</div>
+<p>To edit the loose <code>e722_103.bmd</code> file in <code>event_data\message</code> you would first add a dummy bmd file in <code>P5REssentials\CPK\en.cpk\event_data\message</code></p>
+<p><img alt="BMDLooseExample1" src="../images/BMDLooseExample1.png" /></p>
+<p>Then you would put your <code>.msg</code> file with the same name in <code>FEmulator\BMD</code></p>
+<p><img alt="BMDLooseExample2" src="../images/BMDLooseExample2.png" /></p>
+<h3 id="example-bmd-in-archives">Example - BMD In Archives</h3>
+<p>To edit <code>datSkillHelp.bmd</code> in the archive <code>init\datmsg.pak</code> you would first add a dummy bmd file in <code>FEmulator\PAK\init\datmsg.pak</code> (as per <a href="#replacing-files-in-archives">the information above</a>)</p>
+<p><img alt="BMDPakedExample1" src="../images/BMDPakedExample1.png" /></p>
+<p>Then you would put your <code>.msg</code> file with the same name in <code>FEmulator\BMD</code></p>
+<p><img alt="BMDPakedExample2" src="../images/BMDPakedExample2.png" /></p>
+<h2 id="editing-tbl-files">Editing TBL Files</h2>
+<p>Any TBL files in P3P, P4G and P5R (such as <code>SKILL.TBL</code> and <code>UNIT.TBL</code>) will automatically be merged if multiple mods edit them. This includes <code>itemtbl.bin</code> in P4G and P3P.</p>
+<h3 id="embedded-bf-in-aicalctbl">Embedded BF in AICALC.TBL</h3>
+<p>In P3P and P4G <code>AICALC.TBL</code> contains two embedded bf files, <code>friend.bf</code> and <code>enemy.bf</code>. 
+To edit these place a dummy bf with the same name in <code>FEmulator\PAK\init_free.bin\battle</code> and then hook anything you want to the same way you would any other bf file.</p>
+<h3 id="embedded-bmd-in-msgtbl">Embedded BMD in MSG.TBL</h3>
+<p>In P3P and P4G <code>MSG.TBL</code> contains an embedded bmd file, <code>msgtbl.bmd</code>.
+To edit it, place a dummy bmd with the same name in <code>FEmulator\PAK\init_free.bin\battle</code> and then hook anything you want the same way you would any other bmd file.</p>
+<h2 id="editing-spd-files">Editing SPD Files</h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Essentials can be used to edit textures and sprites in SPD files such that multiple mods can edit sprites in the same texture.</p>
+</div>
+<p><a href="https://sewer56.dev/FileEmulationFramework/emulators/spd.html">Uses FileRedirectionFramework under the hood, follow instructions here for more information.</a><br />
+Don't add dependency on SPD emulator (it's not necessary), but do follow rest of guide.</p>
+<p>In addition to the sprite entry files <code>(.spdspr/.sprt)</code> and/or textures <code>(.dds/.tmx)</code> files you include in <code>FEmulator\SPD</code> per the above guide you may need to add dummy spd files where they would normally go in <code>FEmulator\PAK</code> (only if the spd you're editing is located in an archive).</p>
+<h3 id="example-loose-spd">Example - Loose SPD</h3>
+<p>To edit the loose <code>CHAT.SPD</code> file in <code>FONT\CHAT</code> you would first create a directory mimicking the path of the spd in <code>FEmulator\SPD</code>, including the spds filename.</p>
+<p><img alt="SpdLooseExample1" src="../images/SpdLooseExample1.png" /></p>
+<p>Then you would put your sprite entry and/or texture files in <code>FEmulator\SPD\FONT\CHAT\CHAT.SPD\</code></p>
+<p><img alt="SpdLooseExample2" src="../images/SpdLooseExample2.png" /></p>
+<h3 id="example-spd-in-archive">Example - SPD in archive</h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>To create a dummy spd file you can create a new empty text file and just rename it, changing the file extension.</p>
+</div>
+<p>To edit <code>higawari_common.spd</code> in the archive <code>CALENDAR\HIGAWARI.PAK</code> you would first add a dummy spd file in <code>FEmulator\PAK\CALENDAR\HIGAWARI.PAK</code> (as per <a href="#replacing-files-in-archives">the information above</a>)</p>
+<p><img alt="SpdPakedExample1" src="../images/SpdPakedExample1.png" /></p>
+<p>Then follow the steps for loose spds.</p>
+<p><img alt="SpdPakedExample2" src="../images/SpdPakedExample2.png" /></p>
+<h2 id="releasinguploading-your-mods">Releasing/Uploading your Mods</h2>
+<p>Please refer to the <a href="https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/">Reloaded wiki</a>, and follow the guidance.  </p>
+<p>You should both Enable Update Support AND Publish according to the guidelines.  </p>
+<p>It is recommended to enable update support even if you don't plan to ship updates as <a href="https://reloaded-project.github.io/Reloaded-II/CreatingModPacks/">doing so will allow your mod to be used in Mod Packs.</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+    
+  </body>
+</html>
