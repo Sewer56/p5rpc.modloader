@@ -9,26 +9,6 @@ namespace p5rpc.modloader;
 /// </summary>
 public class Config : Configurable<Config>
 {
-    public enum Language
-    {
-        English,
-        French,
-        Italian,
-        German,
-        Spanish,
-        Japanese,
-        Korean,
-        SimplifiedChinese,
-        TraditionalChinese
-    }
-
-    [Category("Language")]
-    [DisplayName("Game Language")]
-    [Description("Set which language to use for making files.\nSet this to what language you use in-game.")]
-    [DefaultValue(Language.English)]
-    // ReSharper disable once InconsistentNaming
-    public Language CPKLanguage { get; set; } = Language.English;
-    
     [DisplayName("Common Config")]
     public ConfigCommon Common { get; set; } = new();
     

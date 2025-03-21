@@ -2,7 +2,7 @@ using System.Diagnostics;
 using CriFs.V2.Hook.Interfaces;
 using p5rpc.modloader.Merging;
 using p5rpc.modloader.Merging.Tbl;
-using static p5rpc.modloader.Config;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 
 namespace p5rpc.modloader;
 
@@ -11,15 +11,15 @@ public partial class Mod
     // The names of the cpk file for each language
     private readonly Dictionary<Language, string[]> _cpkNames = new()
     {
-        { Language.Japanese, new[] { "BASE.CPK", "DATA.CPK", "data/" }},
-        { Language.English, new[] { "EN.CPK", "_E.CPK", "data_EN" }},
-        { Language.German, new[] { "DE.CPK", "_DE.CPK", "data_DE" }},
-        { Language.French, new[] { "FR.CPK", "_FR.CPK", "data_FR" }},
-        { Language.Italian, new[] { "IT.CPK", "_IT.CPK", "data_IT" }},
-        { Language.Korean, new[] { "KR.CPK", "_K.CPK", "data_KR" }},
-        { Language.Spanish, new[] { "ES.CPK", "_ES.CPK", "data_ES" }},
-        { Language.SimplifiedChinese, new[] { "SC.CPK", "_CH.CPK", "data_CH" }},
-        { Language.TraditionalChinese, new[] { "TC.CPK", "_CK.CPK", "data_CK" }},
+        { Language.Japanese, ["BASE.CPK", "DATA.CPK", "data\\umd0.cpk"] },
+        { Language.English, ["EN.CPK", "_E.CPK", "data_EN"] },
+        { Language.German, ["DE.CPK", "_DE.CPK", "data_DE"] },
+        { Language.French, ["FR.CPK", "_FR.CPK", "data_FR"] },
+        { Language.Italian, ["IT.CPK", "_IT.CPK", "data_IT"] },
+        { Language.Korean, ["KR.CPK", "_K.CPK", "data_KR"] },
+        { Language.Spanish, ["ES.CPK", "_ES.CPK", "data_ES"] },
+        { Language.SimplifiedChinese, ["SC.CPK", "_CK.CPK", "data_CK"] },
+        { Language.TraditionalChinese, ["TC.CPK", "_CH.CPK", "data_CH"] },
     };
     
     private void OnBind(ICriFsRedirectorApi.BindContext context)
@@ -32,14 +32,14 @@ public partial class Mod
         var cpks = _criFsApi.GetCpkFilesInGameDir();
 
         ForceBaseCpkSecond(cpks);
-        ForceCpkFirst(cpks, Configuration.CPKLanguage);
+        ForceCpkFirst(cpks, _language);
 
         var mergeUtils = new MergeUtils(_criFsApi);
         List<IFileMerger> fileMergers = new()
         {
-            new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator, Game),
-            new BmdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bmdEmulator, _pakEmulator, Game),
-            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator, Game),
+            new BfMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bfEmulator, _pakEmulator, Game, _language),
+            new BmdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _bmdEmulator, _pakEmulator, Game, _language),
+            new TblMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator,_localisationFramework,  Game),
             new SpdMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _spdEmulator, _pakEmulator),
             new PakMerger(mergeUtils, _logger, _mergedFileCache, _criFsApi, _pakEmulator),
         };

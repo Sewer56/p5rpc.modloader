@@ -5,6 +5,7 @@ using Persona.Merger.Cache;
 using Persona.Merger.Patching.Tbl;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging.Tbl;
@@ -15,14 +16,16 @@ internal class P5RTblMerger : IFileMerger
     private readonly Logger _logger;
     private readonly MergedFileCache _mergedFileCache;
     private readonly MergeUtils _utils;
+    private readonly ILocalisationFramework _localisationFramework;
 
     internal P5RTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
-        ICriFsRedirectorApi criFsApi)
+        ICriFsRedirectorApi criFsApi, ILocalisationFramework localisationFramework)
     {
         _utils = utils;
         _logger = logger;
         _mergedFileCache = mergedFileCache;
         _criFsApi = criFsApi;
+        _localisationFramework = localisationFramework;
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -97,10 +100,15 @@ internal class P5RTblMerger : IFileMerger
     private async Task<byte[]> PatchNameTable(ArrayRental extractedTable,
         List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
+        // Name tbls of different languages cannot be merged, ensure only those of the same language are used
+        if (_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
+        {
+            candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x.FullPath)).ToList();
+        }
         var table = ParsedNameTable.ParseTable(extractedTable.RawArray);
         var otherTables = new ParsedNameTable[candidates.Count];
         for (var x = 0; x < otherTables.Length; x++)
-            otherTables[x] = ParsedNameTable.ParseTable(await File.ReadAllBytesAsync(candidates[x].FullPath));
+            otherTables[x] = ParsedNameTable.ParseTable(File.ReadAllBytes(candidates[x].FullPath));
 
         var diff = NameTableMerger.CreateDiffs(table, otherTables);
         return NameTableMerger.Merge(table, diff).ToArray();
@@ -112,7 +120,7 @@ internal class P5RTblMerger : IFileMerger
         var patcher = new P5RTblPatcher(extractedTable.Span.ToArray(), type);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x].FullPath)));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x].FullPath)));
 
         var patched = patcher.Apply(patches);
         return patched;

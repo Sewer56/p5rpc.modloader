@@ -5,6 +5,7 @@ using PAK.Stream.Emulator.Interfaces.Structures.IO;
 using Persona.Merger.Cache;
 using Persona.Merger.Patching.Tbl;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 using static p5rpc.modloader.Merging.Tbl.TblMerger;
 
 namespace p5rpc.modloader.Merging.Tbl;
@@ -16,15 +17,17 @@ internal class P4GTblMerger : IFileMerger
     private readonly MergedFileCache _mergedFileCache;
     private readonly IPakEmulator _pakEmulator;
     private readonly MergeUtils _utils;
-
+    private readonly ILocalisationFramework _localisationFramework;
+    
     internal P4GTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
-        ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
+        ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator, ILocalisationFramework localisationFramework)
     {
         _utils = utils;
         _logger = logger;
         _mergedFileCache = mergedFileCache;
         _criFsApi = criFsApi;
         _pakEmulator = pakEmulator;
+        _localisationFramework = localisationFramework;
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -130,7 +133,7 @@ internal class P4GTblMerger : IFileMerger
         var patcher = new P4GTblPatcher(extractedTable, type);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x])));
 
         var patched = patcher.Apply(patches, type);
         return patched;
@@ -138,6 +141,12 @@ internal class P4GTblMerger : IFileMerger
 
     private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
+        // Msg tbls of different languages cannot be merged, ensure only those of the same language are used
+        if(_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
+        {
+            candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x)).ToList();
+        }
+
         var bmds = new byte[5][];
         var bmdFiles = candidates.Where(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase)).ToArray();
         foreach (var bmdFile in bmdFiles)
@@ -150,7 +159,10 @@ internal class P4GTblMerger : IFileMerger
         var patcher = new P4GTblPatcher(extractedTable, TblType.Message);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+        {
+            var fileBytes = File.ReadAllBytes(candidates[x]);
+            patches.Add(patcher.GeneratePatch(fileBytes));
+        }
 
         var patched = patcher.Apply(patches, TblType.Message, bmds);
         return patched;
@@ -174,7 +186,7 @@ internal class P4GTblMerger : IFileMerger
         var patcher = new P4GTblPatcher(extractedTable, TblType.AiCalc);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x])));
 
         var patched = patcher.Apply(patches, TblType.AiCalc, bfs);
         return patched;

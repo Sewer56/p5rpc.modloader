@@ -14,6 +14,7 @@ using Persona.Merger.Cache;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 
 // Free perf gains, but you'll need to remember that any stackalloc isn't 0 initialized.
 [module: SkipLocalsInit]
@@ -53,6 +54,8 @@ public partial class Mod : ModBase // <= Do not Remove.
     private ISpdEmulator _spdEmulator = null!;
     private MergedFileCache _mergedFileCache = null!;
     private Task _createMergedFileCacheTask = null!;
+    private ILocalisationFramework _localisationFramework = null!;
+    private Language _language = null!;
     
     public Mod(ModContext context)
     {
@@ -94,11 +97,18 @@ public partial class Mod : ModBase // <= Do not Remove.
             _logger.Warning("Executable name does not match any known game. Will use Persona 5 Royal profile.\n" +
                             "Consider renaming your EXE back to something that starts with 'p4g' or 'p4pc_DT_mc' or 'p5r'.");
 
+        modLoader.GetController<ILocalisationFramework>().TryGetTarget(out _localisationFramework!);
+        if (!_localisationFramework.TryGetLanguage(out _language))
+        {
+            _language = Language.English;
+            _logger.Error("Unable to get the language of the game, using English as default.");
+        }
+        
         // Read merged file cache in background.
         _createMergedFileCacheTask = Task.Run(async () =>
         {
             var modFolder = modLoader.GetDirectoryForModId(context.ModConfig.ModId);
-            var cacheFolder = Path.Combine(modFolder, "Cache", $"{Game}");
+            var cacheFolder = Path.Combine(modFolder, "Cache", $"{Game}_{_language.Id}");
             return _mergedFileCache = await MergedFileCache.FromPathAsync(context.ModConfig.ModVersion, cacheFolder);
         });
         

@@ -46,6 +46,7 @@
     <PackageReference Include="Reloaded.Memory.SigScan.ReloadedII.Interfaces" Version="1.2.0" />
     <PackageReference Include="Reloaded.Mod.Interfaces" Version="2.3.0" ExcludeAssets="runtime" />
     <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
+    <PackageReference Include="Reloaded.Universal.Localisation.Framework.Interfaces" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

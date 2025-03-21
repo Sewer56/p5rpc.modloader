@@ -7,6 +7,7 @@ using BMD.File.Emulator.Interfaces.Structures.IO;
 using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 
 namespace p5rpc.modloader.Merging;
 
@@ -20,7 +21,7 @@ internal class BmdMerger : IFileMerger
     private readonly IPakEmulator _pakEmulator;
     private readonly Game _game;
 
-    internal BmdMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IBmdEmulator bmdEmulator, IPakEmulator pakEmulator, Game game)
+    internal BmdMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IBmdEmulator bmdEmulator, IPakEmulator pakEmulator, Game game, Language language)
     {
         _utils = utils;
         _logger = logger;
@@ -29,6 +30,22 @@ internal class BmdMerger : IFileMerger
         _bmdEmulator = bmdEmulator;
         _pakEmulator = pakEmulator;
         _game = game;
+        
+        var gameEncodings = BfMerger.Encodings[game];
+        if (gameEncodings.ContainsKey(language))
+        {
+            var encoding = gameEncodings[language];
+            _logger.Info("Set bf emulator encoding to {0}", encoding);
+            _bmdEmulator.SetEncoding(encoding);
+        }
+        else
+        {
+            _logger.Error(
+                "Encoding for {0} is not known, using default encoding. " +
+                "If script tools does have an encoding for this language please report this so it can be supported.",
+                language.Name);
+        }
+
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -91,18 +108,13 @@ internal class BmdMerger : IFileMerger
         string[] modIds = { "p5rpc.modloader" };
         var mergedKey = MergedFileCache.CreateKey(route, modIds);
         CachedFileSource[] msgSources = msgPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
-
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in msgSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-
+        
         if (_mergedFileCache.TryGet(mergedKey, msgSources, out var mergedCachePath))
         {
             _logger.Info("Loading Merged BMD {0} from Cache ({1})", route, mergedCachePath);
             foreach (var path in bmdPaths)
             {
                 _bmdEmulator.RegisterBmd(mergedCachePath, path);
-                File.SetLastWriteTime(path, lastWrite);
             }
             return;
         }
@@ -165,10 +177,6 @@ internal class BmdMerger : IFileMerger
         // Register all the bmds to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < bmdPaths.Count - 1; i++)
             _bmdEmulator.RegisterBmd($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", bmdPaths[i]);
-
-        // Reset last write
-        foreach (var bmd in bmdPaths)
-            File.SetLastWriteTime(bmd, lastWrite);
     }
 
     private ReadOnlyMemory<byte>? ExtractBmd(byte[] pak, string bmdPathInPak)
@@ -242,12 +250,6 @@ internal class BmdMerger : IFileMerger
         var item = await _mergedFileCache.AddAsync(mergedKey, msgSources, File.ReadAllBytes(bmdPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, bmdPath);
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
-
-        // Reset last write
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in msgSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-        File.SetLastWriteTime(bmdPath, lastWrite);
     }
 }
 

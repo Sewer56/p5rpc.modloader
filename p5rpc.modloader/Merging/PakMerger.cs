@@ -72,7 +72,7 @@ internal class PakMerger : IFileMerger
         // Try and get cached merged file
         string[] modIds = { "p5rpc.modloader" };
         var mergedKey = MergedFileCache.CreateKey(route, modIds);
-        CachedFileSource[] innerSources = innerFiles.Select(file => new CachedFileSource { LastWrite = new FileInfo(file).LastWriteTime }).ToArray();
+        CachedFileSource[] innerSources = innerFiles.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
         if(_mergedFileCache.TryGet(mergedKey, innerSources, out var mergedCachePath))
         {
             _logger.Info("Loading Merged PAK {0} from Cache ({1})", route, mergedCachePath);

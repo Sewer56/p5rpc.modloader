@@ -63,15 +63,6 @@
           },
           "ReleaseMetadataName": "PAK.Stream.Emulator.ReleaseMetadata.json"
         },
-        "reloaded.universal.fileemulationframework.bf": {
-          "Config": {
-            "UserName": "Sewer56",
-            "RepositoryName": "FileEmulationFramework",
-            "UseReleaseTag": false,
-            "AssetFileName": "Mod.zip"
-          },
-          "ReleaseMetadataName": "BF.File.Emulator.ReleaseMetadata.json"
-        },
         "reloaded.universal.fileemulationframework.bmd": {
           "Config": {
             "UserName": "Sewer56",
@@ -81,6 +72,15 @@
           },
           "ReleaseMetadataName": "BMD.File.Emulator.ReleaseMetadata.json"
         },
+        "reloaded.universal.fileemulationframework.bf": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "FileEmulationFramework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "BF.File.Emulator.ReleaseMetadata.json"
+        },
         "reloaded.universal.fileemulationframework.spd": {
           "Config": {
             "UserName": "Sewer56",
@@ -89,6 +89,33 @@
             "AssetFileName": "Mod.zip"
           },
           "ReleaseMetadataName": "SPD.File.Emulator.ReleaseMetadata.json"
+        },
+        "Reloaded.Universal.Localisation.Framework": {
+          "Config": {
+            "UserName": "AnimatedSwine37",
+            "RepositoryName": "Reloaded.Universal.Localisation.Framework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "Reloaded.Universal.Localisation.Framework.ReleaseMetadata.json"
+        },
+        "Reloaded.Universal.Localisation.Provider.Steam": {
+          "Config": {
+            "UserName": "AnimatedSwine37",
+            "RepositoryName": "Reloaded.Universal.Localisation.Framework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "Reloaded.Universal.Localisation.Provider.Steam.ReleaseMetadata.json"
+        },
+        "Reloaded.Universal.Localisation.Provider.Windows": {
+          "Config": {
+            "UserName": "AnimatedSwine37",
+            "RepositoryName": "Reloaded.Universal.Localisation.Framework",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "Reloaded.Universal.Localisation.Provider.Windows.ReleaseMetadata.json"
         },
         "reloaded.universal.fileemulationframework.awb": {
           "Config": {
@@ -132,7 +159,10 @@
     "reloaded.universal.fileemulationframework.pak",
     "reloaded.universal.fileemulationframework.bmd",
     "reloaded.universal.fileemulationframework.bf",
-    "reloaded.universal.fileemulationframework.spd"
+    "reloaded.universal.fileemulationframework.spd",
+    "Reloaded.Universal.Localisation.Framework",
+    "Reloaded.Universal.Localisation.Provider.Steam",
+    "Reloaded.Universal.Localisation.Provider.Windows"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [
