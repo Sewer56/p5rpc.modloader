@@ -265,10 +265,7 @@ internal class P4GTblMerger : IFileMerger
         var patcher = new P4GTblPatcher(extractedTable, TblType.Message);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-        {
-            var fileBytes = File.ReadAllBytes(candidates[x]);
-            patches.Add(patcher.GeneratePatch(fileBytes));
-        }
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x])));
 
         return patcher.Apply(patches, TblType.Message, bmds);
     }
