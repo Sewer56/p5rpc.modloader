@@ -9,7 +9,7 @@ namespace p5rpc.modloader.Merging.Tbl;
 
 internal class TblMerger : IFileMerger
 {
-    private IFileMerger _tblMerger;
+    private IFileMerger? _tblMerger;
 
     internal TblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi,
         IPakEmulator pakEmulator, ILocalisationFramework localisationFramework, Game game)

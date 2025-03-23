@@ -84,10 +84,12 @@ internal class P5RTblMerger : IFileMerger
 
             // Then we merge
             byte[] patched;
+            // Note: https://github.com/Sewer56/p5rpc.modloader/pull/41#issue-2939748981
+            // Async reads don't work here.
             if (type != TblType.Name)
-                patched = await PatchTable(type, extractedTable, candidates);
+                patched = PatchTable(type, extractedTable, candidates);
             else
-                patched = await PatchNameTable(extractedTable, candidates);
+                patched = PatchNameTable(extractedTable, candidates);
 
             // Then we store in cache.
             var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
@@ -97,7 +99,7 @@ internal class P5RTblMerger : IFileMerger
         });
     }
 
-    private async Task<byte[]> PatchNameTable(ArrayRental extractedTable,
+    private byte[] PatchNameTable(ArrayRental extractedTable,
         List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
         // Name tbls of different languages cannot be merged, ensure only those of the same language are used
@@ -114,7 +116,7 @@ internal class P5RTblMerger : IFileMerger
         return NameTableMerger.Merge(table, diff).ToArray();
     }
 
-    private static async Task<byte[]> PatchTable(TblType type, ArrayRental extractedTable,
+    private static byte[] PatchTable(TblType type, ArrayRental extractedTable,
         List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
         var patcher = new P5RTblPatcher(extractedTable.Span.ToArray(), type);

@@ -108,16 +108,18 @@ internal class P4GTblMerger : IFileMerger
 
             // Then we merge
             byte[] patched;
+            // Note: https://github.com/Sewer56/p5rpc.modloader/pull/41#issue-2939748981
+            // Async reads don't work here.
             switch (type)
             {
                 case TblType.Message:
-                    patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
                     break;
                 case TblType.AiCalc:
-                    patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
                     break;
                 default:
-                    patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchTable(type, extractedTbl.Value.ToArray(), candidates);
                     break;
             }
 
@@ -128,7 +130,7 @@ internal class P4GTblMerger : IFileMerger
         });
     }
 
-    private async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
+    private byte[] PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
     {
         var patcher = new P4GTblPatcher(extractedTable, type);
         var patches = new List<TblPatch>(candidates.Count);
@@ -139,7 +141,7 @@ internal class P4GTblMerger : IFileMerger
         return patched;
     }
 
-    private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
+    private byte[] PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
         // Msg tbls of different languages cannot be merged, ensure only those of the same language are used
         if(_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
@@ -168,7 +170,7 @@ internal class P4GTblMerger : IFileMerger
         return patched;
     }
 
-    private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
+    private byte[] PatchAiCalc(byte[] extractedTable, List<string> candidates)
     {
         var bfs = new byte[11][];
         // ToArray so we can remove items from the collection in the foreach
