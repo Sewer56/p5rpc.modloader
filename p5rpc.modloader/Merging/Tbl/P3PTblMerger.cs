@@ -207,9 +207,7 @@ internal class P3PTblMerger : IFileMerger
     {
         // Msg tbls of different languages cannot be merged, ensure only those of the same language are used
         if (_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
-        {
             candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x)).ToList();
-        }
 
         var bmds = new byte[5][];
         var bmdFiles = candidates.Where(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase)).ToArray();

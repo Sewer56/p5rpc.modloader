@@ -117,9 +117,8 @@ internal class P5RTblMerger : IFileMerger
     {
         // Name tbls of different languages cannot be merged, ensure only those of the same language are used
         if (_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
-        {
             candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x.FullPath)).ToList();
-        }
+
         var table = ParsedNameTable.ParseTable(extractedTable.RawArray);
         var otherTables = new ParsedNameTable[candidates.Count];
         for (var x = 0; x < otherTables.Length; x++)
