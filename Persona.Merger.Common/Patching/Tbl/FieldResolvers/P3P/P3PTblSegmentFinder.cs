@@ -47,8 +47,8 @@ public unsafe struct P3PTblSegmentFinder
         {
             TblType.AiCalc => 18,
             TblType.Persona => 16,
-            TblType.Encount => 1,
-            TblType.Effect => 1,
+            TblType.Encount => 5,
+            TblType.Effect => 5,
             TblType.Skill => 3,
             TblType.Item => 3,
             TblType.Unit => 3,
