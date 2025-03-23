@@ -320,6 +320,7 @@ internal class BfMerger : IFileMerger
     /// Gets a list of sources for flow files. This includes files that they would import
     /// </summary>
     /// <param name="route">The route for the flow file</param>
+    /// <param name="sources">The identified sources from the BF emulator.</param>
     /// <returns>A list of cache sources for all the files used by the specified route</returns>
     private bool TryGetFlowSources(string route, out CachedFileSource[] sources)
     {
