@@ -41,6 +41,7 @@ internal class TblMerger : IFileMerger
     /// </summary>
     /// <param name="pakFiles">A list of pak files from pak emulator</param>
     /// <param name="route">The route for the file</param>
+    /// <param name="fileName">Name of the file to find.</param>
     /// <returns>A list of files from modded paks that match the file</returns>
     internal static List<string> FindInPaks(RouteGroupTuple[] pakFiles, string route, string fileName)
     {
