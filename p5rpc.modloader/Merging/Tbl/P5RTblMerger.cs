@@ -6,6 +6,7 @@ using Persona.Merger.Patching.Tbl;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Generic;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P5R.Name;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 using static p5rpc.modloader.Merging.MergeUtils;
 
 namespace p5rpc.modloader.Merging.Tbl;
@@ -16,14 +17,16 @@ internal class P5RTblMerger : IFileMerger
     private readonly Logger _logger;
     private readonly MergedFileCache _mergedFileCache;
     private readonly MergeUtils _utils;
+    private readonly ILocalisationFramework _localisationFramework;
 
     internal P5RTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
-        ICriFsRedirectorApi criFsApi)
+        ICriFsRedirectorApi criFsApi, ILocalisationFramework localisationFramework)
     {
         _utils = utils;
         _logger = logger;
         _mergedFileCache = mergedFileCache;
         _criFsApi = criFsApi;
+        _localisationFramework = localisationFramework;
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -94,10 +97,12 @@ internal class P5RTblMerger : IFileMerger
 
             // Then we merge
             byte[] patched;
+            // Note: https://github.com/Sewer56/p5rpc.modloader/pull/41#issue-2939748981
+            // Async reads don't work here.
             if (type != TblType.Name)
-                patched = await PatchTable(type, extractedTable, candidates);
+                patched = PatchTable(type, extractedTable, candidates);
             else
-                patched = await PatchNameTable(extractedTable, candidates);
+                patched = PatchNameTable(extractedTable, candidates);
 
             // Then we store in cache.
             var item = await _mergedFileCache.AddAsync(cacheKey, sources, patched);
@@ -107,25 +112,29 @@ internal class P5RTblMerger : IFileMerger
         });
     }
 
-    private async Task<byte[]> PatchNameTable(ArrayRental extractedTable,
+    private byte[] PatchNameTable(ArrayRental extractedTable,
         List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
+        // Name tbls of different languages cannot be merged, ensure only those of the same language are used
+        if (_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
+            candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x.FullPath)).ToList();
+
         var table = ParsedNameTable.ParseTable(extractedTable.RawArray);
         var otherTables = new ParsedNameTable[candidates.Count];
         for (var x = 0; x < otherTables.Length; x++)
-            otherTables[x] = ParsedNameTable.ParseTable(await File.ReadAllBytesAsync(candidates[x].FullPath));
+            otherTables[x] = ParsedNameTable.ParseTable(File.ReadAllBytes(candidates[x].FullPath));
 
         var diff = NameTableMerger.CreateDiffs(table, otherTables);
         return NameTableMerger.Merge(table, diff).ToArray();
     }
 
-    private static async Task<byte[]> PatchTable(TblType type, ArrayRental extractedTable,
+    private static byte[] PatchTable(TblType type, ArrayRental extractedTable,
         List<ICriFsRedirectorApi.BindFileInfo> candidates)
     {
         var patcher = new P5RTblPatcher(extractedTable.Span.ToArray(), type);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x].FullPath)));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x].FullPath)));
 
         return patcher.Apply(patches);
     }

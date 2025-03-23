@@ -1,4 +1,4 @@
-﻿using CriFs.V2.Hook.Interfaces;
+using CriFs.V2.Hook.Interfaces;
 using CriFsV2Lib.Definitions.Utilities;
 using FileEmulationFramework.Lib.Utilities;
 using PAK.Stream.Emulator.Interfaces;
@@ -7,6 +7,7 @@ using Persona.Merger.Cache;
 using Persona.Merger.Patching.Tbl;
 using Persona.Merger.Patching.Tbl.FieldResolvers.Generic;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 using static p5rpc.modloader.Merging.Tbl.TblMerger;
 
 namespace p5rpc.modloader.Merging.Tbl;
@@ -18,15 +19,17 @@ internal class P3PTblMerger : IFileMerger
     private readonly MergedFileCache _mergedFileCache;
     private readonly IPakEmulator _pakEmulator;
     private readonly MergeUtils _utils;
+    private readonly ILocalisationFramework _localisationFramework;
 
     internal P3PTblMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache,
-        ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator)
+        ICriFsRedirectorApi criFsApi, IPakEmulator pakEmulator, ILocalisationFramework localisationFramework)
     {
         _utils = utils;
         _logger = logger;
         _mergedFileCache = mergedFileCache;
         _criFsApi = criFsApi;
         _pakEmulator = pakEmulator;
+        _localisationFramework = localisationFramework;
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -109,17 +112,19 @@ internal class P3PTblMerger : IFileMerger
             }
 
             // Then we merge
+            // Note: https://github.com/Sewer56/p5rpc.modloader/pull/41#issue-2939748981
+            // Async reads don't work here.
             byte[] patched;
             switch (type)
             {
                 case TblType.Message:
-                    patched = await PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchMsgTable(extractedTbl.Value.ToArray(), candidates);
                     break;
                 case TblType.AiCalc:
-                    patched = await PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchAiCalc(extractedTbl.Value.ToArray(), candidates);
                     break;
                 default:
-                    patched = await PatchTable(type, extractedTbl.Value.ToArray(), candidates);
+                    patched = PatchTable(type, extractedTbl.Value.ToArray(), candidates);
                     break;
             }
 
@@ -188,18 +193,22 @@ internal class P3PTblMerger : IFileMerger
         });
     }
 
-    private static async Task<byte[]> PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
+    private static byte[] PatchTable(TblType type, byte[] extractedTable, List<string> candidates)
     {
         var patcher = new P3PTblPatcher(extractedTable, type);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x])));
 
         return patcher.Apply(patches, type);
     }
 
-    private async Task<byte[]> PatchMsgTable(byte[] extractedTable, List<string> candidates)
+    private byte[] PatchMsgTable(byte[] extractedTable, List<string> candidates)
     {
+        // Msg tbls of different languages cannot be merged, ensure only those of the same language are used
+        if (_localisationFramework.TryGetLanguage(out var language) && language != Language.English)
+            candidates = candidates.Where(x => _localisationFramework.IsFileLocalised(x)).ToList();
+
         var bmds = new byte[5][];
         var bmdFiles = candidates.Where(x => x.EndsWith("MSGTBL.bmd", StringComparison.OrdinalIgnoreCase)).ToArray();
         foreach (var bmdFile in bmdFiles)
@@ -212,12 +221,12 @@ internal class P3PTblMerger : IFileMerger
         var patcher = new P3PTblPatcher(extractedTable, TblType.Message);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x]))); // TODO find out why ReadAllBytesAsync doesn't work
 
         return patcher.Apply(patches, TblType.Message, bmds);
     }
 
-    private async Task<byte[]> PatchAiCalc(byte[] extractedTable, List<string> candidates)
+    private byte[] PatchAiCalc(byte[] extractedTable, List<string> candidates)
     {
         var bfs = new byte[18][];
         // ToArray so we can remove items from the collection in the foreach
@@ -235,7 +244,7 @@ internal class P3PTblMerger : IFileMerger
         var patcher = new P3PTblPatcher(extractedTable, TblType.AiCalc);
         var patches = new List<TblPatch>(candidates.Count);
         for (var x = 0; x < candidates.Count; x++)
-            patches.Add(patcher.GeneratePatch(await File.ReadAllBytesAsync(candidates[x])));
+            patches.Add(patcher.GeneratePatch(File.ReadAllBytes(candidates[x])));
 
         return patcher.Apply(patches, TblType.AiCalc, bfs);
     }

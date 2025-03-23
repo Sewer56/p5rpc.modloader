@@ -223,6 +223,22 @@ Then follow the steps for loose spds.
 
 ![SpdPakedExample2](./images/SpdPakedExample2.png)
 
+## Supporting Multiple Languages
+Persona Essentials has integration with [Localisation Framework](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework) to help you make your mods support multiple languages.
+By adding files as described in [its documentation](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework?tab=readme-ov-file#formatting-files) you can have different versions of any type of file for each language. The framework will automatically determine what language the user is playing in and use the correct ones.
+
+### Example - BMD
+Say you have edited the BMD file `E722_103.bmd` in `EVENT_DATA\MESSAGE` as described in [Example - Loose BMD](#example---loose-bmd) and want it to work in Japanese. 
+As per that section, you will have a `msg` file at `FEmulator\BMD\E722_013.msg` with your English messages.
+
+![BmdLocalisedExample1](./images/BmdLocalisedExample1.png)
+
+To support Japanese you would place a corresponding `msg` file with Japanese text in `FEmulator\L10N\ja\E722_013.msg`.
+
+![BmdLocalisedExample2](./images/BmdLocalisedExample2.png)
+
+To support more languages you would add more copies of that file in the folder `FEmulator\L10N\{langCode}` where `{langCode}` is the id of the language listed in the [Localisation Framework documentation](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework?tab=readme-ov-file#supported-languages).
+
 ## Releasing/Uploading your Mods
 
 Please refer to the [Reloaded wiki](https://reloaded-project.github.io/Reloaded-II/EnablingUpdateSupport/), and follow the guidance.  

@@ -139,14 +139,19 @@ public class MergeCacheTests
     {
         // Arrange & Act
         var folderPath = "Test/Can_WriteToFile";
-        Directory.Delete(folderPath, true);
-        
+        try { Directory.Delete(folderPath, true); }
+        catch (Exception)
+        {
+            // ignored
+        }
+
         var dummyCache = new MergedFileCache(folderPath);
         var dummyFile = new CachedFile() { RelativePath = "dummy", LastAccessed = DateTime.Now };
         var dummyKey = "temp+coolFile.png";
         
         // Assert & Write Dummy File
         dummyCache.KeyToFile[dummyKey] = dummyFile;
+        dummyCache.Version = "1.0.0";
         await dummyCache.ToPathAsync();
         Assert.True(File.Exists(dummyCache.GetConfigPath()));
         

@@ -7,6 +7,7 @@ using BF.File.Emulator.Interfaces.Structures.IO;
 using PAK.Stream.Emulator.Interfaces;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P4G;
 using Persona.Merger.Patching.Tbl.FieldResolvers.P3P;
+using Reloaded.Universal.Localisation.Framework.Interfaces;
 
 namespace p5rpc.modloader.Merging;
 
@@ -20,7 +21,54 @@ internal class BfMerger : IFileMerger
     private readonly IPakEmulator _pakEmulator;
     private readonly Game _game;
 
-    internal BfMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi, IBfEmulator bfEmulator, IPakEmulator pakEmulator, Game game)
+    internal static readonly Dictionary<Game, Dictionary<Language, string>> Encodings = new()
+    {
+        {
+            Game.P3P, new Dictionary<Language, string>
+            {
+                { Language.English, "P3P_EFIGS" },
+                { Language.French, "P3P_EFIGS" },
+                { Language.Italian, "P3P_EFIGS" },
+                { Language.German, "P3P_EFIGS" },
+                { Language.Spanish, "P3P_EFIGS" },
+                { Language.Japanese, "P3P_JP" },
+                { Language.TraditionalChinese, "P3P_CHT" },
+                { Language.SimplifiedChinese, "P3P_CHS" },
+                { Language.Korean, "P3P_Korean" }
+            }
+        },
+        {
+            Game.P4G, new Dictionary<Language, string>
+            {
+                { Language.English, "P4G_EFIGS" },
+                { Language.French, "P4G_EFIGS" },
+                { Language.Italian, "P4G_EFIGS" },
+                { Language.German, "P4G_EFIGS" },
+                { Language.Spanish, "P4G_EFIGS" },
+                { Language.Japanese, "P4G_JP" },
+                { Language.TraditionalChinese, "P4G_CHT" },
+                { Language.SimplifiedChinese, "P4G_CHS" },
+                { Language.Korean, "P4G_Korean" }
+            }
+        },
+        {
+            Game.P5R, new Dictionary<Language, string>
+            {
+                { Language.English, "P5R_EFIGS" },
+                { Language.French, "P5R_EFIGS" },
+                { Language.Italian, "P5R_EFIGS" },
+                { Language.German, "P5R_EFIGS" },
+                { Language.Spanish, "P5R_EFIGS" },
+                { Language.Japanese, "P5R_Japanese" },
+                { Language.TraditionalChinese, "P5R_CHT" },
+                { Language.SimplifiedChinese, "P5R_CHS" },
+                { Language.Korean, "P5_Korean" }
+            }
+        }
+    };
+
+    internal BfMerger(MergeUtils utils, Logger logger, MergedFileCache mergedFileCache, ICriFsRedirectorApi criFsApi,
+        IBfEmulator bfEmulator, IPakEmulator pakEmulator, Game game, Language language)
     {
         _utils = utils;
         _logger = logger;
@@ -29,6 +77,21 @@ internal class BfMerger : IFileMerger
         _bfEmulator = bfEmulator;
         _pakEmulator = pakEmulator;
         _game = game;
+
+        var gameEncodings = Encodings[game];
+        if (gameEncodings.ContainsKey(language))
+        {
+            var encoding = gameEncodings[language];
+            _logger.Info("Set bf emulator encoding to {0}", encoding);
+            _bfEmulator.SetEncoding(encoding);
+        }
+        else
+        {
+            _logger.Error(
+                "Encoding for {0} is not known, using default encoding. " +
+                "If script tools does have an encoding for this language please report this so it can be supported.",
+                language.Name);
+        }
     }
 
     public void Merge(string[] cpks, ICriFsRedirectorApi.BindContext context)
@@ -70,7 +133,6 @@ internal class BfMerger : IFileMerger
                         pakedBfs[fullBfRoute].BfPaths.Add($@"{pakGroup.Files.Directory.FullPath}\{bfRoute}"); // Ensure highest priority bf is used
                     }
                 }
-
             }
             _logger.Info("Route: {0}", route);
         }
@@ -90,21 +152,22 @@ internal class BfMerger : IFileMerger
         // Try and get cached merged bf
         string[] modIds = { "p5rpc.modloader" };
         var mergedKey = MergedFileCache.CreateKey(route, modIds);
-        CachedFileSource[] flowSources = flowPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
-
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in flowSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-
-        if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
+        if (!TryGetFlowSources(route, out var flowSources))
         {
-            _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
-            foreach (var path in bfPaths)
+            _logger.Error("[BF Merger] Failed to get sources for {}, not using cached file");
+        }
+        else
+        {
+            if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
             {
-                _bfEmulator.RegisterBf(mergedCachePath, path);
-                File.SetLastWriteTime(path, lastWrite);
+                _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
+                foreach (var path in bfPaths)
+                {
+                    _bfEmulator.RegisterBf(mergedCachePath, path);
+                }
+
+                return;
             }
-            return;
         }
 
         // Get pak file
@@ -165,10 +228,6 @@ internal class BfMerger : IFileMerger
         // Register all the bfs to the one emulated one (only the highest priority should ever actually be used though)
         for (int i = 0; i < bfPaths.Count - 1; i++)
             _bfEmulator.RegisterBf($"{_mergedFileCache.CacheFolder}\\{item.RelativePath}", bfPaths[i]);
-
-        // Reset last write
-        foreach (var bf in bfPaths)
-            File.SetLastWriteTime(bf, lastWrite);
     }
 
     private ReadOnlyMemory<byte>? ExtractBf(byte[] pak, string bfPathInPak)
@@ -197,13 +256,20 @@ internal class BfMerger : IFileMerger
         string bfPath = Path.Combine(bindDirectory, route);
         string[] modIds = { "p5rpc.modloader" };
         var mergedKey = MergedFileCache.CreateKey(route, modIds);
-        CachedFileSource[] flowSources = flowPaths.Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
-        if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
+
+        if (!TryGetFlowSources(route, out var flowSources))
         {
-            _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
-            _bfEmulator.RegisterBf(mergedCachePath, bfPath);
-            _utils.ReplaceFileInBinderInput(pathToFileMap, route, mergedCachePath);
-            return;
+            _logger.Error("[BF Merger] Failed to get sources for {}, not using cached file");
+        }
+        else
+        {
+            if (_mergedFileCache.TryGet(mergedKey, flowSources, out var mergedCachePath))
+            {
+                _logger.Info("Loading Merged BF {0} from Cache ({1})", route, mergedCachePath);
+                _bfEmulator.RegisterBf(mergedCachePath, bfPath);
+                _utils.ReplaceFileInBinderInput(pathToFileMap, route, mergedCachePath);
+                return;
+            }
         }
 
         string pathInCpk = RemoveR2Prefix(route);
@@ -248,12 +314,25 @@ internal class BfMerger : IFileMerger
         var item = await _mergedFileCache.AddAsync(mergedKey, flowSources, File.ReadAllBytes(bfPath));
         _utils.ReplaceFileInBinderInput(pathToFileMap, route, bfPath);
         _logger.Info("Merge {0} Complete. Cached to {1}.", route, item.RelativePath);
+    }
 
-        // Reset last write
-        DateTime lastWrite = DateTime.MinValue;
-        foreach (var source in flowSources)
-            if (source.LastWrite > lastWrite) lastWrite = source.LastWrite;
-        File.SetLastWriteTime(bfPath, lastWrite);
+    /// <summary>
+    /// Gets a list of sources for flow files. This includes files that they would import
+    /// </summary>
+    /// <param name="route">The route for the flow file</param>
+    /// <param name="sources">The identified sources from the BF emulator.</param>
+    /// <returns>A list of cache sources for all the files used by the specified route</returns>
+    private bool TryGetFlowSources(string route, out CachedFileSource[] sources)
+    {
+        if (_bfEmulator.TryGetImports(route, out var imports))
+        {
+            sources = imports
+                .Select(file => new CachedFileSource { LastWrite = File.GetLastWriteTime(file) }).ToArray();
+            return true;
+        }
+
+        sources = [];
+        return false;
     }
 }
 
