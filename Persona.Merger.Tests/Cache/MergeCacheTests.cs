@@ -151,6 +151,7 @@ public class MergeCacheTests
         
         // Assert & Write Dummy File
         dummyCache.KeyToFile[dummyKey] = dummyFile;
+        dummyCache.Version = "1.0.0";
         await dummyCache.ToPathAsync();
         Assert.True(File.Exists(dummyCache.GetConfigPath()));
         
