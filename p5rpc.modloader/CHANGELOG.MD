@@ -1,3 +1,13 @@
+# 2.9.0
+
+- Added support for [Localisation Framework](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework) allowing for improved mod translation support.
+
+This will automatically pick up your language from Steam and/or Windows settings,
+and apply it to the game. No more need to manually change the language.
+
+Mod authors can now also prepare files specific to a given language, as opposed
+to only supporting English.
+
 # 2.8.0
 
 - Fixed TBL Merging bug related to expanded TBL files
