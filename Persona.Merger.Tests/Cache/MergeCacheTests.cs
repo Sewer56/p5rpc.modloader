@@ -139,8 +139,12 @@ public class MergeCacheTests
     {
         // Arrange & Act
         var folderPath = "Test/Can_WriteToFile";
-        Directory.Delete(folderPath, true);
-        
+        try { Directory.Delete(folderPath, true); }
+        catch (Exception)
+        {
+            // ignored
+        }
+
         var dummyCache = new MergedFileCache(folderPath);
         var dummyFile = new CachedFile() { RelativePath = "dummy", LastAccessed = DateTime.Now };
         var dummyKey = "temp+coolFile.png";
