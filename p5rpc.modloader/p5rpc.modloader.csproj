@@ -18,6 +18,7 @@
   <ItemGroup>
 
     <ReloadedLinkRoots Include="p5rpc.modloader" />
+    <ReloadedLinkRoots Include="Persona.Merger.Common" />
     <!-- Add assemblies to be trimmed. You might need to add their dependencies too!  -->
     <!-- <ReloadedLinkAssemblies Include="Reloaded.Memory" /> -->
   </ItemGroup>
