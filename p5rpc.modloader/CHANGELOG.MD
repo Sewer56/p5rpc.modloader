@@ -1,3 +1,7 @@
+# 2.9.2
+
+- Fix JSON serialisation error due to trimming Persona.Merger.Common.
+
 # 2.9.0
 
 - Added support for [Localisation Framework](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework) allowing for improved mod translation support.
