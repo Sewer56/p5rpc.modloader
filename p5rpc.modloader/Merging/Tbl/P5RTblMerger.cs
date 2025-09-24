@@ -54,8 +54,8 @@ internal class P5RTblMerger : IFileMerger
             PatchAnyFile(pathToFileMap, @"R2\EVENT\EVTFADEOUTTABLE.BIN", 2, cpks),
             PatchAnyFile(pathToFileMap, @"R2\INIT\PMCHATINVITE365TBL.DAT", 2, cpks),
             PatchAnyFile(pathToFileMap, @"R2\RESOURCE\RESRCNPCTBL.BIN", 2, cpks),
-            PatchAnyFile(pathToFileMap, @"R2\BUSTUP\DATA\BUSTUP_PARAM.DAT", 4, cpks),
-            PatchAnyFile(pathToFileMap, @"R2\FONT\ASSIST\MSGASSISTBUSTUPPARAM.DAT", 4, cpks),
+            // PatchAnyFile(pathToFileMap, @"R2\BUSTUP\DATA\BUSTUP_PARAM.DAT", 4, cpks),
+            // PatchAnyFile(pathToFileMap, @"R2\FONT\ASSIST\MSGASSISTBUSTUPPARAM.DAT", 4, cpks),
             PatchAnyFile(pathToFileMap, @"R2\INIT\SHDPERSONA.PDD", 4, cpks),
             PatchAnyFile(pathToFileMap, @"R2\INIT\SHDPERSONAENEMY.PDD", 4, cpks)
         };
