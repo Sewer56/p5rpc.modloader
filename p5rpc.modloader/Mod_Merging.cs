@@ -12,14 +12,14 @@ public partial class Mod
     private readonly Dictionary<Language, string[]> _cpkNames = new()
     {
         { Language.Japanese, ["BASE.CPK", "DATA.CPK", "data\\umd0.cpk"] },
-        { Language.English, ["EN.CPK", "_E.CPK", "data_EN"] },
-        { Language.German, ["DE.CPK", "_DE.CPK", "data_DE"] },
-        { Language.French, ["FR.CPK", "_FR.CPK", "data_FR"] },
-        { Language.Italian, ["IT.CPK", "_IT.CPK", "data_IT"] },
-        { Language.Korean, ["KR.CPK", "_K.CPK", "data_KR"] },
-        { Language.Spanish, ["ES.CPK", "_ES.CPK", "data_ES"] },
-        { Language.SimplifiedChinese, ["SC.CPK", "_CK.CPK", "data_CK"] },
-        { Language.TraditionalChinese, ["TC.CPK", "_CH.CPK", "data_CH"] },
+        { Language.English, ["EN.CPK", "DATA_E.CPK", "data_EN"] },
+        { Language.German, ["DE.CPK", "DATA_DE.CPK", "data_DE"] },
+        { Language.French, ["FR.CPK", "DATA_FR.CPK", "data_FR"] },
+        { Language.Italian, ["IT.CPK", "DATA_IT.CPK", "data_IT"] },
+        { Language.Korean, ["KR.CPK", "DATA_K.CPK", "data_KR"] },
+        { Language.Spanish, ["ES.CPK", "DATA_ES.CPK", "data_ES"] },
+        { Language.SimplifiedChinese, ["SC.CPK", "DATA_CK.CPK", "data_CK"] },
+        { Language.TraditionalChinese, ["TC.CPK", "DATA_CH.CPK", "data_CH"] },
     };
     
     private void OnBind(ICriFsRedirectorApi.BindContext context)
