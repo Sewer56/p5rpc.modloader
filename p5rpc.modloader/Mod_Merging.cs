@@ -7,11 +7,13 @@ using Reloaded.Universal.Localisation.Framework.Interfaces;
 namespace p5rpc.modloader;
 
 public partial class Mod
-{    
+{
+    private readonly string[] _baseCpkNames = ["BASE.CPK", "DATA.CPK", "data\\umd0.cpk"];
+
     // The names of the cpk file for each language
     private readonly Dictionary<Language, string[]> _cpkNames = new()
     {
-        { Language.Japanese, ["BASE.CPK", "DATA.CPK", "data\\umd0.cpk"] },
+        { Language.Japanese, ["JP.CPK", "DATA.CPK", "data\\umd0.cpk"] },
         { Language.English, ["EN.CPK", "DATA_E.CPK", "data_EN"] },
         { Language.German, ["DE.CPK", "DATA_DE.CPK", "data_DE"] },
         { Language.French, ["FR.CPK", "DATA_FR.CPK", "data_FR"] },
@@ -64,8 +66,7 @@ public partial class Mod
     private void ForceBaseCpkSecond(string[] cpkFiles)
     {
         // Reorder array to force a specific cpk to be first
-        var names = _cpkNames[Language.Japanese];
-        var cpkIndex = Array.FindIndex(cpkFiles, s => s.Contains(names[0], StringComparison.OrdinalIgnoreCase) || s.Contains(names[1], StringComparison.OrdinalIgnoreCase) || s.Contains(names[2], StringComparison.OrdinalIgnoreCase));
+        var cpkIndex = Array.FindIndex(cpkFiles, s => s.Contains(_baseCpkNames[0], StringComparison.OrdinalIgnoreCase) || s.Contains(_baseCpkNames[1], StringComparison.OrdinalIgnoreCase) || s.Contains(_baseCpkNames[2], StringComparison.OrdinalIgnoreCase));
         if (cpkIndex != -1)
             (cpkFiles[1], cpkFiles[cpkIndex]) = (cpkFiles[cpkIndex], cpkFiles[1]);
     }

@@ -180,6 +180,10 @@ Then you would put your `.msg` file with the same name in `FEmulator\BMD`
 ## Editing TBL Files
 Any TBL files in P3P, P4G and P5R (such as `SKILL.TBL` and `UNIT.TBL`) will automatically be merged if multiple mods edit them. This includes `itemtbl.bin` in P4G and P3P.
 
+!!! Info
+
+    Note that some TBLS that vary drastically between languages (such as NAME.TBL in P5R) will be ignored if the player's game language is not set to English, unless a localized version for their game language is available (see [supporting multiple languages](https://sewer56.dev/p5rpc.modloader/usage/#supporting-multiple-languages)).
+
 ### Embedded BF in AICALC.TBL
 In P3P and P4G `AICALC.TBL` contains two embedded bf files, `friend.bf` and `enemy.bf`. 
 To edit these place a dummy bf with the same name in `FEmulator\PAK\init_free.bin\battle` and then hook anything you want to the same way you would any other bf file.
@@ -238,6 +242,16 @@ To support Japanese you would place a corresponding `msg` file with Japanese tex
 ![BmdLocalisedExample2](./images/BmdLocalisedExample2.png)
 
 To support more languages you would add more copies of that file in the folder `FEmulator\L10N\{langCode}` where `{langCode}` is the id of the language listed in the [Localisation Framework documentation](https://github.com/AnimatedSwine37/Reloaded.Universal.Localisation.Framework?tab=readme-ov-file#supported-languages).
+
+### Example - TBL
+
+Some TBLS that differ heavily between languages **must** be localized for changes to appear when playing in a language other than English. To do this you would first place an English-language TBL in the appropriate essentials subfolder (eg. `P5REssentials/CPK/folderName/BATTLE/TABLE/NAME.TBL` for name.tbl in P5R).
+
+![TblLocalisedExample1](./images/TblLocalizedExample1.png)
+
+Then, to support eg. Spanish you would place a Spanish-language TBL at `FEmulator/L10N/es/NAME.TBL`.
+
+![TblLocalisedExample1](./images/TblLocalizedExample2.png)
 
 ## Releasing/Uploading your Mods
 
