@@ -1,3 +1,8 @@
+# 2.9.5
+
+- Fixed P5R CPK ordering by separating the JP CPK list from the language dictionary, preventing incorrect language files from being used as a merge base.
+- Added TBL localization documentation and example images for mod authors.
+
 # 2.9.4
 
 - Fixed a bug where SOUND_E.CPK could sometimes get put first instead of EN.CPK when setting the P5R CPK order. This could cause files from the wrong language to be used as a base for merging. [#50](https://github.com/Sewer56/p5rpc.modloader/issues/50)
